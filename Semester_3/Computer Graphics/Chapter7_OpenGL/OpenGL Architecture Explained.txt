@@ -1,0 +1,68 @@
+
+## How It Works (Explained in Simple Steps)
+
+### 1. Application
+- This is the program created by the programmer.
+- It could be a **game, simulation, or graphics software**.
+- It uses **OpenGL functions** to draw things on the screen.
+
+---
+
+### 2. OpenGL API
+- This is the **core library** that provides drawing functions (defined in **OpenGL.h**).
+- These functions let you draw lines, triangles, apply textures, and more.
+- OpenGL itself does not create windows — it only handles the drawing part.
+
+---
+
+### 3. Windowing API
+- This is the **part that creates the window where graphics appear**.
+- Different operating systems have their own windowing APIs:
+    - Windows: **WGL**
+    - Linux: **GLX**
+    - Mac: **AGL, CGL, NSOpenGL**
+- There are also cross-platform libraries like:
+    - **SDL** (Simple DirectMedia Layer)
+    - **GLUT** (easy OpenGL window creation)
+- Or GUI toolkits with OpenGL support:
+    - **wxWidgets, Qt, fltk, tcl/tk**
+
+---
+
+### 4. GLU Library (glu32.dll)
+- This is an **optional helper library**.
+- It gives extra functions to **simplify complex OpenGL tasks** (like creating perspective projections or drawing simple shapes).
+
+---
+
+### 5. Display Management System
+- This is the **part of the operating system** that handles showing things on the screen.
+- It manages how OpenGL graphics fit into the whole screen alongside other windows.
+
+---
+
+### 6. OpenGL Drivers
+- These are the **drivers that talk directly to your hardware** (graphics card or GPU).
+- Two types of drivers:
+    1. **Hardware-Specific Driver:** Uses GPU for fast graphics.
+    2. **Generic Software Driver:** Uses your CPU to draw if there’s no good GPU (much slower).
+- What type gets used depends on:
+    - What the programmer asked for (in the windowing API setup).
+    - What hardware is actually present on the computer.
+
+---
+
+### 7. Hardware
+- This is the **actual physical machine** — including:
+    - Graphics Card (GPU)
+    - Monitor/Display
+
+---
+
+## Summary Flow (Super Simple Version)
+Programmer's App → OpenGL API → Windowing API → OpenGL Drivers → Graphics Card/CPU → Screen
+
+---
+
+### Key Point:
+OpenGL **only handles drawing**. Creating windows, handling input (like mouse clicks), and managing events is handled by **Windowing APIs** or other **toolkits** like SDL, GLUT, Qt, etc.
