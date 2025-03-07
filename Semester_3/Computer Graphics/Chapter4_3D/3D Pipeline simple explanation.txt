@@ -1,0 +1,26 @@
+First of all, all objects like cars, trees, tigers, or houses are created in their own Modeling Coordinate System.
+
+Each object has its own local coordinates, independent of others.
+Next, we perform Modeling Transformation.
+
+This step combines all objects into one common World Coordinate System — so now all objects exist in the same scene.
+Now, we need to decide what part of this world we want to see — this is called Viewing.
+
+For example, we set the camera at a particular place to look at the tiger and person.
+After that, we perform Viewing Transformation.
+
+This converts the objects from World Coordinates to Viewing Coordinates, which means shifting everything so that the camera is at the center, looking in the correct direction.
+Right now, the scene is still in 3D, but our final screen is 2D.
+
+To convert 3D into 2D, we perform Projection Transformation.
+This gives us Projection Coordinates — a flat version of the scene.
+Now, these projection coordinates need to fit into a standard box (a normalized space like -1 to +1).
+
+This is done using Normalization Transformation.
+This step ensures that no matter the actual size of the scene, it will fit properly into the screen later.
+Finally, we do Workstation Transformation.
+
+This step converts the normalized points into actual device coordinates (like screen pixels), so the scene can be displayed on your screen.
+
+
+- Written by Arpan
