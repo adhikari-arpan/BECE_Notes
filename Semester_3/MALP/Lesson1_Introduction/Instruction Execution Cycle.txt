@@ -1,0 +1,11 @@
+The instruction execution cycle is the process by which a microprocessor fetches, decodes, and executes an instruction. It consists of three main stages.  
+
+Fetch is the stage where the processor retrieves the instruction from memory using the program counter, which holds the address of the next instruction. The instruction is stored in the instruction register.  
+
+Decode is the stage where the control unit interprets the fetched instruction to determine the operation to be performed and the required operands.  
+
+Execute is the stage where the processor carries out the operation, which may involve arithmetic or logic computations, data transfer, or control operations.  
+
+Some instructions may require additional steps such as memory read or write if the instruction involves data stored in memory, in which case the processor performs an additional read or write operation. Interrupt handling may also be required if an interrupt is received, in which case the CPU temporarily halts execution and processes the interrupt request.  
+
+This cycle repeats continuously as long as the processor is running.

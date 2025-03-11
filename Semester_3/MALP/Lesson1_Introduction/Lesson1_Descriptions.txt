@@ -1,0 +1,47 @@
+1. Microcomputer System  
+A microcomputer system is a complete computer that includes a microprocessor, memory, and input/output (I/O) devices. It is designed for general-purpose computing and can run software applications.  
+
+Components of a Microcomputer System:  
+- Microprocessor (CPU) – The brain of the system that processes instructions.  
+- Memory (RAM & ROM) – Stores data and instructions.  
+- Input Devices – Keyboard, mouse, sensors, etc.  
+- Output Devices – Monitor, printer, LED display, etc.  
+- Storage Devices – Hard disk, SSD, etc.  
+- System Bus – Connects CPU, memory, and peripherals.  
+
+2. Microprocessor Operation  
+The microprocessor operates by executing a sequence of instructions stored in memory. It follows the Fetch-Decode-Execute Cycle:  
+- Fetch – Retrieves an instruction from memory.  
+- Decode – Interprets the instruction.  
+- Execute – Carries out the operation (e.g., arithmetic, logic, data movement).  
+
+The microprocessor interacts with memory and I/O devices via the system bus (Address Bus, Data Bus, Control Bus).  
+
+3. Microprocessor-Initiated Operations  
+These are actions performed by the microprocessor to control the system:  
+- Memory Read – Fetching data/instructions from memory.  
+- Memory Write – Storing data into memory.  
+- I/O Read – Reading input from peripherals.  
+- I/O Write – Sending output to peripherals.  
+
+The microprocessor uses control signals like RD (Read), WR (Write), ALE (Address Latch Enable) to perform these operations.  
+
+4. Internal Operations of Microprocessor  
+These operations occur inside the microprocessor during instruction execution:  
+- Instruction Decoding – Determines what action to perform.  
+- Arithmetic & Logic Operations – Performed by the Arithmetic Logic Unit (ALU).  
+- Register Transfer – Data movement between registers.  
+- Interrupt Handling – Responds to external/internal interrupts.  
+- Stack Operations – Pushing and popping data for function calls.  
+
+5. Peripheral-Initiated Operations  
+Peripherals (I/O devices) can also initiate operations using interrupts and DMA (Direct Memory Access):  
+- Interrupts – Devices request CPU attention (e.g., keyboard input, external sensors). The CPU responds by executing an Interrupt Service Routine (ISR).  
+- DMA Transfer – High-speed data transfer between memory and peripherals without CPU intervention.  
+
+Summary:  
+- Microcomputer System – Complete system with CPU, memory, and I/O.  
+- Microprocessor Operation – Executes instructions in a cycle.  
+- Microprocessor-Initiated Operations – CPU controls memory and I/O operations.  
+- Internal Operations – Instruction execution, ALU tasks, and register operations.  
+- Peripheral-Initiated Operations – Interrupts and DMA for efficient processing.  
