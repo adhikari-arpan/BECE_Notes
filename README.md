@@ -4,7 +4,7 @@ A comprehensive collection of study notes for Bachelor in Computer Engineering (
 
 ## 🎓 Overview
 
-This repository contains curated study materials, notes, and resources for BCE students at Nepal College of Information Technology (NCIT) and other affiliated colleges of Pokhara University. The content is organized semester-wise and subject-wise to help students easily access relevant materials.
+This repository contains curated study materials, notes, and resources for BCE students for colleges of Pokhara University. The content is organized semester-wise and subject-wise to help students easily access relevant materials.
 
 ## 📁 Repository Structure
 
