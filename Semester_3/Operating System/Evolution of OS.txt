@@ -8,6 +8,7 @@ Users interacted with the system using punch cards or switches.
 Limitations:
 Manual setup for each job.
 Time-consuming and error-prone.
+
 Batch Processing Systems (1940s to 1950s)
 Characteristics:
 Jobs grouped (batched) and executed sequentially.
@@ -16,6 +17,7 @@ Introduced Job Control Language (JCL) to manage batches.
 Advancements:
 Automated job scheduling improved efficiency.
 Reduced idle time of computers.
+
 Multiprogramming Systems (1950s to 1960s)
 Characteristics:
 Allowed multiple programs to reside in memory simultaneously.
@@ -24,6 +26,7 @@ If one program is waiting for I/O, another program uses the CPU.
 Advancements:
 Increased system utilization.
 Early concepts of resource allocation and management emerged.
+
 Time-Sharing Systems (1960s to 1970s)
 Characteristics:
 Enabled multiple users to interact with the computer simultaneously.
@@ -32,6 +35,7 @@ Introduced terminals for direct user interaction.
 Advancements:
 Interactive computing became possible.
 Led to the development of multi-user operating systems like UNIX.
+
 Real-Time Systems (1970s to 1980s)
 Characteristics:
 Designed for applications requiring immediate response.
@@ -40,6 +44,7 @@ Hard Real-Time: Strict timing requirements (e.g., flight control).
 Soft Real-Time: Timing is important but not critical (e.g., video streaming).
 Advancements:
 Used in embedded systems, robotics, and industrial control.
+
 Personal Computer Operating Systems (1980s to 1990s)
 Characteristics:
 Focused on single-user systems with graphical interfaces.
@@ -47,12 +52,14 @@ Examples: MS-DOS, Windows, macOS, Linux.
 Advancements:
 Made computing accessible to individuals.
 Enhanced usability with GUIs (Graphical User Interfaces).
+
 Distributed Systems (1990s to 2000s)
 Characteristics:
 Multiple computers work together as a single system over a network.
 Focused on resource sharing, scalability, and fault tolerance.
 Advancements:
 Foundation for cloud computing and server clusters.
+
 Mobile Operating Systems (2000s to Present)
 Characteristics:
 Specialized for smartphones and tablets.
@@ -60,6 +67,7 @@ Designed for touch interaction and optimized for low-power devices.
 Examples: iOS, Android.
 Advancements:
 Created ecosystems for app development and mobile connectivity.
+
 Cloud-Based and AI-Integrated Systems (2010s to Present)
 Characteristics:
 Virtualized operating systems running on cloud infrastructure.
