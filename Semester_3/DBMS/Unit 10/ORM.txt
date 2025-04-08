@@ -1,0 +1,19 @@
+What is ORM (Object-Relational Mapping)?
+ORM is a technique that allows developers to interact with a relational database using an object-oriented approach. It acts as a bridge between an OOP language and an SQL database.
+
+How Does ORM Work?
+Instead of writing SQL queries, developers use objects in their code to interact with the database.
+The ORM tool converts these objects into SQL queries automatically.
+Data is retrieved as objects rather than raw rows and columns.
+Popular ORM Frameworks
+Hibernate (Java)
+SQLAlchemy (Python)
+Django ORM (Python)
+TypeORM (Node.js)
+Entity Framework (C#)
+
+
+Advantages of ORM
+Eliminates the need for SQL queries: Developers can work with objects instead of SQL commands.
+Improves Code Maintainability: Business logic remains clean without being mixed with SQL queries.
+Ensures Security: Reduces SQL injection risks by handling queries internally.
