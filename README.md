@@ -1,10 +1,10 @@
 # 📚 BCE_Notes
 
-A comprehensive collection of study notes for Bachelor in Computer Engineering (BCE) program under Pokhara University, Nepal.
+A comprehensive collection of study notes for the Bachelor's in Computer Engineering (BCE) program under Pokhara University, Nepal. All Credit Goes to the person who has created all these notes.
 
 ## 🎓 Overview
 
-This repository contains curated study materials, notes, and resources for BCE students for colleges of Pokhara University. The content is organized semester-wise and subject-wise to help students easily access relevant materials.
+This repository contains curated study materials, notes, and resources for BCE students at the colleges of Pokhara University. The content is organized semester-wise and subject-wise to help students easily access relevant materials.
 
 ## 📁 Repository Structure
 
@@ -156,7 +156,7 @@ To contribute:
 
 ## ℹ️ About
 
-These notes are compiled by Arpan Adhikari, a student at Nepal College of Information Technology (NCIT). The materials are designed to follow the Pokhara University curriculum for the Bachelor in Computer Engineering program.
+These notes are compiled by Arpan Adhikari, a student at Nepal College of Information Technology (NCIT). The materials are designed to follow the Pokhara University curriculum for the Bachelor's in Computer Engineering program.
 
 ## ⚠️ Disclaimer
 
@@ -164,4 +164,4 @@ These notes are meant to supplement official course materials, not replace them.
 
 ## 📜 License
 
-This repository is provided for educational purposes. Please respect copyright and intellectual property rights when using and contributing to these materials.
+This repository is provided for educational purposes. Please respect copyright and intellectual property rights when using and contributing to these materials. All Credit Goes to the person who has created all these notes. If you are the owner of the note and want it to be removed from the collection, contact the repo owner at adhikariarpan2063@gmail.com along with proof of ownership.
