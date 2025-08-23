@@ -1,0 +1,19 @@
+Types of data flow and operations within a computer system: 
+
+1. I/O Directly Attached
+- Explanation: This refers to input/output operations where a device is directly connected to the computer and communicates without involving storage.
+- Example in Notes: A camera attached to a PC sends frames directly to a window displayed on the PC's screen.
+- Diagram: Shows movement and control going directly between I/O and processing, bypassing storage.
+
+2. I/O To/From Storage
+- Explanation: This refers to data being transferred between an input/output device and the storage (such as memory or disk).
+- Example in Notes: Playing an MP3 file stored in memory, with the audio output sent to earphones attached to the same PC.
+- Diagram: Illustrates data path involving movement from storage to I/O and control handling the process.
+
+3. Processing From/To Storage
+- Explanation: This describes data being read from storage, processed by the CPU, and then the result is written back to storage.
+- Example in Notes: Any number-crunching application that reads data from memory, processes it, and stores the result back in memory (e.g., calculation C = A + B).
+- Diagram: Shows the control unit facilitating data flow from storage to processing and then back to storage.
+
+In summary:
+These points illustrate how data travels in a computer system during different types of operations: direct device I/O, data transfer between I/O devices and storage, and data processing that involves storage as both the input and output sources.
