@@ -1,0 +1,32 @@
+What is HDL?
+
+- HDL stands for Hardware Description Language.
+- It is a special computer language used to describe how electronic circuits work.
+- Engineers use HDL to design and test digital circuits (like inside computers or phones) without building physical hardware first.
+- HDL helps in simulating, checking, and creating real circuits automatically.
+
+Why use HDL?
+
+- Can describe very big and complex circuits easily.
+- Models circuits from very simple parts (like gates) to the whole system.
+- Helps work faster because you can quickly change and fix your design.
+- You can reuse parts of your design in other projects.
+- HDL code includes comments and explanations, so it documents itself.
+- Works with many types of technologies (different chips, gates).
+
+What can’t HDL do?
+
+- It won’t decide the best way to build a circuit for you; you still need to understand digital design.
+- If you can’t imagine how your circuit should look, you can’t easily write HDL code.
+
+
+
+
+
+What is VHDL?
+
+- VHDL stands for Very High Speed Integrated Circuit Hardware Description Language.
+- It’s a type of HDL made for designing complex circuits, supported by a worldwide standard.
+- Helps create circuits by writing code that can describe everything from simple gates to entire electronics systems.
+- Allows designers to work in many ways: by behavior (what it does), structure (how connected), or detailed gates.
+- Supports many things happening at the same time(important for hardware).
