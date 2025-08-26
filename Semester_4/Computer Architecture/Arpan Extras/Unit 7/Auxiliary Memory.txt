@@ -1,0 +1,20 @@
+Magnetic Disks (Hard Drives)
+
+⦁	A magnetic disk is a flat circular plate, usually made of metal or plastic, coated with a magnetic material to store data.
+⦁	Both sides of the disk can store data, and many disks can be stacked on a spindle.
+⦁	Data is arranged in tracks (concentric circles) on the disk surface.
+⦁	Each track is divided into small parts called sectors, which are the smallest units of data transfer.
+⦁	A read/write head moves to the appropriate track to read or write data.
+⦁	Tracks near the center of the disk have smaller circumference, so disks use variable recording density—denser recording near the center—to keep sectors equally sized.
+⦁	Addressing a location involves specifying the disk number, surface (side), track, and sector.
+⦁	Access Mode can be direct or Sequential.
+
+
+Magnetic Tapes
+
+⦁	Magnetic tape is a long strip of plastic coated with magnetic material where data is stored as magnetic signals along the tape.
+⦁	Unlike disks, tapes read and write data sequentially (from start to end).
+⦁	Data is stored in blocks called records, separated by gaps—unrecorded tape sections to allow stopping the tape without losing data.
+⦁	Each record has special identification bits at the start and end.
+⦁	Tapes can run forward, backward, stop, or be rewound, making them suitable for backup storage where big chunks of data are stored and accessed sequentially.
+⦁	Usually, seven or nine bits of data plus a parity bit (for error checking) are recorded simultaneously.
