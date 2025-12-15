@@ -1,17 +1,17 @@
-# 📚 BCE_Notes
+# 📚 BECE_Notes
 
-A comprehensive collection of study notes for the Bachelor's in Computer Engineering (BCE) program under Pokhara University, Nepal. All Credit Goes to the person who has created all these notes.
+A comprehensive collection of study notes for the Bachelor of Engineering in Computer Engineering (BECE) program under Pokhara University, Nepal. All Credit Goes to the person who has created all these notes. Star (⭐) this repository for quick access.
 
 ## 🎓 Overview
 
-This repository contains curated study materials, notes, and resources for BCE students at the colleges of Pokhara University. The content is organized semester-wise and subject-wise to help students easily access relevant materials.
+This repository contains curated study materials, notes, and resources for BECE students at the colleges of Pokhara University. The content is organized semester-wise and subject-wise to help students easily access relevant materials.
 
 ## 📁 Repository Structure
 
 The repository is organized into semester-based folders, with each semester folder containing subject-specific folders:
 
 ```
-BCE_Notes/
+BECE_Notes/
 ├── Semester_1/
 │   ├── MTH 110 - Calculus I/
 │   ├── ELX 110 - Digital Logic/
