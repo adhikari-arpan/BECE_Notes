@@ -1,0 +1,90 @@
+Sequence Detector Code 1101
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Entity
+entity fsm is
+    Port (
+        clk  : in  STD_LOGIC;
+        clr  : in  STD_LOGIC;
+        din  : in  STD_LOGIC;
+        dout : out STD_LOGIC
+    );
+end fsm;
+
+architecture fsm_arch of fsm is
+
+    -- Renamed states
+    type state_type is (S0, S1, S2, S3, S4);
+
+    signal present_state, next_state : state_type;
+
+begin
+
+    process(clk, clr)
+    begin
+        if clr = '1' then
+            present_state <= S0;
+        elsif rising_edge(clk) then
+            present_state <= next_state;
+        end if;
+    end process;
+
+
+    process(present_state, din)
+    begin
+        case present_state is
+
+            when S0 =>
+                if din = '1' then
+                    next_state <= S1;
+                else
+                    next_state <= S0;
+                end if;
+
+            when S1 =>
+                if din = '1' then
+                    next_state <= S2;
+                else
+                    next_state <= S0;
+                end if;
+
+            when S2 =>
+                if din = '0' then
+                    next_state <= S3;
+                else
+                    next_state <= S2;
+                end if;
+
+            when S3 =>
+                if din = '1' then
+                    next_state <= S4;
+                else
+                    next_state <= S0;
+                end if;
+
+            when S4 =>
+                if din = '1' then
+                    next_state <= S2;  -- overlap
+                else
+                    next_state <= S0;
+                end if;
+
+            when others =>
+                next_state <= S0;
+
+        end case;
+    end process;
+
+   
+    process(present_state)
+    begin
+        if present_state = S4 then
+            dout <= '1';
+        else
+            dout <= '0';
+        end if;
+    end process;
+
+end fsm_arch;
