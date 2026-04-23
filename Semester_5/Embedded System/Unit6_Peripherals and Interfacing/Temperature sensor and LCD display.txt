@@ -1,0 +1,77 @@
+Temperature sensor and LCD display
+
+#define F_CPU 8000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+#include <stdio.h>
+
+// LCD control pins
+#define RS PD0
+#define EN PD1
+
+// -------- LCD --------
+void lcd_cmd(unsigned char cmd) {
+    PORTB = cmd;
+    PORTD &= ~(1<<RS);
+    PORTD |= (1<<EN);
+    _delay_ms(1);
+    PORTD &= ~(1<<EN);
+}
+
+void lcd_data(unsigned char data) {
+    PORTB = data;
+    PORTD |= (1<<RS);
+    PORTD |= (1<<EN);
+    _delay_ms(1);
+    PORTD &= ~(1<<EN);
+}
+
+void lcd_string(char *str) {
+    while(*str) lcd_data(*str++);
+}
+
+void lcd_init() {
+    DDRB = 0xFF;  // LCD data port
+    DDRD = 0xFF;  // LCD control port
+
+    lcd_cmd(0x38); // 8-bit mode, 2 lines
+    lcd_cmd(0x0C); // Display ON, cursor OFF
+    lcd_cmd(0x06); // Auto increment cursor
+    lcd_cmd(0x01); // Clear display
+}
+
+// -------- ADC --------
+void adc_init() {
+    DDRA = 0x00;       // Port A input
+    ADMUX = 0xE0;      // Internal 2.56V ref, left adjust, ADC0
+    ADCSRA = 0x87;     // Enable ADC, prescaler 128
+}
+
+unsigned char adc_read() {
+    ADCSRA |= (1<<ADSC);        // Start conversion
+    while(ADCSRA & (1<<ADSC));  // Wait until conversion complete
+    return ADCH;                // 8-bit result
+}
+
+// -------- MAIN --------
+int main(void) {
+    char buffer[16];
+    unsigned char adc_val;
+    float temp;
+
+    lcd_init();
+    adc_init();
+
+    while(1) {
+        adc_val = adc_read();
+
+        // Convert 8-bit ADC to temperature using 2.56V reference
+        temp = (adc_val * 2.56 * 100.0) / 256.0;
+
+        lcd_cmd(0x80); // First line
+        sprintf(buffer, "Temp: %.1f C", temp);
+        lcd_string(buffer);
+
+        _delay_ms(1000);
+    }
+}
