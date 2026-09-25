@@ -8,6 +8,7 @@ import { AboutView } from '@/components/AboutView';
 import { ContributorsView } from '@/components/ContributorsView';
 import { ContributingView } from '@/components/ContributingView';
 import { Footer } from '@/components/Footer';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { trackPageView } from '@/content/visits';
 
 type Page = 'home' | 'semester' | 'subject' | 'about' | 'contributors' | 'contributing';
@@ -67,6 +68,7 @@ function App() {
           <nav className="top-actions">
             {page !== 'home' && <button className="text-button" onClick={goHome}>Home</button>}
             <span className="status-pill"><span className="status-dot" /> Open collection</span>
+            <ThemeToggle />
           </nav>
         </div>
       </header>
