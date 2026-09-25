@@ -10,3 +10,8 @@ declare module 'virtual:notes-manifest' {
   export const config: { fileBase: string; lfsBase: string };
   export const entries: ManifestEntry[];
 }
+
+interface ImportMetaEnv {
+  /** Firebase Realtime Database URL used for the lifetime visit counter. */
+  readonly VITE_FIREBASE_DB_URL?: string;
+}
