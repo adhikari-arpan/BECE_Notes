@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { allFiles, formatSize, semesters } from '@/content/notes';
 import { formatCount, useSiteStats } from '@/content/visits';
+import { CountUp } from '@/components/CountUp';
 
 interface HomeViewProps {
   onSelectSemester: (id: string) => void;
@@ -33,11 +34,11 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
           <h1>Your notes,<br /><em>in one place.</em></h1>
           <p className="hero-lede">A calm, organized home for every lecture note, question paper, and resource across your BECE journey. Pick a semester to explore its subjects.</p>
           <div className="hero-stats">
-            <div><strong>{String(courseSemesters.length).padStart(2, '0')}</strong><span>Semesters</span></div>
-            <div><strong>{subjectsWithNotes}</strong><span>Subjects with notes</span></div>
-            <div><strong>{allFiles.length}</strong><span>Files</span></div>
-            <div><strong>{formatCount(visitors)}</strong><span>Visitors</span></div>
-            <div><strong>{formatCount(pageViews)}</strong><span>Page visits</span></div>
+            <div><strong><CountUp value={courseSemesters.length} pad={2} /></strong><span>Semesters</span></div>
+            <div><strong><CountUp value={subjectsWithNotes} /></strong><span>Subjects with notes</span></div>
+            <div><strong><CountUp value={allFiles.length} /></strong><span>Files</span></div>
+            <div><strong><CountUp value={visitors} /></strong><span>Visitors</span></div>
+            <div><strong><CountUp value={pageViews} /></strong><span>Page visits</span></div>
           </div>
         </div>
         <div className="hero-visual" aria-hidden="true">
@@ -47,7 +48,7 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
             <div className="mini-icon"><BookOpen size={22} /></div>
             <span>THE LIBRARY</span>
             <strong>Notes that<br />move with you.</strong>
-            <div className="card-footer"><span>PU / 2081</span><span>●</span></div>
+            <div className="card-footer"><span>PU</span><span>●</span></div>
           </div>
         </div>
       </section>
