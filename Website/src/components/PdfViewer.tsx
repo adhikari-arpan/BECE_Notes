@@ -14,6 +14,8 @@ import {
   ZoomOut,
 } from 'lucide-react';
 
+import { Loader } from '@/components/Loader';
+
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 
 /** PDF points -> CSS pixels at 100% zoom (same convention as browser PDF viewers). */
@@ -235,8 +237,7 @@ export default function PdfViewer({ url, fileName, onError }: PdfViewerProps) {
   if (!doc) {
     return (
       <div className="pdf-loading">
-        <div className="spinner" />
-        <span>Loading PDF{progress !== null ? ` · ${progress}%` : '…'}</span>
+        <Loader label="Loading PDF…" progress={progress} />
       </div>
     );
   }

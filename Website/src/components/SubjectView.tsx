@@ -17,6 +17,7 @@ import {
   Presentation,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
+import { Loader } from '@/components/Loader';
 import { formatDate, formatSize, plural, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
 
 const PdfViewer = lazy(() => import('@/components/PdfViewer'));
@@ -167,7 +168,7 @@ function FilePreview({ file }: { file: NoteFile }) {
     body = <Fallback file={file} title="Couldn't load a preview" message="The file can still be downloaded." />;
   } else if (file.kind === 'pdf') {
     body = (
-      <Suspense fallback={<div className="pdf-loading"><div className="spinner" /><span>Loading viewer…</span></div>}>
+      <Suspense fallback={<div className="pdf-loading"><Loader label="Loading viewer…" /></div>}>
         <PdfViewer url={file.url} fileName={file.name} onError={onError} />
       </Suspense>
     );
@@ -205,7 +206,7 @@ function TextPreview({ file, onError }: { file: NoteFile; onError: () => void })
     };
   }, [file.url, onError]);
 
-  if (text === null) return <div className="pdf-loading"><div className="spinner" /><span>Loading…</span></div>;
+  if (text === null) return <div className="pdf-loading"><Loader /></div>;
 
   if (file.kind === 'markdown') {
     return <article className="markdown-preview" dangerouslySetInnerHTML={{ __html: marked.parse(text, { async: false }) }} />;
