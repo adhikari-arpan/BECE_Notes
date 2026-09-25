@@ -470,6 +470,7 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
     } catch {
       document.execCommand('copy');
     }
+    window.getSelection()?.removeAllRanges();
     setPopover(null);
   };
 
@@ -574,6 +575,7 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
               <Search size={14} />
               <input
                 ref={searchInputRef}
+                autoFocus
                 value={query}
                 placeholder="Find in document…"
                 aria-label="Find in document"
