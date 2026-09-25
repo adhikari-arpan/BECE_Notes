@@ -17,6 +17,11 @@ function App() {
   const [activeSemesterId, setActiveSemesterId] = useState<string>('1');
   const [activeSubjectId, setActiveSubjectId] = useState<string>('');
 
+  // Opening another page (about, contributors, a semester...) starts at the top, not mid-scroll.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [page, activeSemesterId, activeSubjectId]);
+
   // Every page opened (home, a semester, a subject, about...) counts as one page visit.
   useEffect(() => {
     const key = page === 'semester' ? `semester:${activeSemesterId}` : page === 'subject' ? `subject:${activeSubjectId}` : page;
