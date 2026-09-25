@@ -46,88 +46,97 @@ BECE_Notes/
 ## 📝 Semester-wise Course Breakdown
 
 ### 🔹 Year I, Semester I
-| Code | Subject | Credits |
-|------|---------|---------|
-| MTH 110 | 🧮 Calculus I | 3 |
-| ELX 110 | 🔌 Digital Logic | 3 |
-| CMP 124 | 💻 Programming in C | 3 |
-| ELE 110 | ⚡ Basic Electrical Engineering | 3 |
-| CMP 122 | 🔨 Computer Workshop | 1 |
-| ENG 110 | 🗣️ Communication Technique | 2 |
-| ELX 110 | 🔋 Electronic Devices & Circuits | 3 |
+
+| Code    | Subject                          | Credits |
+| ------- | -------------------------------- | ------- |
+| MTH 110 | 🧮 Calculus I                    | 3       |
+| ELX 110 | 🔌 Digital Logic                 | 3       |
+| CMP 124 | 💻 Programming in C              | 3       |
+| ELE 110 | ⚡ Basic Electrical Engineering  | 3       |
+| CMP 122 | 🔨 Computer Workshop             | 1       |
+| ENG 110 | 🗣️ Communication Technique       | 2       |
+| ELX 110 | 🔋 Electronic Devices & Circuits | 3       |
 
 ### 🔹 Year I, Semester II
-| Code | Subject | Credits |
-|------|---------|---------|
-| MTH 150 | 📐 Algebra & Geometry | 3 |
-| PHY 110 | 🔭 Applied Physics | 3 |
-| CHM 110 | 🧪 Applied Chemistry | 2 |
-| MEC 116 | ✏️ Basic Engineering Drawing | 1 |
-| CMP 162 | 🧩 Object Oriented Programming in C++ | 3 |
-| CMP 165 | 📊 Data Structure & Algorithm | 3 |
-| ELE 172 | 📡 Instrumentation | 2 |
+
+| Code    | Subject                               | Credits |
+| ------- | ------------------------------------- | ------- |
+| MTH 150 | 📐 Algebra & Geometry                 | 3       |
+| PHY 110 | 🔭 Applied Physics                    | 3       |
+| CHM 110 | 🧪 Applied Chemistry                  | 2       |
+| MEC 116 | ✏️ Basic Engineering Drawing          | 1       |
+| CMP 162 | 🧩 Object Oriented Programming in C++ | 3       |
+| CMP 165 | 📊 Data Structure & Algorithm         | 3       |
+| ELE 172 | 📡 Instrumentation                    | 2       |
 
 ### 🔹 Year II, Semester III
-| Code | Subject | Credits |
-|------|---------|---------|
-| MTH 210 | 🧮 Calculus II | 3 |
-| CMP 222 | 🗄️ Database Management System | 3 |
-| CMP 232 | 🖥️ Operating Systems | 3 |
-| CMP 224 | 🔍 Microprocessor & Assembly Language Programming | 3 |
-| CMP234 | 🎨 Computer Graphics | 3 |
-| CMP 220 | 📡 Data Communication | 3 |
+
+| Code    | Subject                                           | Credits |
+| ------- | ------------------------------------------------- | ------- |
+| MTH 210 | 🧮 Calculus II                                    | 3       |
+| CMP 222 | 🗄️ Database Management System                     | 3       |
+| CMP 232 | 🖥️ Operating Systems                              | 3       |
+| CMP 224 | 🔍 Microprocessor & Assembly Language Programming | 3       |
+| CMP234  | 🎨 Computer Graphics                              | 3       |
+| CMP 220 | 📡 Data Communication                             | 3       |
 
 ### 🔹 Year II, Semester IV
-| Code | Subject | Credits |
-|------|---------|---------|
-| MTH 250 | 📊 Applied Mathematics | 3 |
-| MTH 257 | 🔢 Numerical Methods | 2 |
-| CMP 228 | ☕ Advanced Programming with Java | 3 |
-| CMP 254 | 🧠 Theory of Computation | 3 |
-| CMP 262 | 🏗️ Computer Architecture | 3 |
-| CMP 270 | 🔬 Research Fundamentals | 2 |
+
+| Code    | Subject                           | Credits |
+| ------- | --------------------------------- | ------- |
+| MTH 250 | 📊 Applied Mathematics            | 3       |
+| MTH 257 | 🔢 Numerical Methods              | 2       |
+| CMP 228 | ☕ Advanced Programming with Java | 3       |
+| CMP 254 | 🧠 Theory of Computation          | 3       |
+| CMP 262 | 🏗️ Computer Architecture          | 3       |
+| CMP 270 | 🔬 Research Fundamentals          | 2       |
 
 ### 🔹 Year III, Semester V
-| Code | Subject | Credits |
-|------|---------|---------|
-| MTH 216 | 📊 Probability & Statistics | 2 |
-| ELX 320 | 🤖 Embedded System | 2 |
-| MGT 320 | 📋 Engineering Management | 2 |
-| CMP 346 | 🧠 Artificial Intelligence | 3 |
-| CMM 344 | 📶 Digital Signal Processing | 3 |
-| CMP 340 | 🔧 Software Engineering | 3 |
+
+| Code    | Subject                      | Credits |
+| ------- | ---------------------------- | ------- |
+| MTH 216 | 📊 Probability & Statistics  | 2       |
+| ELX 320 | 🤖 Embedded System           | 2       |
+| MGT 320 | 📋 Engineering Management    | 2       |
+| CMP 346 | 🧠 Artificial Intelligence   | 3       |
+| CMM 344 | 📶 Digital Signal Processing | 3       |
+| CMP 340 | 🔧 Software Engineering      | 3       |
 
 ### 🔹 Year III, Semester VI
-| Code | Subject | Credits |
-|------|---------|---------|
-| CMP 362 | 📷 Image Processing & Pattern Recognition | 3 |
-| CMP 364 | 🤖 Machine Learning | 2 |
-| CMP 360 | 📊 Data Science & Analytics | 2 |
-| CMP 344 | 🌐 Computer Networks | 3 |
-| CMP 338 | 🎮 Simulation & Modeling | 2 |
-| - | 📚 Elective I | 3 |
-| PRJ 360 | 🚀 Project I | 2 |
+
+| Code    | Subject                                   | Credits |
+| ------- | ----------------------------------------- | ------- |
+| CMP 362 | 📷 Image Processing & Pattern Recognition | 3       |
+| CMP 364 | 🤖 Machine Learning                       | 2       |
+| CMP 344 | 🌐 Computer Networks                      | 3       |
+| CMP 338 | 🎮 Simulation & Modeling                  | 2       |
+| CMP 422 | 🔄 Compiler Design                        | 2       |
+| -       | 📚 Elective I                             | 3       |
+| PRJ 360 | 🚀 Project I                              | 2       |
 
 ### 🔹 Year IV, Semester VII
-| Code | Subject | Credits |
-|------|---------|---------|
-| MGT 332 | 💼 Entrepreneurship & Professional Practice | 2 |
-| MGT 290 | 💰 Engineering Economics | 3 |
-| CMP 426 | 🔒 Network & Cyber Security | 3 |
-| CMP 424 | ☁️ Cloud Computing & Virtualization | 2 |
-| CMP 422 | 🔄 Compiler Design | 3 |
-| - | 📚 Elective II | 3 |
+
+| Code    | Subject                                     | Credits |
+| ------- | ------------------------------------------- | ------- |
+| MGT 332 | 💼 Entrepreneurship & Professional Practice | 2       |
+| MGT 290 | 💰 Engineering Economics                    | 3       |
+| CMP 426 | 🔒 Network & Cyber Security                 | 3       |
+| CMP 424 | ☁️ Cloud Computing & Virtualization         | 3       |
+| CMP 360 | 📊 Data Science & Analytics                 | 3       |
+| -       | 📚 Elective II                              | 3       |
 
 ### 🔹 Year IV, Semester VIII
-| Code | Subject | Credits |
-|------|---------|---------|
-| - | 📚 Elective III | 3 |
-| INT 492 | 🏢 Internship | 3 |
-| PRJ 452 | 🚀 Project II | 3 |
+
+| Code    | Subject         | Credits |
+| ------- | --------------- | ------- |
+| -       | 📚 Elective III | 3       |
+| INT 492 | 🏢 Internship   | 3       |
+| PRJ 452 | 🚀 Project II   | 3       |
 
 ## 📋 Electives
 
 ### 🤖 AI and Machine Learning
+
 - CMP 458 - 🧠 Artificial Neural Network
 - CMP 468 - 📊 Fuzzy Logic and Engineering Application
 - CMP 442 - 👥 Human Computer Interaction
@@ -136,6 +145,7 @@ BECE_Notes/
 - - 📝 Computational Linguistics
 
 ### 📈 Data Analysis and Computing
+
 - CMP 438 - 📊 Big Data Technologies
 - CMP 409 - 🧬 Bioinformatics
 - CMP 472 - ☁️ Cloud Computing
@@ -144,6 +154,7 @@ BECE_Notes/
 - CMP 435 - 💻 Distributed Operating System
 
 ### 🔍 Information Retrieval and Computing
+
 - CMP 491 - 🔍 Oracle
 - CMP 419 - ⚡ Parallel Computing
 - CMP 432 - ⏱️ Real Time Operating System
