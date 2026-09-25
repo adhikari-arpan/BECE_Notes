@@ -7,6 +7,9 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap" />
     <title>BECE Notes — Pokhara University Computer Engineering Notes (Semester-wise)</title>
     <meta
       name="description"
@@ -89,6 +92,19 @@
         document.documentElement.dataset.theme = t;
       } catch (e) {}
     </script>
+    <style>
+      /* First paint, before the app's JavaScript has loaded: themed background and a small
+         loading screen. The plain-text summary for search engines stays in the page but is
+         kept out of sight; the app replaces all of it as soon as it starts. */
+      html { background: #f7f7f2; }
+      html[data-theme='dark'] { background: #0f1513; }
+      .boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+      .boot img { height: 56px; width: auto; animation: boot-pulse 1.4s ease-in-out infinite; }
+      .boot span { width: 120px; height: 3px; border-radius: 99px; background: linear-gradient(90deg, transparent, #f0c34a, transparent); background-size: 200% 100%; animation: boot-bar 1.2s linear infinite; }
+      @keyframes boot-pulse { 50% { opacity: .55; } }
+      @keyframes boot-bar { to { background-position: -200% 0; } }
+      .prerender-summary { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
