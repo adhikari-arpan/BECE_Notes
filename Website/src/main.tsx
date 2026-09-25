@@ -5,7 +5,9 @@ import App from "./App.tsx";
 import "./index.css";
 import "./firebase";
 import { startVisitTracking } from "./content/visits";
+import { startThemeSync } from "./content/theme";
 
+startThemeSync();
 startVisitTracking();
 
 createRoot(document.getElementById("root")!).render(
