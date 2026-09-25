@@ -452,7 +452,6 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 
 /* File tree groups */
 .file-tree { max-height: 78vh; overflow-y: auto; }
-.tree-group + .tree-group { margin-top: 4px; }
 .tree-folder span { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* File type badges */
@@ -600,7 +599,10 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
 .tree-title { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 10px; margin-bottom: 6px; border-bottom: 1px dashed var(--c-dde3dc); }
 .tree-title-label { font: 600 10px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--c-0b1f1a); }
 .tree-count { font: 600 9px 'DM Mono', monospace; color: var(--c-6d5410); background: var(--c-f7e3a6); padding: 2px 7px; border-radius: 99px; flex-shrink: 0; }
-.tree-group + .tree-group { margin-top: 6px; }
+/* Faint divider between folder groups so each folder reads as its own block. */
+.tree-group + .tree-group { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--c-e7ebe6); }
+/* The syllabus group already ends with its own dashed line. */
+.tree-group-syllabus + .tree-group { border-top: 0; padding-top: 0; }
 .tree-folder { width: 100%; border: 0; background: transparent; display: flex; align-items: center; gap: 6px; padding: 8px; border-radius: 8px; color: var(--c-0b1f1a); font-size: 12px; font-weight: 700; text-align: left; letter-spacing: -.01em; }
 .tree-folder:hover { background: var(--c-ebf0e8); }
 .tree-folder em { font-style: normal; font-weight: 500; color: var(--c-7d8b84); }
