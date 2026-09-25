@@ -537,6 +537,8 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .content-page-section ol { counter-reset: step; padding-left: 0; }
 .content-page-section ol li { counter-increment: step; list-style: none; padding-left: 32px; position: relative; }
 .content-page-section ol li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 22px; height: 22px; background: var(--c-e0ece1); color: var(--c-467568); border-radius: 6px; font: 600 11px 'DM Mono', monospace; display: grid; place-items: center; }
+.content-page-section a { color: var(--c-467568); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; word-break: break-word; }
+.content-page-section a:hover { color: var(--c-0b1f1a); }
 .content-page-section code { font: 500 12px 'DM Mono', monospace; background: var(--c-eef3ee); color: var(--c-1d3f35); padding: 2px 7px; border-radius: 5px; }
 
 .site-footer { background: #173f37; color: #c8d8cf; padding: 50px 0 30px; margin-top: auto; }
