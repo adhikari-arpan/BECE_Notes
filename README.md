@@ -2,6 +2,14 @@
 
 A comprehensive collection of study notes for the Bachelor of Engineering in Computer Engineering (BECE) program under Pokhara University, Nepal. All Credit Goes to the person who has created all these notes. Star (⭐) this repository for quick access.
 
+## 🌐 Study online — recommended
+
+### 👉 [notes.arpanadhikari7.com.np](https://notes.arpanadhikari7.com.np/)
+
+This repository is several GB in size, so forking, cloning or downloading it is slow and heavy. **We recommend studying from the website instead** — every note in this repository is available there, organized by semester and subject, with an in-browser PDF viewer and one-click downloads. New notes added here show up there too.
+
+Fork or clone the repository only if you want to contribute (see [Contribution](#-contribution) below).
+
 ## 🎓 Overview
 
 This repository contains curated study materials, notes, and resources for BECE students at the colleges of Pokhara University. The content is organized semester-wise and subject-wise to help students easily access relevant materials.
@@ -143,7 +151,11 @@ BECE_Notes/
 
 ## 🚀 Usage
 
-Feel free to browse through the relevant semester and subject folders to find the study materials you need. Each subject folder contains comprehensive notes, question papers, lab materials, and other helpful resources.
+The easiest way to use these notes is the website: **[notes.arpanadhikari7.com.np](https://notes.arpanadhikari7.com.np/)**. You can also browse the semester and subject folders here on GitHub. Each subject folder contains comprehensive notes, question papers, lab materials, and other helpful resources.
+
+## 👥 Contribution
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add notes. The repository is large, so you don't need to clone it — you can upload files straight from GitHub. Any merged contribution shows up among the GitHub contributors; contributors with **10 or more relevant study note files** are also listed on the website.
 
 ## ℹ️ About
 
