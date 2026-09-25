@@ -1,16 +1,13 @@
 import { ArrowLeft, GitBranch, FileText, Mail, CheckCircle2, Users } from 'lucide-react';
+import { Link } from '@/components/Link';
 
-interface ContributingViewProps {
-  onBack: () => void;
-}
-
-export function ContributingView({ onBack }: ContributingViewProps) {
+export function ContributingView() {
   return (
     <>
       <section className="semester-page-header section-wrap">
-        <button className="back-button" onClick={onBack}>
+        <Link to="/" className="back-button">
           <ArrowLeft size={16} /> Back to home
-        </button>
+        </Link>
         <div className="semester-page-title">
           <div>
             <span className="section-kicker">Get involved</span>

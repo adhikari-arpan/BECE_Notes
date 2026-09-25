@@ -20,10 +20,12 @@ import {
   ScrollText,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
+import { Link } from '@/components/Link';
+import { navigate } from '@/content/router';
 import { Loader } from '@/components/Loader';
 import { DownloadButton } from '@/components/DownloadButton';
 import { useResizableSidebar } from '@/components/useResizableSidebar';
-import { formatDate, formatSize, isSyllabusFolder, plural, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
+import { formatDate, formatSize, isSyllabusFolder, plural, semesterPath, subjectPath, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
 
 const PdfViewer = lazy(() => import('@/components/PdfViewer'));
 
@@ -44,15 +46,13 @@ function FileKindIcon({ kind, size = 18 }: { kind: FileKind; size?: number }) {
 }
 
 interface SubjectViewProps {
-  /** File to show first; defaults to the subject's first file. */
-  initialFileId?: string;
   semester: Semester;
   subject: Subject;
-  onBack: () => void;
-  onContributing: () => void;
+  /** File named in the URL (?file=…); defaults to the subject's first note. */
+  requestedFile?: NoteFile;
 }
 
-export function SubjectView({ semester, subject, initialFileId, onBack, onContributing }: SubjectViewProps) {
+export function SubjectView({ semester, subject, requestedFile }: SubjectViewProps) {
   const groups = useMemo(() => {
     const map = new Map<string, NoteFile[]>();
     for (const file of subject.files) map.set(file.folder, [...(map.get(file.folder) ?? []), file]);
@@ -61,11 +61,11 @@ export function SubjectView({ semester, subject, initialFileId, onBack, onContri
     return [...map.entries()].sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b, undefined, { numeric: true }));
   }, [subject]);
 
-  // Open on the first note (not the syllabus) unless a specific file was requested.
+  // The open file lives in the URL (?file=…) so it can be shared; otherwise start on the first note.
   const firstNote = subject.files.find((f) => !isSyllabusFolder(f.folder)) ?? subject.files[0];
-  const [activeFileId, setActiveFileId] = useState(initialFileId ?? firstNote?.id ?? '');
+  const activeFile = requestedFile ?? firstNote;
+  const openFile = (file: NoteFile) => navigate(subjectPath(semester, subject, file), { replace: true });
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
-  const activeFile = subject.files.find((f) => f.id === activeFileId) ?? subject.files[0];
   const sidebar = useResizableSidebar();
 
   const toggleFolder = (folder: string) =>
@@ -79,9 +79,9 @@ export function SubjectView({ semester, subject, initialFileId, onBack, onContri
   return (
     <>
       <section className="subject-page">
-        <button className="back-button" onClick={onBack}>
+        <Link to={semesterPath(semester)} className="back-button">
           <ArrowLeft size={16} /> Back to {semester.label}
-        </button>
+        </Link>
 
         <div className="subject-box">
           <div className="subject-box-head">
@@ -156,7 +156,7 @@ export function SubjectView({ semester, subject, initialFileId, onBack, onContri
                         <button
                           key={file.id}
                           className={`file-row ${folder ? 'nested' : ''} ${file.id === activeFile.id ? 'active' : ''}`}
-                          onClick={() => setActiveFileId(file.id)}
+                          onClick={() => openFile(file)}
                           title={file.name}
                         >
                           <span className={`file-badge ${file.kind}`}><FileKindIcon kind={file.kind} size={14} /></span>
@@ -177,7 +177,7 @@ export function SubjectView({ semester, subject, initialFileId, onBack, onContri
                 <div className="large-file-icon"><FolderOpen size={28} /></div>
                 <h3>No notes here yet</h3>
                 <p>Nobody has added material for {subject.name} yet. Have notes for this subject? Share them with everyone.</p>
-                <button className="download-button" onClick={onContributing}>How to contribute</button>
+                <Link to="/contributing" className="download-button">How to contribute</Link>
               </div>
             )}
         </div>
