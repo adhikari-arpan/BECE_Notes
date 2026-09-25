@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { BookOpen } from 'lucide-react';
 import { semesters } from '@/content/notes';
 import { HomeView } from '@/components/HomeView';
 import { SemesterView } from '@/components/SemesterView';
@@ -9,6 +8,7 @@ import { ContributorsView } from '@/components/ContributorsView';
 import { ContributingView } from '@/components/ContributingView';
 import { Footer } from '@/components/Footer';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { Logo } from '@/components/Logo';
 import { trackPageView } from '@/content/visits';
 
 type Page = 'home' | 'semester' | 'subject' | 'about' | 'contributors' | 'contributing';
@@ -58,7 +58,7 @@ function App() {
       <header className="topbar">
         <div className="topbar-inner">
           <button className="brand-lockup" onClick={goHome}>
-            <div className="brand-mark"><BookOpen size={19} strokeWidth={2.4} /></div>
+            <div className="brand-mark"><Logo /></div>
             <div>
               <span className="brand-name">BECE</span>
               <span className="brand-divider">/</span>

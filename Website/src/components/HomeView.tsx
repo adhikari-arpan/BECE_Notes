@@ -1,5 +1,4 @@
 import {
-  BookOpen,
   ChevronRight,
   Users,
   CircleHelp,
@@ -13,6 +12,7 @@ import {
 import { allFiles, formatSize, semesters } from '@/content/notes';
 import { formatCount, useSiteStats } from '@/content/visits';
 import { CountUp } from '@/components/CountUp';
+import { Logo } from '@/components/Logo';
 
 interface HomeViewProps {
   onSelectSemester: (id: string) => void;
@@ -45,7 +45,7 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
           <div className="orbit orbit-one" /><div className="orbit orbit-two" />
           <div className="hero-card hero-card-back"><span>BECE</span><b>Study smarter.</b></div>
           <div className="hero-card hero-card-front">
-            <div className="mini-icon"><BookOpen size={22} /></div>
+            <div className="mini-icon"><Logo /></div>
             <span>THE LIBRARY</span>
             <strong>Notes that<br />move with you.</strong>
             <div className="card-footer"><span>PU</span><span>●</span></div>

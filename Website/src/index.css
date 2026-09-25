@@ -227,7 +227,8 @@ button { cursor: pointer; }
 .topbar-inner { height: 100%; display: flex; justify-content: space-between; align-items: center; }
 
 .brand-lockup { display: flex; align-items: center; gap: 11px; color: var(--c-0b1f1a); border: 0; background: none; cursor: pointer; }
-.brand-mark { width: 34px; height: 34px; background: #f0c34a; display: grid; place-items: center; border-radius: 10px 10px 10px 2px; color: #0b1f1a; flex-shrink: 0; }
+.brand-mark { height: 34px; display: flex; align-items: center; flex-shrink: 0; }
+.brand-mark .logo { height: 100%; width: auto; display: block; }
 .brand-name { font-weight: 700; letter-spacing: -.04em; font-size: 17px; }
 .brand-divider { color: var(--c-aeb9b1); margin: 0 8px; }
 .brand-context { color: var(--c-5c6b64); font-size: 13px; }
@@ -266,7 +267,8 @@ h1 em { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing
 .hero-card-back span { font: 500 10px 'DM Mono', monospace; letter-spacing: .14em; }
 .hero-card-back b { font: 600 21px 'Playfair Display', serif; line-height: 1.05; }
 .hero-card-front { width: 205px; height: 242px; top: 4px; left: 24px; background: var(--c-fffdf5); padding: 18px; display: flex; flex-direction: column; color: var(--c-0b1f1a); transform: rotate(-7deg); }
-.mini-icon { width: 42px; height: 42px; border-radius: 10px; background: #f0c34a; display: grid; place-items: center; margin-bottom: 34px; }
+.mini-icon { height: 46px; display: flex; align-items: center; margin-bottom: 30px; }
+.mini-icon .logo { height: 100%; width: auto; }
 .hero-card-front span { font: 500 9px 'DM Mono', monospace; color: var(--c-77877d); letter-spacing: .16em; }
 .hero-card-front strong { font: 600 28px 'Playfair Display', serif; line-height: 1.02; margin-top: 9px; }
 .card-footer { border-top: 1px solid var(--c-dce1d9); margin-top: auto; padding-top: 11px; display: flex; justify-content: space-between; color: var(--c-94a099); font: 500 9px 'DM Mono', monospace; }
@@ -343,7 +345,9 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .file-row > span { min-width: 0; flex: 1; }
 .file-row strong, .file-row small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .file-row-arrow { margin-left: auto; opacity: .45; margin-top: 2px; }
-.preview-pane { display: flex; flex-direction: column; min-width: 0; background: var(--c-f6f7f2); }
+.preview-pane { position: relative; display: flex; flex-direction: column; min-width: 0; background: var(--c-f6f7f2); }
+/* Small brand mark in the bottom-left corner of the note viewer. */
+.content-watermark { position: absolute; left: 14px; bottom: 12px; height: 30px; width: auto; opacity: .8; pointer-events: none; user-select: none; z-index: 3; filter: drop-shadow(0 1px 2px rgba(0,0,0,.25)); }
 .preview-toolbar { min-height: 65px; border-bottom: 1px solid var(--c-e0e5df); padding: 0 17px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .preview-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .preview-title > div:last-child { min-width: 0; }
@@ -432,8 +436,7 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .subject-page .back-button { margin-bottom: 10px; align-self: flex-start; }
 .subject-box { flex: 1; min-height: 0; display: flex; flex-direction: column; border: 1px solid var(--c-dbe2dc); border-radius: 15px; overflow: hidden; background: var(--c-fffdf7); }
 .app-shell-fixed .topbar { height: 48px; }
-.app-shell-fixed .brand-mark { width: 26px; height: 26px; border-radius: 8px 8px 8px 2px; }
-.app-shell-fixed .brand-mark svg { width: 15px; height: 15px; }
+.app-shell-fixed .brand-mark { height: 26px; }
 .app-shell-fixed .brand-name { font-size: 15px; }
 .app-shell-fixed .status-pill { padding: 5px 9px; }
 .subject-page .back-button { margin-bottom: 6px; }
