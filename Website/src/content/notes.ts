@@ -1,4 +1,5 @@
 import { config, entries, type ManifestEntry } from 'virtual:notes-manifest';
+import { subjectDescriptions } from '@/content/descriptions';
 
 export type FileKind = 'pdf' | 'doc' | 'slides' | 'sheet' | 'image' | 'markdown' | 'code' | 'text' | 'other';
 
@@ -25,6 +26,8 @@ export interface Subject {
   code: string;
   name: string;
   credits: number | null;
+  /** Short summary of what the course covers (see descriptions.ts). */
+  description?: string;
   icon: string;
   /** Repo folder holding this subject's notes, or null if nothing has been added yet. */
   folder: string | null;
@@ -129,6 +132,9 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(
 /** Folder/course names compared loosely: "Programming in C" = "programming-in-c", "&" = "and". */
 export const normalizeName = (s: string) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]/g, '');
 
+const descriptionsByName = new Map(Object.entries(subjectDescriptions).map(([name, text]) => [normalizeName(name), text]));
+const descriptionFor = (name: string) => descriptionsByName.get(normalizeName(name));
+
 function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: string): Subject[] {
   const groups = groupByFolder(root);
   const folderByName = new Map([...groups.keys()].filter(Boolean).map((f) => [normalizeName(f), f]));
@@ -148,6 +154,7 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
       kind: 'course' as const,
       code: c.code,
       name: c.name,
+      description: descriptionFor(c.name),
       credits: c.credits,
       icon: c.icon,
       folder: folder ? `${root}/${folder}` : null,

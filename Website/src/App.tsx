@@ -16,6 +16,8 @@ import { useLocation } from '@/content/router';
 import { trackPageView } from '@/content/visits';
 
 const SITE_TITLE = 'BECE Notes — Pokhara University Computer Engineering Notes';
+/** The site-wide description from index.html, restored on pages without their own. */
+let defaultDescription = '';
 
 /**
  * Routes:
@@ -47,6 +49,19 @@ function App() {
   useEffect(() => {
     trackPageView(pathname);
   }, [pathname]);
+
+  // A description per page — the grey text under the title in search results.
+  useEffect(() => {
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (!meta) return;
+    if (!defaultDescription) defaultDescription = meta.content;
+    const clip = (text: string) => (text.length > 160 ? `${text.slice(0, 157).trimEnd()}…` : text);
+    meta.content = subject && semester
+      ? clip(`${subject.name}${subject.kind === 'course' ? ` (${subject.code})` : ''} notes for ${semester.label}, Pokhara University BECE. ${subject.description ?? 'Lecture notes, past questions and resources.'}`)
+      : semester
+        ? clip(`${semester.label} notes for Pokhara University BE Computer Engineering: ${semester.subjects.filter((s) => s.kind === 'course').map((s) => s.name).join(', ')}.`)
+        : defaultDescription;
+  }, [semester, subject]);
 
   // A title per page, for browser tabs, bookmarks and search results.
   useEffect(() => {

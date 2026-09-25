@@ -2,6 +2,8 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type CSSProp
 import { marked } from 'marked';
 import {
   ArrowDownToLine,
+  Info,
+  MousePointerClick,
   ArrowLeft,
   ChevronDown,
   ChevronRight,
@@ -62,8 +64,8 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
   }, [subject]);
 
   // The open file lives in the URL (?file=…) so it can be shared; otherwise start on the first note.
-  const firstNote = subject.files.find((f) => !isSyllabusFolder(f.folder)) ?? subject.files[0];
-  const activeFile = requestedFile ?? firstNote;
+  const activeFile = requestedFile;
+  const hasFiles = subject.files.length > 0;
   const openFile = (file: NoteFile) => navigate(subjectPath(semester, subject, file), { replace: true });
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const sidebar = useResizableSidebar();
@@ -85,7 +87,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
 
         <div className="subject-box">
           <div className="subject-box-head">
-            {activeFile && (
+            {hasFiles && (
               <button
                 className="icon-button sidebar-toggle"
                 onClick={sidebar.toggle}
@@ -127,12 +129,18 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
             )}
           </div>
 
-            {activeFile ? (
+            {hasFiles ? (
               <div
                 className={`file-body-full ${sidebar.collapsed ? 'sidebar-collapsed' : ''} ${sidebar.dragging ? 'sidebar-dragging' : ''}`}
                 style={{ '--sidebar-width': `${sidebar.width}px` } as CSSProperties}
               >
                 <div className="file-tree" aria-hidden={sidebar.collapsed || undefined}>
+                  {subject.description && (
+                    <details className="subject-about">
+                      <summary><Info size={13} /> About this subject</summary>
+                      <p>{subject.description}</p>
+                    </details>
+                  )}
                   <div className="tree-title">
                     <span className="tree-title-label">Files</span>
                     <span className="tree-count">{subject.files.length}</span>
@@ -155,7 +163,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                       {!collapsed.has(folder) && files.map((file) => (
                         <button
                           key={file.id}
-                          className={`file-row ${folder ? 'nested' : ''} ${file.id === activeFile.id ? 'active' : ''}`}
+                          className={`file-row ${folder ? 'nested' : ''} ${file.id === activeFile?.id ? 'active' : ''}`}
                           onClick={() => openFile(file)}
                           title={file.name}
                         >
@@ -170,7 +178,21 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                   ))}
                 </div>
                 <div className="sidebar-resizer" {...sidebar.handleProps} />
-                <FilePreview key={activeFile.id} file={activeFile} />
+                {activeFile ? (
+                  <FilePreview key={activeFile.id} file={activeFile} />
+                ) : (
+                  <div className="preview-pane">
+                    <div className="pick-file">
+                      <div className="pick-file-icon"><MousePointerClick size={30} /></div>
+                      <h3>Pick a file to start reading</h3>
+                      <p>
+                        Choose any note from the list on the left and it will open right here. Use the
+                        search, zoom and highlighter tools, or download it for offline study.
+                      </p>
+                      <span className="pick-file-hint"><ArrowLeft size={14} /> {plural(subject.files.length, 'file')} in {subject.name}</span>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="unsupported-preview subject-box-empty">

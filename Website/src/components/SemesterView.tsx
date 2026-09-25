@@ -103,6 +103,7 @@ export function SemesterView({ semester }: SemesterViewProps) {
                 <span className="subject-card-code">{subject.kind === 'resource' ? 'Resources' : subject.code}</span>
               </span>
               <strong className="subject-card-name">{subject.name}</strong>
+              {subject.description && <span className="subject-card-desc">{subject.description}</span>}
               <span className="subject-card-foot">
                 <span className="subject-card-meta">
                   {subject.credits !== null && <span>{plural(subject.credits, 'credit')}</span>}
