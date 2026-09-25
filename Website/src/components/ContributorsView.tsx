@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Globe, Mail } from 'lucide-react';
 import { contributors } from '@/content/contributors';
 
 interface ContributorsViewProps {
@@ -25,7 +25,11 @@ export function ContributorsView({ onBack, onContributing }: ContributorsViewPro
         <div className="contributors-list">
           {contributors.map((c, i) => (
             <div key={i} className={`contributor-card ${i === 0 ? 'contributor-card-lead' : ''}`}>
-              <div className="contributor-avatar">{c.name.split(' ').map(w => w[0]).join('').slice(0, 2)}</div>
+              {c.photo ? (
+                <img className="contributor-avatar contributor-photo" src={`${import.meta.env.BASE_URL}${c.photo}`} alt={c.name} loading="lazy" />
+              ) : (
+                <div className="contributor-avatar">{c.name.split(' ').map(w => w[0]).join('').slice(0, 2)}</div>
+              )}
               <div className="contributor-info">
                 <div className="contributor-name-row">
                   <strong>{c.name}</strong>
@@ -36,6 +40,16 @@ export function ContributorsView({ onBack, onContributing }: ContributorsViewPro
                 <div className="contributor-subjects">
                   {c.subjects.map((s, j) => <span key={j} className="contributor-tag">{s}</span>)}
                 </div>
+                {(c.website || c.email) && (
+                  <div className="contributor-links">
+                    {c.website && (
+                      <a href={c.website} target="_blank" rel="noreferrer"><Globe size={14} /> {c.website.replace(/^https?:\/\//, '')}</a>
+                    )}
+                    {c.email && (
+                      <a href={`mailto:${c.email}`}><Mail size={14} /> {c.email}</a>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}
