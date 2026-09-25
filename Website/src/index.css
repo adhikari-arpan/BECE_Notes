@@ -548,6 +548,12 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .contributor-card { display: flex; gap: 18px; align-items: flex-start; background: var(--c-fffdf7); border: 1px solid var(--c-e3e6de); border-radius: 14px; padding: 24px; }
 .contributor-card-lead { border-color: #f0c34a; background: var(--c-fffdf0); box-shadow: 0 6px 18px rgba(240,195,74,.12); }
 .contributor-avatar { width: 52px; height: 52px; border-radius: 13px; display: grid; place-items: center; background: var(--c-e0ece1); color: var(--c-467568); font: 600 16px 'DM Sans', sans-serif; flex-shrink: 0; }
+.contributor-photo { width: 84px; height: 84px; border-radius: 18px; object-fit: cover; flex-shrink: 0; border: 3px solid #f0c34a; background: var(--c-e0ece1); }
+.contributor-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.contributor-links a { display: inline-flex; align-items: center; gap: 6px; font: 600 12px 'DM Sans', sans-serif; color: var(--c-0b1f1a); background: var(--c-fffdf7); border: 1px solid var(--c-dfe4dd); padding: 6px 11px; border-radius: 99px; text-decoration: none; transition: background .16s, border-color .16s; }
+.contributor-links a:hover { background: #f0c34a; border-color: #f0c34a; color: #0b1f1a; }
+.contributor-links svg { color: var(--c-467568); }
+.contributor-links a:hover svg { color: #0b1f1a; }
 .contributor-card-lead .contributor-avatar { background: #f0c34a; color: #0b1f1a; }
 .contributor-info { flex: 1; }
 .contributor-name-row { display: flex; align-items: center; gap: 10px; }
