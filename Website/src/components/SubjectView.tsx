@@ -16,6 +16,7 @@ import {
   FolderOpen,
   Presentation,
 } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 import { formatDate, formatSize, plural, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
 
 const PdfViewer = lazy(() => import('@/components/PdfViewer'));
@@ -184,6 +185,7 @@ function FilePreview({ file }: { file: NoteFile }) {
 
   return (
     <div className="preview-pane">
+      <Logo className="content-watermark" />
       <div className={`preview-content ${file.kind === 'pdf' && !failed ? 'preview-content-pdf' : ''}`}>{body}</div>
     </div>
   );

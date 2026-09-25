@@ -1,5 +1,6 @@
-import { BookOpen, CircleHelp, Eye, Heart, MousePointerClick, Users } from 'lucide-react';
+import { CircleHelp, Eye, Heart, MousePointerClick, Users } from 'lucide-react';
 import { formatCount, useSiteStats } from '@/content/visits';
+import { Logo } from '@/components/Logo';
 
 interface FooterProps {
   onNavigate: (page: 'about' | 'contributors' | 'contributing') => void;
@@ -13,7 +14,7 @@ export function Footer({ onNavigate }: FooterProps) {
       <div className="footer-inner section-wrap">
         <div className="footer-top">
           <div className="footer-brand">
-            <div className="brand-mark"><BookOpen size={19} strokeWidth={2.4} /></div>
+            <div className="brand-mark"><Logo /></div>
             <div>
               <span className="brand-name">BECE Notes</span>
               <p>A curated library for Computer Engineering students at Pokhara University.</p>
