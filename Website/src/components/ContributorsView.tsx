@@ -43,7 +43,7 @@ export function ContributorsView({ onBack, onContributing }: ContributorsViewPro
 
         <div className="contribute-cta">
           <h3>Your name could be here</h3>
-          <p>Contributed notes, fixed a typo, or improved the collection? Add your name to the growing list of people helping fellow BECE students.</p>
+          <p>Contribute 10 or more relevant study note files and your name joins the list of people helping fellow BECE students. Every contribution, however small, still shows up among the contributors on GitHub.</p>
           <button className="cta-button" onClick={onContributing}>See contributing guidelines</button>
         </div>
       </section>

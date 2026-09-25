@@ -96,7 +96,7 @@ function App() {
             onContributing={() => setPage('contributing')}
           />
         )}
-        {page === 'contributing' && <ContributingView onBack={() => setPage('contributors')} />}
+        {page === 'contributing' && <ContributingView onBack={goHome} />}
       </main>
 
       {page !== 'subject' && <Footer onNavigate={(p) => setPage(p)} />}
