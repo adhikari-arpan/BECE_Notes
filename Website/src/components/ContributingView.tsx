@@ -1,4 +1,4 @@
-import { ArrowLeft, GitBranch, FileText, Mail, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, GitBranch, FileText, Mail, CheckCircle2, Users } from 'lucide-react';
 
 interface ContributingViewProps {
   onBack: () => void;
@@ -9,7 +9,7 @@ export function ContributingView({ onBack }: ContributingViewProps) {
     <>
       <section className="semester-page-header section-wrap">
         <button className="back-button" onClick={onBack}>
-          <ArrowLeft size={16} /> Back to contributors
+          <ArrowLeft size={16} /> Back to home
         </button>
         <div className="semester-page-title">
           <div>
@@ -39,7 +39,7 @@ export function ContributingView({ onBack }: ContributingViewProps) {
           <div className="content-page-section">
             <h3><GitBranch size={18} /> How to contribute</h3>
             <ol>
-              <li>Fork the repository to your own account.</li>
+              <li>Fork the repository to your own account. The repository is large, so there's no need to clone it — you can add files straight from GitHub with <strong>Add file → Upload files</strong> inside the right folder.</li>
               <li>Create a new branch for your changes (e.g. <code>add-cmp222-notes</code>).</li>
               <li>Add your files to the correct semester and subject folder, following the existing structure.</li>
               <li>Ensure your files are clearly named and free of sensitive or personal information.</li>
@@ -53,7 +53,15 @@ export function ContributingView({ onBack }: ContributingViewProps) {
               <li>Only submit materials you have the right to share. Respect copyright.</li>
               <li>Use clear, descriptive file names (e.g. <code>Midterm-Questions-2080.pdf</code>).</li>
               <li>Keep file sizes reasonable. Compress large PDFs when possible.</li>
-              <li>Your pull request will be reviewed, and your name will be added to the contributors list upon merge.</li>
+              <li>Your pull request will be reviewed before it is merged.</li>
+            </ul>
+          </div>
+
+          <div className="content-page-section">
+            <h3><Users size={18} /> Getting listed as a contributor</h3>
+            <ul>
+              <li><CheckCircle2 size={16} /> Every contribution is welcome, big or small. Once your pull request is merged, you automatically appear in the repository's contributors on GitHub.</li>
+              <li><CheckCircle2 size={16} /> To be listed on this website's Contributors page, contribute at least <strong>10 relevant study note files</strong> (notes, question papers, lab reports and similar). Contributions across several pull requests add up.</li>
             </ul>
           </div>
 
