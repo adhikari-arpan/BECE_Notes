@@ -86,8 +86,6 @@ export const subjectDescriptions: Record<string, string> = {
     'Image processing and pattern recognition techniques: image enhancement, filtering, segmentation, feature extraction, and classification, with applications in areas such as medical imaging and computer vision.',
   'Machine Learning':
     'Algorithms that learn from data: supervised learning (regression and classification), unsupervised learning and clustering, model evaluation, neural networks, and practical machine learning workflows.',
-  'Data Science & Analytics':
-    'Working with data: collection and cleaning, exploratory data analysis, visualization, statistical modelling, and using analytics to make data-driven decisions.',
   'Computer Networks':
     'How computer networks work: layered network models, addressing and subnetting, routing algorithms and protocols, transport protocols, network management and security, and server configuration.',
   'Simulation & Modeling':
@@ -106,6 +104,8 @@ export const subjectDescriptions: Record<string, string> = {
     'Securing networks and systems: cryptography, authentication, network security protocols, firewalls and intrusion detection, common attacks, and security policies.',
   'Cloud Computing & Virtualization':
     'Cloud and virtualization technologies: virtualization and hypervisors, cloud service and deployment models, cloud architecture, storage, and security in the cloud.',
+  'Data Science & Analytics':
+    'Working with data: collection and cleaning, exploratory data analysis, visualization, statistical modelling, and using analytics to make data-driven decisions.',
   'Elective II': 'Notes for the Semester VII elective. See the Electives section for notes on individual elective subjects.',
 
   // ---------------- Semester VIII ----------------

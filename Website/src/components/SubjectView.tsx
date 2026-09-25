@@ -35,6 +35,9 @@ const kindLabels: Record<FileKind, string> = {
   pdf: 'PDF', doc: 'Word', slides: 'Slides', sheet: 'Sheet', image: 'Image', markdown: 'Markdown', code: 'Code', text: 'Text', other: 'File',
 };
 
+/** Microsoft's online Office viewer refuses files above these sizes. */
+const OFFICE_PREVIEW_LIMIT = { doc: 10 * 1024 * 1024, slides: 10 * 1024 * 1024, sheet: 5 * 1024 * 1024 } as const;
+
 /** Text-like files larger than this are offered as downloads instead of rendered inline. */
 const MAX_INLINE_TEXT = 2 * 1024 * 1024;
 
@@ -226,6 +229,8 @@ function FilePreview({ file }: { file: NoteFile }) {
     body = <div className="image-preview"><img src={file.url} alt={file.name} onError={onError} /></div>;
   } else if ((file.kind === 'markdown' || file.kind === 'code' || file.kind === 'text') && file.size <= MAX_INLINE_TEXT) {
     body = <TextPreview file={file} onError={onError} />;
+  } else if ((file.kind === 'doc' || file.kind === 'slides' || file.kind === 'sheet') && file.size > OFFICE_PREVIEW_LIMIT[file.kind]) {
+    body = <Fallback file={file} title="This file is too large to preview" message="Download it to view it on your device." />;
   } else if ((file.kind === 'doc' || file.kind === 'slides' || file.kind === 'sheet') && isRemote) {
     body = <iframe title={`Preview of ${file.name}`} src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(file.url)}`} />;
   } else if (file.kind === 'doc' || file.kind === 'slides' || file.kind === 'sheet') {
