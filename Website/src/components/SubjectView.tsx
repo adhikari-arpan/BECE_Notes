@@ -169,7 +169,7 @@ function FilePreview({ file }: { file: NoteFile }) {
   } else if (file.kind === 'pdf') {
     body = (
       <Suspense fallback={<div className="pdf-loading"><Loader label="Loading viewer…" /></div>}>
-        <PdfViewer url={file.url} fileName={file.name} onError={onError} />
+        <PdfViewer url={file.url} fileName={file.name} fileKey={file.path} onError={onError} />
       </Suspense>
     );
   } else if (file.kind === 'image') {
