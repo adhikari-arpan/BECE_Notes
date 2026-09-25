@@ -1,12 +1,12 @@
-import { BookOpen, CircleHelp, Eye, Heart, Users } from 'lucide-react';
-import { formatCount, useVisitCount } from '@/content/visits';
+import { BookOpen, CircleHelp, Eye, Heart, MousePointerClick, Users } from 'lucide-react';
+import { formatCount, useSiteStats } from '@/content/visits';
 
 interface FooterProps {
   onNavigate: (page: 'about' | 'contributors' | 'contributing') => void;
 }
 
 export function Footer({ onNavigate }: FooterProps) {
-  const visits = useVisitCount();
+  const { visitors, pageViews } = useSiteStats();
 
   return (
     <footer className="site-footer">
@@ -27,8 +27,11 @@ export function Footer({ onNavigate }: FooterProps) {
         </div>
         <div className="footer-bottom">
           <p>Started by <strong>Arpan Adhikari</strong> · Nepal College of Information Technology (NCIT)</p>
-          {visits !== null && (
-            <span className="footer-visits"><Eye size={13} /> {formatCount(visits)} visits</span>
+          {(visitors !== null || pageViews !== null) && (
+            <span className="footer-stats">
+              {visitors !== null && <span className="footer-visits"><Eye size={13} /> {formatCount(visitors)} visitors</span>}
+              {pageViews !== null && <span className="footer-visits"><MousePointerClick size={13} /> {formatCount(pageViews)} page visits</span>}
+            </span>
           )}
           <span>Made for students, by students. All materials belong to their original creators.</span>
         </div>

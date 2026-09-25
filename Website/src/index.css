@@ -45,7 +45,7 @@ main { flex: 1; }
 h1 { font-size: clamp(52px, 7.2vw, 88px); line-height: .94; letter-spacing: -.075em; margin: 0; font-weight: 600; color: #0b1f1a; }
 h1 em { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: -.07em; color: #467568; }
 .hero-lede { max-width: 410px; margin: 28px 0 34px; font-size: 16px; line-height: 1.6; color: #4c5b54; }
-.hero-stats { display: flex; gap: 32px; }
+.hero-stats { display: flex; flex-wrap: wrap; gap: 18px 30px; }
 .hero-stats div { display: flex; flex-direction: column; gap: 4px; }
 .hero-stats strong { font: 600 20px 'DM Mono', monospace; color: #0b1f1a; }
 .hero-stats span { color: #8b9690; font-size: 11px; }
@@ -284,7 +284,8 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 
 /* Landing page stats */
 .stats-section { padding: 0 0 80px; }
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.footer-stats { display: inline-flex; flex-wrap: wrap; gap: 6px; }
 .stat-card { display: flex; flex-direction: column; gap: 4px; background: #fffdf7; border: 1px solid #e3e6de; border-radius: 13px; padding: 20px 22px; }
 .stat-card svg { color: #52806c; margin-bottom: 10px; }
 .stat-card strong { font: 600 26px 'DM Mono', monospace; color: #0b1f1a; letter-spacing: -.03em; }
@@ -349,6 +350,7 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 @media (max-width: 900px) {
   .hero-visual { margin-right: 0; transform: scale(.85); transform-origin: right center; }
   .semester-tabs { grid-template-columns: repeat(2, 1fr); }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
   .file-body-full { grid-template-columns: 200px minmax(0, 1fr); }
   .about-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }

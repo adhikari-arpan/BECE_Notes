@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BookOpen } from 'lucide-react';
 import { semesters } from '@/content/notes';
 import { HomeView } from '@/components/HomeView';
@@ -8,6 +8,7 @@ import { AboutView } from '@/components/AboutView';
 import { ContributorsView } from '@/components/ContributorsView';
 import { ContributingView } from '@/components/ContributingView';
 import { Footer } from '@/components/Footer';
+import { trackPageView } from '@/content/visits';
 
 type Page = 'home' | 'semester' | 'subject' | 'about' | 'contributors' | 'contributing';
 
@@ -15,6 +16,12 @@ function App() {
   const [page, setPage] = useState<Page>('home');
   const [activeSemesterId, setActiveSemesterId] = useState<string>('1');
   const [activeSubjectId, setActiveSubjectId] = useState<string>('');
+
+  // Every page opened (home, a semester, a subject, about...) counts as one page visit.
+  useEffect(() => {
+    const key = page === 'semester' ? `semester:${activeSemesterId}` : page === 'subject' ? `subject:${activeSubjectId}` : page;
+    trackPageView(key);
+  }, [page, activeSemesterId, activeSubjectId]);
 
   const goHome = () => {
     setPage('home');
