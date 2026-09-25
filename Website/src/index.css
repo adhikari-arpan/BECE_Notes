@@ -3,6 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Navigation is done with real links now; keep them looking like the cards/buttons they replaced. */
+a.brand-lockup, a.text-button, a.back-button, a.cta-button, a.download-button, a.semester-card, a.subject-card, a.about-card,
+a.course-table-link, a.syllabus-link, a.syllabus-all-link, .footer-links a { text-decoration: none; }
+.not-found { padding-bottom: 120px; }
+.not-found p { max-width: 460px; color: var(--c-4c5b54); line-height: 1.6; margin: 12px 0 24px; }
+
 /* Theme colors. Light values are the original palette; dark values are derived from them
    (same hue, flipped lightness). Brand gold and the dark-green surfaces stay the same in both. */
 :root {
@@ -671,6 +677,10 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
 .content-page-section ol { counter-reset: step; padding-left: 0; }
 .content-page-section ol li { counter-increment: step; list-style: none; padding-left: 32px; position: relative; }
 .content-page-section ol li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 22px; height: 22px; background: var(--c-e0ece1); color: var(--c-467568); border-radius: 6px; font: 600 11px 'DM Mono', monospace; display: grid; place-items: center; }
+.content-page-lead { font: 600 20px/1.4 'Playfair Display', serif !important; color: var(--c-0b1f1a) !important; margin-bottom: 14px !important; }
+.content-page-callout { margin-top: 14px; padding: 14px 16px; border-radius: 12px; background: var(--c-fffdf0); border: 1px solid #efd98f; border-left: 4px solid #f0c34a; font-size: 14px; line-height: 1.65; color: var(--c-1d3f35); }
+.content-page-callout strong { color: var(--c-0b1f1a); }
+.content-page-callout a { color: var(--c-467568); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; word-break: break-word; }
 .content-page-section a { color: var(--c-467568); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; word-break: break-word; }
 .content-page-section a:hover { color: var(--c-0b1f1a); }
 .content-page-section code { font: 500 12px 'DM Mono', monospace; background: var(--c-eef3ee); color: var(--c-1d3f35); padding: 2px 7px; border-radius: 5px; }
@@ -683,8 +693,8 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
 .footer-brand span { font-size: 15px; font-weight: 600; color: #fff; }
 .footer-brand p { margin: 5px 0 0; font-size: 12px; line-height: 1.55; max-width: 300px; opacity: .75; }
 .footer-links { display: flex; flex-direction: column; gap: 10px; }
-.footer-links button { border: 0; background: transparent; color: #c8d8cf; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; transition: color .18s; }
-.footer-links button:hover { color: #f0c34a; }
+.footer-links a, .footer-links button { border: 0; background: transparent; color: #c8d8cf; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; transition: color .18s; }
+.footer-links a:hover, .footer-links button:hover { color: #f0c34a; }
 .footer-bottom { padding-top: 22px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
 .footer-bottom p { margin: 0; font-size: 12px; color: #a8c0b6; }
 .footer-bottom p strong { color: #f0c34a; }

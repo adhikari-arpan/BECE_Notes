@@ -194,7 +194,9 @@ function crawlableSummary(entries: ManifestEntry[]): string {
         ? `Semester ${ROMAN[Number(n)] ?? n} notes: Pokhara University BE Computer Engineering`
         : root === 'Electives' ? 'Elective subject notes' : `${root} notes`;
       const items = [...subjects.entries()].map(([name, count]) => `<li>${escapeHtml(name)} (${count} ${count === 1 ? 'file' : 'files'})</li>`).join('');
-      return `<section><h2>${escapeHtml(title)}</h2><ul>${items}</ul></section>`;
+      const href = n ? `/semester-${n}` : root === 'Electives' ? '/electives' : '';
+      const heading = href ? `<a href="${href}">${escapeHtml(title)}</a>` : escapeHtml(title);
+      return `<section><h2>${heading}</h2><ul>${items}</ul></section>`;
     })
     .join('');
   return `<main><h1>BECE Notes: Pokhara University Computer Engineering notes</h1>` +
