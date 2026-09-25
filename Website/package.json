@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "firebase": "^12.19.0",
     "lucide-react": "^0.446.0",
     "marked": "^18.0.14",
