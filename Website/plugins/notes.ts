@@ -169,6 +169,40 @@ function serveNotes(server: ViteDevServer, repoRoot: string) {
   });
 }
 
+const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+
+/**
+ * Plain HTML summary of the collection, placed inside #root at build time. Search engines
+ * read real text immediately; React replaces it as soon as the app mounts.
+ */
+function crawlableSummary(entries: ManifestEntry[]): string {
+  const bySection = new Map<string, Map<string, number>>();
+  for (const { path: file } of entries) {
+    const [root, folder] = file.split('/');
+    const subject = file.split('/').length > 2 ? folder.replace(/^_+/, '') : 'General resources';
+    const subjects = bySection.get(root) ?? new Map<string, number>();
+    subjects.set(subject, (subjects.get(subject) ?? 0) + 1);
+    bySection.set(root, subjects);
+  }
+  const sections = [...bySection.entries()]
+    // Semesters first (in order), then electives and other collections.
+    .sort(([a], [b]) => Number(!a.startsWith('Semester_')) - Number(!b.startsWith('Semester_')) || a.localeCompare(b, undefined, { numeric: true }))
+    .map(([root, subjects]) => {
+      const n = /^Semester_(\d+)$/.exec(root)?.[1];
+      const title = n
+        ? `Semester ${ROMAN[Number(n)] ?? n} notes: Pokhara University BE Computer Engineering`
+        : root === 'Electives' ? 'Elective subject notes' : `${root} notes`;
+      const items = [...subjects.entries()].map(([name, count]) => `<li>${escapeHtml(name)} (${count} ${count === 1 ? 'file' : 'files'})</li>`).join('');
+      return `<section><h2>${escapeHtml(title)}</h2><ul>${items}</ul></section>`;
+    })
+    .join('');
+  return `<main><h1>BECE Notes: Pokhara University Computer Engineering notes</h1>` +
+    `<p>Free semester-wise study notes for the Bachelor of Engineering in Computer Engineering (BECE) program under Pokhara University, Nepal: ` +
+    `lecture notes, handwritten notes, question collections, past exam questions, lab reports and syllabus. ${entries.length} files in total.</p>` +
+    `${sections}</main>`;
+}
+
 export function notesPlugin(options: NotesPluginOptions): Plugin {
   const repoRoot = path.resolve(options.repoRoot);
   let isBuild = false;
@@ -195,6 +229,10 @@ export function notesPlugin(options: NotesPluginOptions): Plugin {
           };
       const entries = buildManifest(repoRoot, isBuild);
       return `export const config = ${JSON.stringify(config)};\nexport const entries = ${JSON.stringify(entries)};\n`;
+    },
+    transformIndexHtml(html) {
+      if (!isBuild) return html;
+      return html.replace('<div id="root"></div>', `<div id="root">${crawlableSummary(buildManifest(repoRoot, true))}</div>`);
     },
     configureServer(server) {
       serveNotes(server, repoRoot);
