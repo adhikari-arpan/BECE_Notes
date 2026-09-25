@@ -234,7 +234,11 @@ export function notesPlugin(options: NotesPluginOptions): Plugin {
     },
     transformIndexHtml(html) {
       if (!isBuild) return html;
-      return html.replace('<div id="root"></div>', `<div id="root">${crawlableSummary(buildManifest(repoRoot, true))}</div>`);
+      // A small loading screen shows until the app starts; the text summary is there for search
+      // engines and screen readers but kept out of sight so it never flashes unstyled.
+      const boot = '<div class="boot" aria-hidden="true"><img src="/logo.png" alt="" /><span></span></div>';
+      const summary = `<div class="prerender-summary">${crawlableSummary(buildManifest(repoRoot, true))}</div>`;
+      return html.replace('<div id="root"></div>', `<div id="root">${boot}${summary}</div>`);
     },
     configureServer(server) {
       serveNotes(server, repoRoot);
