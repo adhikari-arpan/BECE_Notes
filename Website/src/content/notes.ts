@@ -18,6 +18,8 @@ export interface NoteFile {
 
 export interface Subject {
   id: string;
+  /** URL part, e.g. `programming-in-c` in /semester-1/programming-in-c. */
+  slug: string;
   /** course = curriculum subject, syllabus = the semester's `_Syllabus` folder, resource = anything else. */
   kind: 'course' | 'syllabus' | 'resource';
   code: string;
@@ -31,6 +33,8 @@ export interface Subject {
 
 export interface Semester {
   id: string;
+  /** URL part, e.g. `semester-1` or `electives`. */
+  slug: string;
   /** Short badge shown on the home page, e.g. `01` or `EL`. */
   badge: string;
   year: string;
@@ -140,6 +144,7 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
     if (folder) matched.add(folder);
     return {
       id: `${slug(root)}--${slug(c.code + '-' + c.name)}`,
+      slug: slug(c.name),
       kind: 'course' as const,
       code: c.code,
       name: c.name,
@@ -157,6 +162,7 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
     const isSyllabus = normalizeName(name) === 'syllabus';
     subjects.push({
       id: `${slug(root)}--${slug(folder)}`,
+      slug: slug(name),
       kind: isSyllabus ? 'syllabus' : 'resource',
       code: isSyllabus ? 'SYLLABUS' : 'RESOURCES',
       name,
@@ -167,10 +173,17 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
     });
   }
 
+  // Two subjects can't share a URL within one semester: add the course code if they would.
+  const seen = new Set<string>();
+  for (const subject of subjects) {
+    if (seen.has(subject.slug)) subject.slug = `${subject.slug}-${slug(subject.code)}`;
+    seen.add(subject.slug);
+  }
+
   // Files placed directly inside the semester/collection folder.
   const loose = groups.get('');
   if (loose) {
-    subjects.push({ id: `${slug(root)}--files`, kind: 'resource', code: 'RESOURCES', name: looseFilesName, credits: null, icon: '▤', folder: root, files: loose });
+    subjects.push({ id: `${slug(root)}--files`, slug: slug(looseFilesName), kind: 'resource', code: 'RESOURCES', name: looseFilesName, credits: null, icon: '▤', folder: root, files: loose });
   }
   return subjects;
 }
@@ -178,13 +191,14 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
 export const semesters: Semester[] = [
   ...curriculum.map((s) => ({
     id: String(s.id),
+    slug: `semester-${s.id}`,
     badge: String(s.id).padStart(2, '0'),
     year: s.year,
     label: s.label,
     subjects: buildSubjects(`Semester_${s.id}`, s.courses, 'General resources'),
   })),
-  { id: 'electives', badge: 'EL', year: 'Year III–IV', label: 'Electives', subjects: buildSubjects('Electives', electiveCourses, 'General resources') },
-  { id: 'entrance', badge: 'IOE', year: 'Before Year I', label: 'Entrance Preparation', subjects: buildSubjects('Engineering Entrance Preparation', [], 'Entrance question sets') },
+  { id: 'electives', slug: 'electives', badge: 'EL', year: 'Year III–IV', label: 'Electives', subjects: buildSubjects('Electives', electiveCourses, 'General resources') },
+  { id: 'entrance', slug: 'entrance-preparation', badge: 'IOE', year: 'Before Year I', label: 'Entrance Preparation', subjects: buildSubjects('Engineering Entrance Preparation', [], 'Entrance question sets') },
   // Extra collections only show up once their folder has files.
 ].filter((s) => /^\d+$/.test(s.id) || s.subjects.some((subject) => subject.files.length > 0));
 
@@ -219,11 +233,30 @@ export function syllabusFileFor(syllabus: Subject | undefined, subject: Subject)
  * Where a subject's syllabus lives: its file in the semester `_Syllabus` folder if there is one,
  * otherwise the first file in the subject's own `_Syllabus` folder.
  */
-export function findSyllabus(semesterSyllabus: Subject | undefined, subject: Subject): { subjectId: string; file: NoteFile } | undefined {
+export function findSyllabus(semesterSyllabus: Subject | undefined, subject: Subject): { subject: Subject; file: NoteFile } | undefined {
   const fromSemester = syllabusFileFor(semesterSyllabus, subject);
-  if (fromSemester && semesterSyllabus) return { subjectId: semesterSyllabus.id, file: fromSemester };
+  if (fromSemester && semesterSyllabus) return { subject: semesterSyllabus, file: fromSemester };
   const own = subject.files.find((f) => isSyllabusFolder(f.folder));
-  return own ? { subjectId: subject.id, file: own } : undefined;
+  return own ? { subject, file: own } : undefined;
+}
+
+/* ----------------------------- URLs ----------------------------- */
+
+export const semesterPath = (semester: Semester) => `/${semester.slug}`;
+
+/** A file's path relative to its subject folder — used in `?file=` so links stay short. */
+export const fileKey = (subject: Subject, file: NoteFile) =>
+  subject.folder && file.path.startsWith(subject.folder + '/') ? file.path.slice(subject.folder.length + 1) : file.path;
+
+export const subjectPath = (semester: Semester, subject: Subject, file?: NoteFile) =>
+  `/${semester.slug}/${subject.slug}${file ? `?file=${encodeURIComponent(fileKey(subject, file))}` : ''}`;
+
+export function findSemester(slugPart: string) {
+  return semesters.find((s) => s.slug === slugPart.toLowerCase());
+}
+
+export function findSubject(semester: Semester, slugPart: string) {
+  return semester.subjects.find((s) => s.slug === slugPart.toLowerCase());
 }
 
 export const allFiles = semesters.flatMap((semester) => semester.subjects.flatMap((item) => item.files));
