@@ -13,7 +13,7 @@ const coverage = semestersWithNotes.length
 export function AboutView() {
   return (
     <>
-      <section className="semester-page-header section-wrap">
+      <section className="semester-page-header content-page-header section-wrap">
         <Link to="/" className="back-button">
           <ArrowLeft size={16} /> Back to home
         </Link>

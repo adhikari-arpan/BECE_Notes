@@ -1,4 +1,4 @@
-import { CircleHelp, Eye, Heart, MousePointerClick, Users } from 'lucide-react';
+import { ShieldCheck, CircleHelp, Eye, Heart, MousePointerClick, Users } from 'lucide-react';
 import { formatCount, useSiteStats } from '@/content/visits';
 import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
@@ -21,6 +21,7 @@ export function Footer() {
             <Link to="/about"><CircleHelp size={15} /> About Us</Link>
             <Link to="/contributors"><Users size={15} /> Contributors</Link>
             <Link to="/contributing"><Heart size={15} /> Contribute</Link>
+            <Link to="/privacy"><ShieldCheck size={15} /> Privacy Policy</Link>
           </nav>
         </div>
         <div className="footer-bottom">

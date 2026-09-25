@@ -7,6 +7,7 @@ import { AboutView } from '@/components/AboutView';
 import { ContributorsView } from '@/components/ContributorsView';
 import { ContributingView } from '@/components/ContributingView';
 import { NotFoundView } from '@/components/NotFoundView';
+import { PrivacyView } from '@/components/PrivacyView';
 import { Footer } from '@/components/Footer';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Logo } from '@/components/Logo';
@@ -19,7 +20,7 @@ const SITE_TITLE = 'BECE Notes — Pokhara University Computer Engineering Notes
 /**
  * Routes:
  *   /                                 home
- *   /about, /contributors, /contributing
+ *   /about, /contributors, /contributing, /privacy
  *   /semester-1, /electives, ...      a semester (or collection)
  *   /semester-1/programming-in-c      a subject; ?file=<path in subject> opens a specific file
  */
@@ -27,7 +28,7 @@ function App() {
   const { pathname, params } = useLocation();
   const [first, second] = pathname.split('/').filter(Boolean);
 
-  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing') ? first : null;
+  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy') ? first : null;
   const semester = !staticPage && first ? findSemester(first) : undefined;
   const subject = semester && second ? findSubject(semester, second) : undefined;
 
@@ -49,7 +50,7 @@ function App() {
 
   // A title per page, for browser tabs, bookmarks and search results.
   useEffect(() => {
-    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute' };
+    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy' };
     document.title = page === 'home' ? SITE_TITLE
       : staticPage ? `${titles[staticPage]} | BECE Notes`
       : subject && semester ? `${subject.name} — ${semester.label} Notes | BECE Notes`
@@ -86,6 +87,7 @@ function App() {
         {page === 'about' && <AboutView />}
         {page === 'contributors' && <ContributorsView />}
         {page === 'contributing' && <ContributingView />}
+        {page === 'privacy' && <PrivacyView />}
         {page === 'not-found' && <NotFoundView />}
       </main>
 

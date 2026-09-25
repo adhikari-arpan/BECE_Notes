@@ -665,7 +665,13 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
 .cta-button:hover { transform: translateY(-2px); }
 
 .content-page { padding-bottom: 80px; }
-.content-page-body { max-width: 680px; }
+.content-page-body { max-width: none; }
+/* Text pages (About, Privacy, Contribute): one centred reading column, header aligned with it. */
+.content-page-header.section-wrap, .content-page.section-wrap { width: min(820px, calc(100% - 48px)); }
+.content-page-section p, .content-page-section li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+/* The callout holds a long unbreakable email address, which would stretch a justified line. */
+.content-page-callout { text-align: left; }
+.content-page-lead { text-align: left !important; }
 .content-page-intro p { font: 600 22px 'Playfair Display', serif; line-height: 1.35; color: var(--c-1d3f35); margin: 0 0 36px; }
 .content-page-section { margin-bottom: 36px; }
 .content-page-section h3 { display: flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 600; color: var(--c-0b1f1a); margin: 0 0 14px; }
@@ -673,6 +679,7 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
 .content-page-section p { font-size: 14px; line-height: 1.65; color: var(--c-4c5b54); margin: 0 0 10px; }
 .content-page-section ul, .content-page-section ol { padding-left: 20px; margin: 0; }
 .content-page-section li { font-size: 14px; line-height: 1.65; color: var(--c-4c5b54); margin-bottom: 8px; display: flex; align-items: flex-start; gap: 8px; list-style: none; padding-left: 0; }
+.content-page-section li > span { flex: 1; min-width: 0; }
 .content-page-section li svg { color: var(--c-52806c); flex-shrink: 0; margin-top: 3px; }
 .content-page-section ol { counter-reset: step; padding-left: 0; }
 .content-page-section ol li { counter-increment: step; list-style: none; padding-left: 32px; position: relative; }
@@ -705,6 +712,8 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
   .stats-grid { grid-template-columns: repeat(3, 1fr); }
   .file-body-full { grid-template-columns: 200px minmax(0, 1fr); }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .content-page-section p, .content-page-section li { text-align: left; }
+  .content-page-header.section-wrap, .content-page.section-wrap { width: calc(100% - 32px); }
   .about-grid { grid-template-columns: 1fr; }
   .about-card-feature { grid-row: auto; padding: 22px; }
   .about-card-feature h3 { font-size: 24px; }
