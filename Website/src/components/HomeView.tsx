@@ -5,12 +5,13 @@ import {
   CircleHelp,
   Heart,
   Eye,
+  MousePointerClick,
   FileText,
   Layers,
   HardDrive,
 } from 'lucide-react';
 import { allFiles, formatSize, semesters } from '@/content/notes';
-import { formatCount, useVisitCount } from '@/content/visits';
+import { formatCount, useSiteStats } from '@/content/visits';
 
 interface HomeViewProps {
   onSelectSemester: (id: string) => void;
@@ -22,8 +23,7 @@ const subjectsWithNotes = semesters.flatMap((s) => s.subjects).filter((s) => s.f
 const totalBytes = allFiles.reduce((sum, f) => sum + f.size, 0);
 
 export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
-  const visits = useVisitCount();
-  const visitsLabel = visits === null ? '—' : formatCount(visits);
+  const { visitors, pageViews } = useSiteStats();
 
   return (
     <>
@@ -36,7 +36,8 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
             <div><strong>{String(courseSemesters.length).padStart(2, '0')}</strong><span>Semesters</span></div>
             <div><strong>{subjectsWithNotes}</strong><span>Subjects with notes</span></div>
             <div><strong>{allFiles.length}</strong><span>Files</span></div>
-            <div><strong>{visitsLabel}</strong><span>Visits</span></div>
+            <div><strong>{formatCount(visitors)}</strong><span>Visitors</span></div>
+            <div><strong>{formatCount(pageViews)}</strong><span>Page visits</span></div>
           </div>
         </div>
         <div className="hero-visual" aria-hidden="true">
@@ -92,8 +93,13 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
         <div className="stats-grid">
           <div className="stat-card stat-card-highlight">
             <Eye size={18} />
-            <strong>{visitsLabel}</strong>
-            <span>Total visits</span>
+            <strong>{formatCount(visitors)}</strong>
+            <span>Visitors</span>
+          </div>
+          <div className="stat-card stat-card-highlight">
+            <MousePointerClick size={18} />
+            <strong>{formatCount(pageViews)}</strong>
+            <span>Page visits</span>
           </div>
           <div className="stat-card">
             <FileText size={18} />

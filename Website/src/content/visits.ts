@@ -1,34 +1,61 @@
 import { useSyncExternalStore } from 'react';
 
 /**
- * Lifetime visit counter stored in a Firebase Realtime Database (free Spark plan, data
- * never expires). The site is static, so the browser talks to the database's REST API
- * directly; the database rules (see Website/README.md) only allow the count to go up by
- * exactly 1, so it can never be lowered or reset from the browser.
+ * Lifetime counters stored in a Firebase Realtime Database (free Spark plan, data never
+ * expires). The site is static, so the browser talks to the database's REST API directly;
+ * the database rules (see Website/README.md) only allow a counter to go up by exactly 1,
+ * so it can never be lowered or reset from the browser.
  *
- * A visit is counted when a browser has no counted visit yet, or when 30 minutes have
- * passed since its last counted visit. That covers returning later as well as someone
- * who keeps the site open: every 30 minutes of use adds one more. The timestamp lives in
- * localStorage, so all open tabs share it and don't double count.
+ * - Visitors: +1 when a browser has no counted visit yet, or when 30 minutes have passed
+ *   since its last counted visit — returning later, or still using the site 30 minutes on.
+ *   The timestamp lives in localStorage, so all open tabs share it and don't double count.
+ * - Page visits: +1 every time a page of the site is opened (home, a semester, a subject...).
  */
 
-/** e.g. https://bece-notes-default-rtdb.firebaseio.com — set in Website/.env */
+/** e.g. https://your-project-default-rtdb.firebaseio.com — set in Website/.env */
 const DB_URL = (import.meta.env.VITE_FIREBASE_DB_URL ?? '').replace(/\/+$/, '');
-// Local development counts into a separate counter so testing doesn't inflate the real number.
 // One database can serve counters for several sites: counters/<site>/<counter>.
 const SITE = 'bece-notes';
-const COUNTER = import.meta.env.DEV ? 'visits-dev' : 'visits';
-const ENDPOINT = `${DB_URL}/counters/${SITE}/${COUNTER}.json`;
+// Local development counts into separate counters so testing doesn't inflate the real numbers.
+const SUFFIX = import.meta.env.DEV ? '-dev' : '';
+const VISITORS = `visitors${SUFFIX}`;
+const PAGE_VIEWS = `pageviews${SUFFIX}`;
+
 const VISIT_WINDOW_MS = 30 * 60 * 1000;
 const STORAGE_KEY = 'bece-notes:last-counted-visit';
 const CHECK_INTERVAL_MS = 60 * 1000;
 
-let count: number | null = null;
+export interface SiteStats {
+  visitors: number | null;
+  pageViews: number | null;
+}
+
+let stats: SiteStats = { visitors: null, pageViews: null };
 const listeners = new Set<() => void>();
 
-function setCount(value: number) {
-  count = value;
+function update(key: keyof SiteStats, value: number) {
+  stats = { ...stats, [key]: value };
   listeners.forEach((l) => l());
+}
+
+const endpoint = (counter: string) => `${DB_URL}/counters/${SITE}/${counter}.json`;
+
+async function request(counter: string, key: keyof SiteStats, action: 'hit' | 'get') {
+  if (!DB_URL) return;
+  try {
+    if (action === 'hit') {
+      // Atomic server-side increment; safe when many visitors arrive at once.
+      const res = await fetch(endpoint(counter), { method: 'PUT', body: JSON.stringify({ '.sv': { increment: 1 } }) });
+      const value: unknown = res.ok ? await res.json() : null;
+      if (typeof value === 'number') return update(key, value);
+    }
+    const res = await fetch(endpoint(counter));
+    if (!res.ok) return;
+    const value: unknown = await res.json();
+    update(key, typeof value === 'number' ? value : 0); // null = nothing recorded yet
+  } catch {
+    // Database unreachable — leave the number hidden.
+  }
 }
 
 // Fallback when localStorage is blocked: then each page load tracks its own 30-minute window.
@@ -51,60 +78,54 @@ function writeLastCounted(time: number) {
   }
 }
 
-async function request(action: 'hit' | 'get') {
-  if (!DB_URL) return;
-  try {
-    if (action === 'hit') {
-      // Atomic server-side increment; safe when many visitors arrive at once.
-      const res = await fetch(ENDPOINT, { method: 'PUT', body: JSON.stringify({ '.sv': { increment: 1 } }) });
-      const value: unknown = res.ok ? await res.json() : null;
-      if (typeof value === 'number') return setCount(value);
-    }
-    const res = await fetch(ENDPOINT);
-    if (!res.ok) return;
-    const value: unknown = await res.json();
-    setCount(typeof value === 'number' ? value : 0); // null = no visits recorded yet
-  } catch {
-    // Database unreachable — leave the number hidden.
-  }
-}
-
-function checkVisit() {
+function checkVisitor() {
   if (document.visibilityState !== 'visible') return;
   const now = Date.now();
   if (now - readLastCounted() >= VISIT_WINDOW_MS) {
     // Claim the slot before the request so other tabs don't count the same visit.
     writeLastCounted(now);
-    request('hit');
-  } else if (count === null) {
-    request('get');
+    request(VISITORS, 'visitors', 'hit');
+  } else if (stats.visitors === null) {
+    request(VISITORS, 'visitors', 'get');
   }
 }
 
 let started = false;
 
-/** Call once at startup: counts this visit if due and keeps checking while the site is open. */
+/** Call once at startup: counts this visitor if due and keeps checking while the site is open. */
 export function startVisitTracking() {
   if (started || typeof window === 'undefined') return;
   if (!DB_URL) {
-    console.info('[visits] VITE_FIREBASE_DB_URL is not set — visit counter disabled.');
+    console.info('[visits] VITE_FIREBASE_DB_URL is not set — visit counters disabled.');
     return;
   }
   started = true;
-  checkVisit();
-  document.addEventListener('visibilitychange', checkVisit);
-  window.setInterval(checkVisit, CHECK_INTERVAL_MS);
+  checkVisitor();
+  document.addEventListener('visibilitychange', checkVisitor);
+  window.setInterval(checkVisitor, CHECK_INTERVAL_MS);
 }
 
-/** Current total visit count, or null while loading / if the counter is unavailable. */
-export function useVisitCount(): number | null {
+let lastPage = { key: '', time: 0 };
+
+/** Counts one page visit. Call whenever the user opens a page; `pageKey` identifies it. */
+export function trackPageView(pageKey: string) {
+  if (!DB_URL) return;
+  const now = Date.now();
+  // React's StrictMode runs effects twice in development — ignore an immediate repeat.
+  if (pageKey === lastPage.key && now - lastPage.time < 1000) return;
+  lastPage = { key: pageKey, time: now };
+  request(PAGE_VIEWS, 'pageViews', 'hit');
+}
+
+/** Current lifetime visitors and page visits; each is null while loading or if unavailable. */
+export function useSiteStats(): SiteStats {
   return useSyncExternalStore(
     (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
-    () => count,
+    () => stats,
   );
 }
 
-export const formatCount = (n: number) => n.toLocaleString('en-US');
+export const formatCount = (n: number | null) => (n === null ? '—' : n.toLocaleString('en-US'));
