@@ -1,13 +1,12 @@
 import { ArrowLeft, ArrowRight, FileText } from 'lucide-react';
-import { findSyllabus, isSyllabus, plural, type Semester } from '@/content/notes';
+import { findSyllabus, isSyllabus, plural, subjectPath, type Semester } from '@/content/notes';
+import { Link } from '@/components/Link';
 
 interface SemesterViewProps {
   semester: Semester;
-  onSelectSubject: (subjectId: string, fileId?: string) => void;
-  onBack: () => void;
 }
 
-export function SemesterView({ semester, onSelectSubject, onBack }: SemesterViewProps) {
+export function SemesterView({ semester }: SemesterViewProps) {
   // The `_Syllabus` folder (one detailed syllabus file per subject) is linked from the table, not the grid.
   const syllabus = semester.subjects.find(isSyllabus);
   const subjects = semester.subjects.filter((s) => !isSyllabus(s));
@@ -19,9 +18,9 @@ export function SemesterView({ semester, onSelectSubject, onBack }: SemesterView
   return (
     <>
       <section className="semester-page-header section-wrap">
-        <button className="back-button" onClick={onBack}>
+        <Link to="/" className="back-button">
           <ArrowLeft size={16} /> Back to home
-        </button>
+        </Link>
         <div className="semester-page-title">
           <div>
             <span className="section-kicker">{semester.year}</span>
@@ -50,18 +49,18 @@ export function SemesterView({ semester, onSelectSubject, onBack }: SemesterView
                     <tr key={c.id}>
                       <td className="code">{c.code}</td>
                       <td>
-                        <button className="course-table-link" onClick={() => onSelectSubject(c.id)}>
+                        <Link to={subjectPath(semester, c)} className="course-table-link">
                           <span className="course-table-icon">{c.icon}</span>
                           {c.name}
-                        </button>
+                        </Link>
                       </td>
                       <td className="num">{c.credits ?? '—'}</td>
                       {hasSyllabusColumn && (
                         <td>
                           {syllabusFile ? (
-                            <button className="syllabus-link" onClick={() => onSelectSubject(syllabusFile.subjectId, syllabusFile.file.id)} title={syllabusFile.file.name}>
+                            <Link to={subjectPath(semester, syllabusFile.subject, syllabusFile.file)} className="syllabus-link" title={syllabusFile.file.name}>
                               <FileText size={13} /> View
-                            </button>
+                            </Link>
                           ) : <span className="muted">—</span>}
                         </td>
                       )}
@@ -77,9 +76,9 @@ export function SemesterView({ semester, onSelectSubject, onBack }: SemesterView
                     <td className="num">{totalCredits}</td>
                     {hasSyllabusColumn && (
                       <td>
-                        {syllabus && <button className="syllabus-all-link" onClick={() => onSelectSubject(syllabus.id)}>
+                        {syllabus && <Link to={subjectPath(semester, syllabus)} className="syllabus-all-link">
                           All syllabus files <ArrowRight size={13} />
-                        </button>}
+                        </Link>}
                       </td>
                     )}
                   </tr>
@@ -93,10 +92,10 @@ export function SemesterView({ semester, onSelectSubject, onBack }: SemesterView
         <h3 className="notes-heading">Subject notes</h3>
         <div className="subject-cards-grid">
           {subjects.map((subject) => (
-            <button
+            <Link
               key={subject.id}
+              to={subjectPath(semester, subject)}
               className={`subject-card ${subject.files.length === 0 ? 'subject-card-empty' : ''} ${subject.kind === 'resource' ? 'subject-card-resource' : ''}`}
-              onClick={() => onSelectSubject(subject.id)}
             >
               <span className="subject-card-glyph" aria-hidden="true">{subject.icon}</span>
               <span className="subject-card-top">
@@ -111,7 +110,7 @@ export function SemesterView({ semester, onSelectSubject, onBack }: SemesterView
                 </span>
                 <span className="subject-card-go"><ArrowRight size={15} /></span>
               </span>
-            </button>
+            </Link>
           ))}
         </div>
       </section>

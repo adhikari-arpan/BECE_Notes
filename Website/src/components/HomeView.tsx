@@ -9,16 +9,12 @@ import {
   Layers,
   HardDrive,
 } from 'lucide-react';
-import { allFiles, formatSize, isSyllabus, plural, semesters } from '@/content/notes';
+import { allFiles, formatSize, isSyllabus, plural, semesterPath, semesters } from '@/content/notes';
 import { formatCount, useSiteStats } from '@/content/visits';
 import { CountUp } from '@/components/CountUp';
 import { Logo } from '@/components/Logo';
+import { Link } from '@/components/Link';
 import { contributors } from '@/content/contributors';
-
-interface HomeViewProps {
-  onSelectSemester: (id: string) => void;
-  onNavigate: (page: 'about' | 'contributors' | 'contributing') => void;
-}
 
 const courseSemesters = semesters.filter((s) => /^\d+$/.test(s.id));
 const subjectsWithNotes = semesters.flatMap((s) => s.subjects).filter((s) => !isSyllabus(s) && s.files.length > 0).length;
@@ -27,7 +23,7 @@ const founder = contributors[0];
 const totalSubjects = courseSemesters.flatMap((s) => s.subjects).filter((s) => s.kind === 'course').length;
 const totalBytes = allFiles.reduce((sum, f) => sum + f.size, 0);
 
-export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
+export function HomeView() {
   const { visitors, pageViews } = useSiteStats();
 
   return (
@@ -67,10 +63,10 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
             const files = subjects.reduce((sum, s) => sum + s.files.length, 0);
             const credits = subjects.reduce((sum, s) => sum + (s.kind === 'course' ? s.credits ?? 0 : 0), 0);
             return (
-              <button
+              <Link
                 key={semester.id}
+                to={semesterPath(semester)}
                 className={`semester-card ${files === 0 ? 'semester-card-empty' : ''}`}
-                onClick={() => onSelectSemester(semester.id)}
               >
                 <span className="semester-card-glyph" aria-hidden="true">{semester.badge}</span>
                 <span className="semester-card-top">
@@ -88,7 +84,7 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
                   </span>
                   <span className="semester-card-go"><ArrowRight size={15} /></span>
                 </span>
-              </button>
+              </Link>
             );
           })}
         </div>
@@ -99,7 +95,7 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
           <div><span className="section-kicker">The project</span><h2>About the collection</h2></div>
         </div>
         <div className="about-grid">
-          <button className="about-card about-card-feature" onClick={() => onNavigate('about')}>
+          <Link to="/about" className="about-card about-card-feature">
             <span className="about-card-top">
               <Logo className="about-card-logo" />
               <span className="about-card-kicker">Pokhara University · BECE</span>
@@ -125,9 +121,9 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
               </span>
             )}
             <span className="about-card-cta">Read the story <ArrowRight size={15} /></span>
-          </button>
+          </Link>
 
-          <button className="about-card" onClick={() => onNavigate('contributors')}>
+          <Link to="/contributors" className="about-card">
             <span className="about-card-top">
               <span className="about-card-icon"><Users size={20} /></span>
             </span>
@@ -137,9 +133,9 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
               <span className="about-card-pill">{plural(contributors.length, 'contributor')}</span>
               <span className="about-card-go"><ArrowRight size={15} /></span>
             </span>
-          </button>
+          </Link>
 
-          <button className="about-card about-card-gold" onClick={() => onNavigate('contributing')}>
+          <Link to="/contributing" className="about-card about-card-gold">
             <span className="about-card-top">
               <span className="about-card-icon"><Heart size={20} /></span>
             </span>
@@ -149,7 +145,7 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
               <span className="about-card-pill">How to contribute</span>
               <span className="about-card-go"><ArrowRight size={15} /></span>
             </span>
-          </button>
+          </Link>
         </div>
       </section>
 

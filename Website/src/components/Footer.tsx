@@ -1,12 +1,9 @@
 import { CircleHelp, Eye, Heart, MousePointerClick, Users } from 'lucide-react';
 import { formatCount, useSiteStats } from '@/content/visits';
 import { Logo } from '@/components/Logo';
+import { Link } from '@/components/Link';
 
-interface FooterProps {
-  onNavigate: (page: 'about' | 'contributors' | 'contributing') => void;
-}
-
-export function Footer({ onNavigate }: FooterProps) {
+export function Footer() {
   const { visitors, pageViews } = useSiteStats();
 
   return (
@@ -21,9 +18,9 @@ export function Footer({ onNavigate }: FooterProps) {
             </div>
           </div>
           <nav className="footer-links">
-            <button onClick={() => onNavigate('about')}><CircleHelp size={15} /> About Us</button>
-            <button onClick={() => onNavigate('contributors')}><Users size={15} /> Contributors</button>
-            <button onClick={() => onNavigate('contributing')}><Heart size={15} /> Contribute</button>
+            <Link to="/about"><CircleHelp size={15} /> About Us</Link>
+            <Link to="/contributors"><Users size={15} /> Contributors</Link>
+            <Link to="/contributing"><Heart size={15} /> Contribute</Link>
           </nav>
         </div>
         <div className="footer-bottom">

@@ -1,18 +1,14 @@
 import { ArrowLeft, Globe, Mail } from 'lucide-react';
+import { Link } from '@/components/Link';
 import { contributors } from '@/content/contributors';
 
-interface ContributorsViewProps {
-  onBack: () => void;
-  onContributing: () => void;
-}
-
-export function ContributorsView({ onBack, onContributing }: ContributorsViewProps) {
+export function ContributorsView() {
   return (
     <>
       <section className="semester-page-header section-wrap">
-        <button className="back-button" onClick={onBack}>
+        <Link to="/" className="back-button">
           <ArrowLeft size={16} /> Back to home
-        </button>
+        </Link>
         <div className="semester-page-title">
           <div>
             <span className="section-kicker">The people behind it</span>
@@ -58,7 +54,7 @@ export function ContributorsView({ onBack, onContributing }: ContributorsViewPro
         <div className="contribute-cta">
           <h3>Your name could be here</h3>
           <p>Contribute 10 or more relevant study note files and your name joins the list of people helping fellow BECE students. Every contribution, however small, still shows up among the contributors on GitHub.</p>
-          <button className="cta-button" onClick={onContributing}>See contributing guidelines</button>
+          <Link to="/contributing" className="cta-button">See contributing guidelines</Link>
         </div>
       </section>
     </>
