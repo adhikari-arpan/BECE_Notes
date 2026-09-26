@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://notes.arpanadhikari7.com.np/sitemap.xml
