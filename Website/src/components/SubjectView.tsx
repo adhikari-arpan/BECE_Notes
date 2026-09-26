@@ -95,7 +95,7 @@ export function SubjectView({ semester, subject, onBack, onContributing }: Subje
               <h2>{subject.name}</h2>
               <span className="subject-meta">
                 <span className="meta-chip meta-chip-semester">{semester.label}</span>
-                {subject.credits !== null && <span className="meta-chip">{subject.credits} credits</span>}
+                {subject.credits !== null && <span className="meta-chip">{plural(subject.credits, 'credit')}</span>}
                 <span className="meta-chip">{plural(subject.files.length, 'file')}</span>
               </span>
             </div>

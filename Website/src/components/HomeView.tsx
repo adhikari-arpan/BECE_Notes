@@ -9,7 +9,7 @@ import {
   Layers,
   HardDrive,
 } from 'lucide-react';
-import { allFiles, formatSize, semesters } from '@/content/notes';
+import { allFiles, formatSize, isSyllabus, semesters } from '@/content/notes';
 import { formatCount, useSiteStats } from '@/content/visits';
 import { CountUp } from '@/components/CountUp';
 import { Logo } from '@/components/Logo';
@@ -20,7 +20,7 @@ interface HomeViewProps {
 }
 
 const courseSemesters = semesters.filter((s) => /^\d+$/.test(s.id));
-const subjectsWithNotes = semesters.flatMap((s) => s.subjects).filter((s) => s.files.length > 0).length;
+const subjectsWithNotes = semesters.flatMap((s) => s.subjects).filter((s) => !isSyllabus(s) && s.files.length > 0).length;
 const totalBytes = allFiles.reduce((sum, f) => sum + f.size, 0);
 
 export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
@@ -63,7 +63,7 @@ export function HomeView({ onSelectSemester, onNavigate }: HomeViewProps) {
             <button key={semester.id} className="semester-tab" onClick={() => onSelectSemester(semester.id)}>
               <span className="semester-number">{semester.badge}</span>
               <span><small>{semester.year}</small><b>{semester.label}</b></span>
-              <span className="tab-subject-count">{semester.subjects.filter((s) => s.files.length > 0).length}/{semester.subjects.length} with notes</span>
+              <span className="tab-subject-count">{semester.subjects.filter((s) => !isSyllabus(s) && s.files.length > 0).length}/{semester.subjects.filter((s) => !isSyllabus(s)).length} with notes</span>
               <ChevronRight size={16} className="tab-arrow" />
             </button>
           ))}

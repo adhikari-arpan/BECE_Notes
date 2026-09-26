@@ -318,6 +318,15 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .subject-count-pill { font: 500 11px 'DM Mono', monospace; color: var(--c-43655a); background: var(--c-e6eee8); padding: 7px 12px; border-radius: 99px; white-space: nowrap; flex-shrink: 0; }
 
 .subject-grid-section { padding-bottom: 80px; }
+.syllabus-card { width: 100%; display: flex; align-items: center; gap: 16px; margin-bottom: 14px; padding: 16px 20px; text-align: left; border: 1px solid #e8c873; border-radius: 13px; background: linear-gradient(100deg, var(--c-fffdf0), var(--c-fffdf7)); color: var(--c-0b1f1a); box-shadow: 0 4px 14px rgba(240,195,74,.1); transition: transform .18s, box-shadow .18s; }
+.syllabus-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(240,195,74,.2); }
+.syllabus-card-icon { width: 44px; height: 44px; flex-shrink: 0; display: grid; place-items: center; border-radius: 11px; background: #f0c34a; color: #0b1f1a; }
+.syllabus-card-body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.syllabus-card-body small { font: 600 9px 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #b8860b; }
+.syllabus-card-body strong { font: 600 18px 'Playfair Display', serif; color: var(--c-0b1f1a); }
+.syllabus-card-body span { font-size: 12px; color: var(--c-5c6b64); }
+.syllabus-card-cta { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; font: 600 12px 'DM Sans', sans-serif; color: #0b1f1a; background: #f0c34a; padding: 8px 14px; border-radius: 99px; }
+@media (max-width: 560px) { .syllabus-card-cta { display: none; } }
 .subject-group { margin-bottom: 36px; }
 .subject-group-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--c-e3e6de); }
 .subject-group-semester { font-size: 14px; font-weight: 600; color: var(--c-1d3f35); display: flex; align-items: center; gap: 7px; }

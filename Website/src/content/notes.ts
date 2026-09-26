@@ -18,6 +18,8 @@ export interface NoteFile {
 
 export interface Subject {
   id: string;
+  /** course = curriculum subject, syllabus = the semester's `_Syllabus` folder, resource = anything else. */
+  kind: 'course' | 'syllabus' | 'resource';
   code: string;
   name: string;
   credits: number | null;
@@ -49,7 +51,7 @@ const course = (code: string, name: string, credits: number | null, icon: string
 
 /** Pokhara University BECE curriculum. `folder` maps a course to its folder name in this repo. */
 const curriculum: { id: number; year: string; label: string; courses: CourseInfo[] }[] = [
-  { id: 1, year: 'Year I', label: 'Semester I', courses: [course('MTH 110', 'Calculus I', 3, '∫', 'Calculus-I'), course('ELX 110', 'Digital Logic', 3, '01', 'Digital Logic'), course('CMP 124', 'Programming in C', 3, '</>', 'C programming'), course('ELE 110', 'Basic Electrical Engineering', 3, '∿', 'Basic Electrical Engineering'), course('CMP 122', 'Computer Workshop', 1, '⌘'), course('ENG 110', 'Communication Technique', 2, 'Aa', 'Communication Technique'), course('ELX 111', 'Electronic Devices & Circuits', 3, '◈', 'Electronic Devices & Circuit')] },
+  { id: 1, year: 'Year I', label: 'Semester I', courses: [course('MTH 110', 'Calculus I', 3, '∫', 'Calculus-I'), course('ELX 110', 'Digital Logic', 3, '01', 'Digital Logic'), course('CMP 124', 'Programming in C', 3, '</>', 'Programming in C'), course('ELE 110', 'Basic Electrical Engineering', 3, '∿', 'Basic Electrical Engineering'), course('CMP 122', 'Computer Workshop', 1, '⌘'), course('ENG 110', 'Communication Technique', 2, 'Aa', 'Communication Technique'), course('ELX 111', 'Electronic Devices & Circuits', 3, '◈', 'Electronic Devices & Circuit')] },
   { id: 2, year: 'Year I', label: 'Semester II', courses: [course('MTH 150', 'Algebra & Geometry', 3, '△'), course('PHY 110', 'Applied Physics', 3, '◉', 'Applied Physics'), course('CHM 110', 'Applied Chemistry', 2, '⚗', 'Applied Chemistry'), course('MEC 116', 'Basic Engineering Drawing', 1, '✎', 'Engineering Drawing'), course('CMP 162', 'Object Oriented Programming in C++', 3, '{}', 'OOP in C++'), course('CMP 165', 'Data Structure & Algorithm', 3, '[]', 'DSA'), course('ELE 172', 'Instrumentation', 2, '◌', 'Instrumentation')] },
   { id: 3, year: 'Year II', label: 'Semester III', courses: [course('MTH 210', 'Calculus II', 3, '∫'), course('CMP 222', 'Database Management System', 3, 'DB', 'DBMS'), course('CMP 232', 'Operating Systems', 3, 'OS', 'Operating System'), course('CMP 224', 'Microprocessor & Assembly Language Programming', 3, 'µP', 'Microprocessor'), course('CMP 234', 'Computer Graphics', 3, '✦', 'Computer Graphics'), course('CMP 220', 'Data Communication', 3, '↔', 'Data Communication')] },
   { id: 4, year: 'Year II', label: 'Semester IV', courses: [course('MTH 250', 'Applied Mathematics', 3, 'Σ', 'Applied Mathematics'), course('MTH 257', 'Numerical Methods', 2, '≈', 'Numerical Methods'), course('CMP 228', 'Advanced Programming with Java', 3, 'J', 'Java'), course('CMP 254', 'Theory of Computation', 3, 'λ', 'Theory of Computation'), course('CMP 262', 'Computer Architecture', 3, '▦', 'Computer Architecture'), course('CMP 270', 'Research Fundamentals', 2, '⌁', 'Research Fundamentals')] },
@@ -120,26 +122,43 @@ function groupByFolder(root: string): Map<string, NoteFile[]> {
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
+/** Folder/course names compared loosely: "Programming in C" = "programming-in-c", "&" = "and". */
+const normalizeName = (s: string) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]/g, '');
+
 function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: string): Subject[] {
   const groups = groupByFolder(root);
-  const subjects: Subject[] = courses.map((c) => ({
-    id: `${slug(root)}--${slug(c.folder ?? c.code + '-' + c.name)}`,
-    code: c.code,
-    name: c.name,
-    credits: c.credits,
-    icon: c.icon,
-    folder: c.folder && groups.has(c.folder) ? `${root}/${c.folder}` : null,
-    files: (c.folder && groups.get(c.folder)) || [],
-  }));
+  const folderByName = new Map([...groups.keys()].filter(Boolean).map((f) => [normalizeName(f), f]));
+  const matched = new Set<string>();
 
-  // Folders not listed in the curriculum (Question Collection, _Syllabus, ...) still get shown.
-  const known = new Set(courses.map((c) => c.folder));
+  const subjects: Subject[] = courses.map((c) => {
+    // A course's notes live in the folder named in the curriculum, or in a folder named
+    // after the course itself — so renaming a folder to the course name keeps working.
+    const folder = [c.folder, c.name]
+      .filter((n): n is string => !!n)
+      .map((n) => folderByName.get(normalizeName(n)))
+      .find((f): f is string => !!f && !matched.has(f));
+    if (folder) matched.add(folder);
+    return {
+      id: `${slug(root)}--${slug(c.code + '-' + c.name)}`,
+      kind: 'course' as const,
+      code: c.code,
+      name: c.name,
+      credits: c.credits,
+      icon: c.icon,
+      folder: folder ? `${root}/${folder}` : null,
+      files: (folder && groups.get(folder)) || [],
+    };
+  });
+
+  // Folders not matched to a course (Question Collection, _Syllabus, ...) still get shown.
   for (const [folder, files] of groups) {
-    if (!folder || known.has(folder)) continue;
-    const name = folder.replace(/^_+/, '');
+    if (!folder || matched.has(folder)) continue;
+    const name = folder.replace(/^_+/, '').replace(/_+/g, ' ');
+    const isSyllabus = normalizeName(name) === 'syllabus';
     subjects.push({
       id: `${slug(root)}--${slug(folder)}`,
-      code: 'RESOURCES',
+      kind: isSyllabus ? 'syllabus' : 'resource',
+      code: isSyllabus ? 'SYLLABUS' : 'RESOURCES',
       name,
       credits: null,
       icon: resourceIcons.find(([re]) => re.test(name))?.[1] ?? '▤',
@@ -151,7 +170,7 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
   // Files placed directly inside the semester/collection folder.
   const loose = groups.get('');
   if (loose) {
-    subjects.push({ id: `${slug(root)}--files`, code: 'RESOURCES', name: looseFilesName, credits: null, icon: '▤', folder: root, files: loose });
+    subjects.push({ id: `${slug(root)}--files`, kind: 'resource', code: 'RESOURCES', name: looseFilesName, credits: null, icon: '▤', folder: root, files: loose });
   }
   return subjects;
 }
@@ -168,6 +187,9 @@ export const semesters: Semester[] = [
   { id: 'entrance', badge: 'IOE', year: 'Before Year I', label: 'Entrance Preparation', subjects: buildSubjects('Engineering Entrance Preparation', [], 'Entrance question sets') },
   // Extra collections only show up once their folder has files.
 ].filter((s) => /^\d+$/.test(s.id) || s.subjects.some((subject) => subject.files.length > 0));
+
+/** Everything except the syllabus counts as a subject in totals and lists. */
+export const isSyllabus = (s: Subject) => s.kind === 'syllabus';
 
 export const allFiles = semesters.flatMap((semester) => semester.subjects.flatMap((item) => item.files));
 
