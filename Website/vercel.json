@@ -1,4 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "becenotes.vercel.app" }],
+      "destination": "https://notes.arpanadhikari7.com.np/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
