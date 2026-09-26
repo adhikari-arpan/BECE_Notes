@@ -117,7 +117,7 @@ function lfsPaths(repoRoot: string, roots: string[]): Set<string> {
   return lfs;
 }
 
-function buildManifest(repoRoot: string, trackedOnly: boolean): ManifestEntry[] {
+export function buildManifest(repoRoot: string, trackedOnly: boolean): ManifestEntry[] {
   const roots = listNoteRoots(repoRoot);
   let files: string[] = [];
   for (const root of roots) walk(path.join(repoRoot, root), repoRoot, files);

@@ -1,4 +1,30 @@
+# Everyone — search engines and AI assistants — is welcome to read and recommend BECE Vault.
 User-agent: *
+Allow: /
+
+# AI crawlers (listed explicitly so there is no doubt they may use the site).
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
 Allow: /
 
 Sitemap: https://notes.arpanadhikari7.com.np/sitemap.xml
