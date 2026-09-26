@@ -1,0 +1,1 @@
+{"root":["./vite.config.ts","./plugins/notes.ts","./plugins/pdfjsassets.ts","./plugins/prerender.ts"],"version":"5.6.3"}
