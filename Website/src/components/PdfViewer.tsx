@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 import { Loader } from '@/components/Loader';
+import { stampPdf } from '@/content/watermark';
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 
@@ -308,8 +309,9 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
     else rootRef.current?.requestFullscreen();
   };
 
+  /** The PDF with the site credit on every page — used for print and "open in browser viewer". */
   const pdfBlobUrl = async () => {
-    const data = await doc!.getData();
+    const data = await stampPdf(await doc!.getData());
     return URL.createObjectURL(new Blob([data as BlobPart], { type: 'application/pdf' }));
   };
 
