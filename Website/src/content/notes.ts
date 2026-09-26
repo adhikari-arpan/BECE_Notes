@@ -188,6 +188,9 @@ export const semesters: Semester[] = [
   // Extra collections only show up once their folder has files.
 ].filter((s) => /^\d+$/.test(s.id) || s.subjects.some((subject) => subject.files.length > 0));
 
+/** True for a file inside a subject's own `_Syllabus` (or `Syllabus`) folder. */
+export const isSyllabusFolder = (folder: string) => normalizeName(folder.split('/')[0]) === 'syllabus';
+
 /** Everything except the syllabus counts as a subject in totals and lists. */
 export const isSyllabus = (s: Subject) => s.kind === 'syllabus';
 
@@ -210,6 +213,17 @@ export function syllabusFileFor(syllabus: Subject | undefined, subject: Subject)
     files.find((x) => x.base === name) ??
     files.find((x) => x.base.startsWith(name) || name.startsWith(x.base) || (code.length > 3 && x.base.includes(code)))
   )?.f;
+}
+
+/**
+ * Where a subject's syllabus lives: its file in the semester `_Syllabus` folder if there is one,
+ * otherwise the first file in the subject's own `_Syllabus` folder.
+ */
+export function findSyllabus(semesterSyllabus: Subject | undefined, subject: Subject): { subjectId: string; file: NoteFile } | undefined {
+  const fromSemester = syllabusFileFor(semesterSyllabus, subject);
+  if (fromSemester && semesterSyllabus) return { subjectId: semesterSyllabus.id, file: fromSemester };
+  const own = subject.files.find((f) => isSyllabusFolder(f.folder));
+  return own ? { subjectId: subject.id, file: own } : undefined;
 }
 
 export const allFiles = semesters.flatMap((semester) => semester.subjects.flatMap((item) => item.files));
