@@ -19,7 +19,7 @@ export function ContributingView() {
       <section className="content-page section-wrap">
         <div className="content-page-body">
           <div className="content-page-intro">
-            <p>Thank you for your interest in contributing to the BECE Notes collection. Every contribution, big or small, helps fellow students across Pokhara University. Here's how you can help.</p>
+            <p>Thank you for your interest in contributing to the BECE Vault collection. Every contribution, big or small, helps fellow students across Pokhara University. Here's how you can help.</p>
           </div>
 
           <div className="content-page-section">

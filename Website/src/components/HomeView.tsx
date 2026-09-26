@@ -191,7 +191,7 @@ export function HomeView() {
           <div className="chiya-banner-text">
             <span className="section-kicker">Support the project</span>
             <h3>Did these notes help you pass?</h3>
-            <p>BECE Notes is free for every student. If it saved you time before an exam, buy me a chiya — it keeps the library growing.</p>
+            <p>BECE Vault is free for every student. If it saved you time before an exam, buy me a chiya — it keeps the library growing.</p>
           </div>
           <button className="chiya-cta" onClick={openTipJar}><Coffee size={16} /> Buy me a Chiya</button>
         </div>

@@ -23,7 +23,7 @@ export function PrivacyView() {
         <div className="content-page-body">
           <div className="content-page-section">
             <p className="content-page-lead">
-              BECE Notes (notes.arpanadhikari7.com.np) is a free study-notes website. You don't need an account, and we
+              BECE Vault (notes.arpanadhikari7.com.np) is a free study-notes website. You don't need an account, and we
               don't ask for your name, email or any other personal details to use it.
             </p>
             <p>

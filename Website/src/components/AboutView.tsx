@@ -31,7 +31,7 @@ export function AboutView() {
           <div className="content-page-section">
             <h3><GraduationCap size={18} /> What this is</h3>
             <p className="content-page-lead">
-              BECE Notes is a free, semester-wise library of study notes for the Bachelor of Engineering in Computer
+              BECE Vault is a free, semester-wise library of study notes for the Bachelor of Engineering in Computer
               Engineering (BECE) program under Pokhara University (PU), Nepal.
             </p>
             <p>

@@ -14,7 +14,7 @@ export function Footer() {
           <div className="footer-brand">
             <div className="brand-mark"><Logo /></div>
             <div>
-              <span className="brand-name">BECE Notes</span>
+              <span className="brand-name">BECE Vault</span>
               <p>A curated library for Computer Engineering students at Pokhara University.</p>
             </div>
           </div>

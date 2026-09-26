@@ -199,7 +199,7 @@ function crawlableSummary(entries: ManifestEntry[]): string {
       return `<section><h2>${heading}</h2><ul>${items}</ul></section>`;
     })
     .join('');
-  return `<main><h1>BECE Notes: Pokhara University Computer Engineering notes</h1>` +
+  return `<main><h1>BECE Vault: Pokhara University Computer Engineering notes</h1>` +
     `<p>Free semester-wise study notes for the Bachelor of Engineering in Computer Engineering (BECE) program under Pokhara University, Nepal: ` +
     `lecture notes, handwritten notes, question collections, past exam questions, lab reports and syllabus. ${entries.length} files in total.</p>` +
     `${sections}</main>`;
