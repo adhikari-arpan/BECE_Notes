@@ -17,6 +17,8 @@ function App() {
   const [page, setPage] = useState<Page>('home');
   const [activeSemesterId, setActiveSemesterId] = useState<string>('1');
   const [activeSubjectId, setActiveSubjectId] = useState<string>('');
+  /** File to open first when a subject page opens (e.g. one subject's syllabus). */
+  const [initialFileId, setInitialFileId] = useState<string | undefined>();
 
   // Opening another page (about, contributors, a semester...) starts at the top, not mid-scroll.
   useEffect(() => {
@@ -40,8 +42,9 @@ function App() {
     setPage('semester');
   };
 
-  const openSubject = (subjectId: string) => {
+  const openSubject = (subjectId: string, fileId?: string) => {
     setActiveSubjectId(subjectId);
+    setInitialFileId(fileId);
     setPage('subject');
   };
 
@@ -89,9 +92,10 @@ function App() {
         )}
         {page === 'subject' && activeSubject && (
           <SubjectView
-            key={activeSubject.id}
+            key={`${activeSubject.id}:${initialFileId ?? ''}`}
             semester={activeSemester}
             subject={activeSubject}
+            initialFileId={initialFileId}
             onBack={backToSemester}
             onContributing={() => setPage('contributing')}
           />

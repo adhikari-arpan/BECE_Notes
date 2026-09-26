@@ -1,16 +1,18 @@
-import { ArrowLeft, ArrowRight, ChevronRight, ScrollText } from 'lucide-react';
-import { isSyllabus, plural, type Semester } from '@/content/notes';
+import { ArrowLeft, ArrowRight, FileText } from 'lucide-react';
+import { isSyllabus, plural, syllabusFileFor, type Semester } from '@/content/notes';
 
 interface SemesterViewProps {
   semester: Semester;
-  onSelectSubject: (subjectId: string) => void;
+  onSelectSubject: (subjectId: string, fileId?: string) => void;
   onBack: () => void;
 }
 
 export function SemesterView({ semester, onSelectSubject, onBack }: SemesterViewProps) {
-  // The `_Syllabus` folder gets its own card above the subjects instead of a slot in the grid.
+  // The `_Syllabus` folder (one detailed syllabus file per subject) is linked from the table, not the grid.
   const syllabus = semester.subjects.find(isSyllabus);
   const subjects = semester.subjects.filter((s) => !isSyllabus(s));
+  const courses = subjects.filter((s) => s.kind === 'course');
+  const totalCredits = courses.reduce((sum, c) => sum + (c.credits ?? 0), 0);
 
   return (
     <>
@@ -23,40 +25,90 @@ export function SemesterView({ semester, onSelectSubject, onBack }: SemesterView
             <span className="section-kicker">{semester.year}</span>
             <h2>{semester.label}</h2>
           </div>
-          <span className="subject-count-pill">{plural(subjects.length, 'subject')}</span>
+          <span className="subject-count-pill">{plural(courses.length, 'subject')}{totalCredits ? ` · ${totalCredits} credits` : ''}</span>
         </div>
       </section>
 
       <section className="subject-grid-section section-wrap">
-        {syllabus && (
-          <button className="syllabus-card" onClick={() => onSelectSubject(syllabus.id)}>
-            <span className="syllabus-card-icon"><ScrollText size={22} /></span>
-            <span className="syllabus-card-body">
-              <small>Start here</small>
-              <strong>{semester.label} syllabus</strong>
-              <span>Official Pokhara University course outline · {plural(syllabus.files.length, 'file')}</span>
-            </span>
-            <span className="syllabus-card-cta">View syllabus <ArrowRight size={15} /></span>
-          </button>
+        {courses.length > 0 && (
+          <div className="course-table-wrap">
+            <table className="course-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Subject</th>
+                  <th className="num">Credits</th>
+                  {syllabus && <th>Syllabus</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {courses.map((c) => {
+                  const syllabusFile = syllabusFileFor(syllabus, c);
+                  return (
+                    <tr key={c.id}>
+                      <td className="code">{c.code}</td>
+                      <td>
+                        <button className="course-table-link" onClick={() => onSelectSubject(c.id)}>
+                          <span className="course-table-icon">{c.icon}</span>
+                          {c.name}
+                        </button>
+                      </td>
+                      <td className="num">{c.credits ?? '—'}</td>
+                      {syllabus && (
+                        <td>
+                          {syllabusFile ? (
+                            <button className="syllabus-link" onClick={() => onSelectSubject(syllabus.id, syllabusFile.id)} title={syllabusFile.name}>
+                              <FileText size={13} /> View
+                            </button>
+                          ) : <span className="muted">—</span>}
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+              {totalCredits > 0 && (
+                <tfoot>
+                  <tr>
+                    <td />
+                    <td>Total</td>
+                    <td className="num">{totalCredits}</td>
+                    {syllabus && (
+                      <td>
+                        <button className="syllabus-all-link" onClick={() => onSelectSubject(syllabus.id)}>
+                          All syllabus files <ArrowRight size={13} />
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                </tfoot>
+              )}
+            </table>
+          </div>
         )}
 
+
+        <h3 className="notes-heading">Subject notes</h3>
         <div className="subject-cards-grid">
           {subjects.map((subject) => (
             <button
               key={subject.id}
-              className={`subject-card ${subject.files.length === 0 ? 'subject-card-empty' : ''}`}
+              className={`subject-card ${subject.files.length === 0 ? 'subject-card-empty' : ''} ${subject.kind === 'resource' ? 'subject-card-resource' : ''}`}
               onClick={() => onSelectSubject(subject.id)}
             >
-              <span className="subject-card-icon">{subject.icon}</span>
-              <div className="subject-card-body">
-                <small>{subject.code}</small>
-                <strong>{subject.name}</strong>
+              <span className="subject-card-glyph" aria-hidden="true">{subject.icon}</span>
+              <span className="subject-card-top">
+                <span className="subject-card-icon">{subject.icon}</span>
+                <span className="subject-card-code">{subject.kind === 'resource' ? 'Resources' : subject.code}</span>
+              </span>
+              <strong className="subject-card-name">{subject.name}</strong>
+              <span className="subject-card-foot">
                 <span className="subject-card-meta">
-                  {subject.credits !== null && `${plural(subject.credits, 'credit')} · `}
-                  {subject.files.length > 0 ? plural(subject.files.length, 'file') : 'No notes yet'}
+                  {subject.credits !== null && <span>{plural(subject.credits, 'credit')}</span>}
+                  <span>{subject.files.length > 0 ? plural(subject.files.length, 'file') : 'No notes yet'}</span>
                 </span>
-              </div>
-              <ChevronRight size={16} className="subject-card-arrow" />
+                <span className="subject-card-go"><ArrowRight size={15} /></span>
+              </span>
             </button>
           ))}
         </div>

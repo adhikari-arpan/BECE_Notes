@@ -43,13 +43,15 @@ function FileKindIcon({ kind, size = 18 }: { kind: FileKind; size?: number }) {
 }
 
 interface SubjectViewProps {
+  /** File to show first; defaults to the subject's first file. */
+  initialFileId?: string;
   semester: Semester;
   subject: Subject;
   onBack: () => void;
   onContributing: () => void;
 }
 
-export function SubjectView({ semester, subject, onBack, onContributing }: SubjectViewProps) {
+export function SubjectView({ semester, subject, initialFileId, onBack, onContributing }: SubjectViewProps) {
   const groups = useMemo(() => {
     const map = new Map<string, NoteFile[]>();
     for (const file of subject.files) map.set(file.folder, [...(map.get(file.folder) ?? []), file]);
@@ -57,7 +59,7 @@ export function SubjectView({ semester, subject, onBack, onContributing }: Subje
     return [...map.entries()].sort(([a], [b]) => (a === '' ? -1 : b === '' ? 1 : a.localeCompare(b, undefined, { numeric: true })));
   }, [subject]);
 
-  const [activeFileId, setActiveFileId] = useState(subject.files[0]?.id ?? '');
+  const [activeFileId, setActiveFileId] = useState(initialFileId ?? subject.files[0]?.id ?? '');
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const activeFile = subject.files.find((f) => f.id === activeFileId) ?? subject.files[0];
   const sidebar = useResizableSidebar();
