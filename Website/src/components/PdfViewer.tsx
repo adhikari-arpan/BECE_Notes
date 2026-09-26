@@ -25,6 +25,7 @@ import { Loader } from '@/components/Loader';
 import { stampPdf } from '@/content/watermark';
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+const PDFJS_ASSETS = `${import.meta.env.BASE_URL}pdfjs/`;
 
 /** PDF points -> CSS pixels at 100% zoom (same convention as browser PDF viewers). */
 const CSS_UNITS = 96 / 72;
@@ -156,7 +157,16 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
     setDoc(null);
     setProgress(null);
     textCache.current = new Map();
-    const task = pdfjs.getDocument({ url });
+    const task = pdfjs.getDocument({
+      url,
+      // Decoders and fonts pdf.js loads on demand (served by plugins/pdfjsAssets.ts). Without them,
+      // scanned pages compressed as fax/JBIG2 images, and some fonts, render blank or broken.
+      wasmUrl: `${PDFJS_ASSETS}wasm/`,
+      cMapUrl: `${PDFJS_ASSETS}cmaps/`,
+      cMapPacked: true,
+      standardFontDataUrl: `${PDFJS_ASSETS}standard_fonts/`,
+      iccUrl: `${PDFJS_ASSETS}iccs/`,
+    });
     task.onProgress = ({ loaded, total }: { loaded: number; total: number }) => {
       if (total) setProgress(Math.round((loaded / total) * 100));
     };
