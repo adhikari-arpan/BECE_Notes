@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { notesPlugin } from './plugins/notes';
 import { pdfjsAssetsPlugin } from './plugins/pdfjsAssets';
+import { prerenderPlugin } from './plugins/prerender';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -15,6 +16,12 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       pdfjsAssetsPlugin(),
+      // A real HTML page per route + sitemap.xml + llms.txt, for search engines and AI crawlers.
+      prerenderPlugin({
+        repoRoot: fileURLToPath(new URL('..', import.meta.url)),
+        siteUrl: env.SITE_URL || 'https://notes.arpanadhikari7.com.np',
+        siteName: 'BECE Vault',
+      }),
       notesPlugin({
         // The notes live next to this Website folder, in the repository root.
         repoRoot: fileURLToPath(new URL('..', import.meta.url)),
