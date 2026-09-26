@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { Loader } from '@/components/Loader';
+import { DownloadButton } from '@/components/DownloadButton';
 import { formatDate, formatSize, plural, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
 
 const PdfViewer = lazy(() => import('@/components/PdfViewer'));
@@ -93,9 +94,9 @@ export function SubjectView({ semester, subject, onBack, onContributing }: Subje
                 <span className="subject-box-file-size">
                   {formatSize(activeFile.size)}{activeFile.updated ? ` · ${formatDate(activeFile.updated)}` : ''}
                 </span>
-                <a className="icon-button" href={activeFile.url} download={activeFile.name} aria-label="Download file" title="Download">
+                <DownloadButton file={activeFile} className="icon-button">
                   <Download size={15} />
-                </a>
+                </DownloadButton>
                 {activeFile.kind !== 'pdf' && (
                   <a className="icon-button" href={activeFile.url} target="_blank" rel="noreferrer" aria-label="Open file in new tab" title="Open in new tab">
                     <ExternalLink size={15} />
@@ -235,9 +236,9 @@ function Fallback({ file, title, message }: { file: NoteFile; title: string; mes
       <div className="large-file-icon"><FileKindIcon kind={file.kind} size={28} /></div>
       <h3>{title}</h3>
       <p>{message}</p>
-      <a href={file.url} download={file.name} className="download-button">
+      <DownloadButton file={file} className="download-button">
         <ArrowDownToLine size={17} /> Download {kindLabels[file.kind]}
-      </a>
+      </DownloadButton>
     </div>
   );
 }

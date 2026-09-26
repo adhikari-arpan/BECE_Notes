@@ -445,6 +445,8 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .loader-percent { font: 600 14px 'DM Mono', monospace; color: var(--c-0b1f1a); min-width: 4ch; }
 @media (prefers-reduced-motion: reduce) { .loader-ring { animation-duration: 12s; } }
 @keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin .8s linear infinite; }
+.is-busy { cursor: progress; }
 .image-preview { min-height: 100%; display: grid; place-items: center; padding: 16px; }
 .image-preview img { max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 2px 10px rgba(var(--shadow-rgb),.08); }
 .code-preview { margin: 0; padding: 18px 20px; min-height: 100%; font: 400 12px/1.6 'DM Mono', monospace; color: var(--c-24413a); background: var(--c-fbfcf7); white-space: pre-wrap; word-break: break-word; }
