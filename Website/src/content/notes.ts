@@ -123,7 +123,7 @@ function groupByFolder(root: string): Map<string, NoteFile[]> {
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 /** Folder/course names compared loosely: "Programming in C" = "programming-in-c", "&" = "and". */
-const normalizeName = (s: string) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]/g, '');
+export const normalizeName = (s: string) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]/g, '');
 
 function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: string): Subject[] {
   const groups = groupByFolder(root);
@@ -190,6 +190,27 @@ export const semesters: Semester[] = [
 
 /** Everything except the syllabus counts as a subject in totals and lists. */
 export const isSyllabus = (s: Subject) => s.kind === 'syllabus';
+
+/** Name key for syllabus matching: ignores filler words and "syllabus"/"final"/"new" in file names. */
+const SYLLABUS_NOISE = new Set(['a', 'an', 'and', 'the', 'of', 'in', 'with', 'for', 'to', 'syllabus', 'final', 'new', 'detailed']);
+const syllabusKey = (s: string) =>
+  normalizeName(s.replace(/&/g, ' and ').split(/[^A-Za-z0-9]+/).filter((w) => w && !SYLLABUS_NOISE.has(w.toLowerCase())).join(''));
+
+/**
+ * The file in the semester's syllabus folder that belongs to `subject`, matched loosely by name
+ * ("Communication Techniques.pdf" ↔ Communication Technique) or by course code ("CMP 124").
+ */
+export function syllabusFileFor(syllabus: Subject | undefined, subject: Subject): NoteFile | undefined {
+  if (!syllabus) return undefined;
+  const name = syllabusKey(subject.name);
+  const code = normalizeName(subject.code);
+  const files = syllabus.files.map((f) => ({ f, base: syllabusKey(f.name.replace(/\.[^.]+$/, '')) })).filter((x) => x.base);
+  // Exact name first, so "Calculus I" never picks "Calculus II.pdf" when both exist.
+  return (
+    files.find((x) => x.base === name) ??
+    files.find((x) => x.base.startsWith(name) || name.startsWith(x.base) || (code.length > 3 && x.base.includes(code)))
+  )?.f;
+}
 
 export const allFiles = semesters.flatMap((semester) => semester.subjects.flatMap((item) => item.files));
 

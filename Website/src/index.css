@@ -318,29 +318,53 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .subject-count-pill { font: 500 11px 'DM Mono', monospace; color: var(--c-43655a); background: var(--c-e6eee8); padding: 7px 12px; border-radius: 99px; white-space: nowrap; flex-shrink: 0; }
 
 .subject-grid-section { padding-bottom: 80px; }
-.syllabus-card { width: 100%; display: flex; align-items: center; gap: 16px; margin-bottom: 14px; padding: 16px 20px; text-align: left; border: 1px solid #e8c873; border-radius: 13px; background: linear-gradient(100deg, var(--c-fffdf0), var(--c-fffdf7)); color: var(--c-0b1f1a); box-shadow: 0 4px 14px rgba(240,195,74,.1); transition: transform .18s, box-shadow .18s; }
-.syllabus-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(240,195,74,.2); }
-.syllabus-card-icon { width: 44px; height: 44px; flex-shrink: 0; display: grid; place-items: center; border-radius: 11px; background: #f0c34a; color: #0b1f1a; }
-.syllabus-card-body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.syllabus-card-body small { font: 600 9px 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #b8860b; }
-.syllabus-card-body strong { font: 600 18px 'Playfair Display', serif; color: var(--c-0b1f1a); }
-.syllabus-card-body span { font-size: 12px; color: var(--c-5c6b64); }
-.syllabus-card-cta { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; font: 600 12px 'DM Sans', sans-serif; color: #0b1f1a; background: #f0c34a; padding: 8px 14px; border-radius: 99px; }
-@media (max-width: 560px) { .syllabus-card-cta { display: none; } }
+.subject-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.subject-card { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 14px; min-height: 172px; padding: 20px 20px 18px; text-align: left; border: 1px solid var(--c-e3e6de); border-radius: 16px; background: linear-gradient(160deg, var(--c-fffdf7) 55%, var(--c-f6f7f1)); color: var(--c-1d3f35); box-shadow: 0 1px 2px rgba(var(--shadow-rgb),.04); transition: transform .2s, box-shadow .2s, border-color .2s; }
+/* Gold accent bar that slides in on hover. */
+.subject-card::before { content: ''; position: absolute; left: 0; top: 0; height: 3px; width: 100%; background: linear-gradient(90deg, #f0c34a, #e5a927); transform: scaleX(0); transform-origin: left; transition: transform .25s; }
+.subject-card:hover { transform: translateY(-4px); border-color: #e8c873; box-shadow: 0 14px 30px rgba(var(--shadow-rgb),.1); }
+.subject-card:hover::before { transform: scaleX(1); }
+/* Large faint copy of the subject icon in the corner, for texture. */
+.subject-card-glyph { position: absolute; right: -6px; bottom: -22px; font: 600 96px/1 'DM Mono', monospace; color: var(--c-467568); opacity: .06; pointer-events: none; white-space: nowrap; transition: opacity .2s, transform .3s; }
+.subject-card:hover .subject-card-glyph { opacity: .1; transform: translateY(-4px); }
+.subject-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.subject-card-icon { width: 48px; height: 48px; flex-shrink: 0; display: grid; place-items: center; border-radius: 13px; background: linear-gradient(145deg, var(--c-e0ece1), var(--c-dcece2)); color: var(--c-1f5a47); font: 600 15px 'DM Mono', monospace; transition: background .2s, color .2s; }
+.subject-card:hover .subject-card-icon { background: #f0c34a; color: #0b1f1a; }
+.subject-card-code { font: 600 10px 'DM Mono', monospace; letter-spacing: .06em; color: var(--c-43655a); background: var(--c-eef3ee); padding: 4px 9px; border-radius: 99px; white-space: nowrap; }
+.subject-card-name { position: relative; font: 700 16px/1.3 'DM Sans', sans-serif; letter-spacing: -.015em; color: var(--c-0b1f1a); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.subject-card-foot { position: relative; margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.subject-card-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.subject-card-meta span { font: 500 10px 'DM Mono', monospace; color: var(--c-5c6b64); background: var(--c-eef1ec); padding: 3px 8px; border-radius: 99px; }
+.subject-card-go { width: 32px; height: 32px; flex-shrink: 0; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--c-dfe4dd); color: var(--c-467568); transition: background .2s, color .2s, border-color .2s, transform .2s; }
+.subject-card:hover .subject-card-go { background: #0b1f1a; border-color: #0b1f1a; color: #f0c34a; transform: translateX(2px); }
+.subject-card-resource .subject-card-icon { background: linear-gradient(145deg, #fbefc8, #f7e3a6); color: #6d5410; }
+.subject-card-resource .subject-card-code { background: #fbefc8; color: #6d5410; }
+.subject-card-empty { background: var(--c-fbfcf7); box-shadow: none; }
+.subject-card-empty .subject-card-name, .subject-card-empty .subject-card-icon { opacity: .55; }
+.subject-card-empty .subject-card-meta span { background: transparent; padding-left: 0; }
+.syllabus-all-link { display: inline-flex; align-items: center; gap: 5px; border: 0; background: none; padding: 0; color: var(--c-467568); font: 600 11px 'DM Sans', sans-serif; white-space: nowrap; }
+.syllabus-all-link:hover { color: var(--c-0b1f1a); text-decoration: underline; text-underline-offset: 3px; }
+.course-table-wrap { margin-bottom: 18px; border: 1px solid var(--c-e3e6de); border-radius: 13px; overflow-x: auto; background: var(--c-fffdf7); }
+.course-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.course-table th { text-align: left; font: 600 10px 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--c-5c6b64); background: var(--c-f6f7f1); padding: 11px 16px; border-bottom: 1px solid var(--c-e3e6de); white-space: nowrap; }
+.course-table td { padding: 9px 16px; border-bottom: 1px solid var(--c-eef1ec); color: var(--c-1d3f35); vertical-align: middle; }
+.course-table tbody tr:last-child td { border-bottom: 0; }
+.course-table tbody tr:hover td { background: var(--c-f6f7f1); }
+.course-table .num { text-align: center; width: 1%; white-space: nowrap; }
+.course-table td.code { font: 600 11px 'DM Mono', monospace; color: var(--c-0b1f1a); white-space: nowrap; width: 1%; }
+.course-table-link { display: inline-flex; align-items: center; gap: 10px; border: 0; background: none; padding: 0; color: var(--c-0b1f1a); font: 600 13px 'DM Sans', sans-serif; text-align: left; }
+.course-table-link:hover { color: var(--c-467568); text-decoration: underline; text-underline-offset: 3px; }
+.course-table-icon { width: 26px; height: 26px; flex-shrink: 0; display: grid; place-items: center; border-radius: 7px; background: var(--c-e0ece1); color: var(--c-467568); font: 500 10px 'DM Mono', monospace; }
+.syllabus-link { display: inline-flex; align-items: center; gap: 5px; border: 1px solid #e8c873; background: var(--c-fffdf0); color: var(--c-0b1f1a); font: 600 11px 'DM Sans', sans-serif; padding: 4px 10px; border-radius: 99px; white-space: nowrap; }
+.syllabus-link:hover { background: #f0c34a; border-color: #f0c34a; color: #0b1f1a; }
+.course-table .muted { color: var(--c-a1aaa4); }
+.course-table tfoot td { font-weight: 700; color: var(--c-0b1f1a); background: var(--c-f6f7f1); border-top: 1px solid var(--c-e3e6de); border-bottom: 0; }
+.notes-heading { margin: 26px 0 12px; font: 600 10px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--c-5c6b64); }
 .subject-group { margin-bottom: 36px; }
 .subject-group-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--c-e3e6de); }
 .subject-group-semester { font-size: 14px; font-weight: 600; color: var(--c-1d3f35); display: flex; align-items: center; gap: 7px; }
 .subject-group-semester svg { color: var(--c-52806c); }
 .subject-group-year { font: 500 10px 'DM Mono', monospace; color: var(--c-9aa69e); }
-.subject-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
-.subject-card { border: 1px solid var(--c-e3e6de); border-radius: 11px; padding: 14px 16px; text-align: left; display: flex; align-items: center; gap: 13px; background: var(--c-fffdf7); color: var(--c-789087); transition: transform .18s, box-shadow .18s, border-color .18s; }
-.subject-card:hover { transform: translateY(-2px); border-color: var(--c-c8d4cb); box-shadow: 0 6px 16px rgba(var(--shadow-rgb),.06); color: var(--c-1d3f35); }
-.subject-card-icon { width: 36px; height: 36px; flex-shrink: 0; display: grid; place-items: center; background: var(--c-e0ece1); color: var(--c-467568); border-radius: 9px; font: 500 13px 'DM Mono', monospace; }
-.subject-card-body { min-width: 0; flex: 1; }
-.subject-card-body small { display: block; font: 500 9px 'DM Mono', monospace; color: var(--c-9aa69e); margin-bottom: 3px; }
-.subject-card-body strong { display: block; font-size: 13px; font-weight: 600; color: var(--c-0b1f1a); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.subject-card-meta { display: block; font: 500 9px 'DM Mono', monospace; color: var(--c-a2ada6); margin-top: 4px; }
-.subject-card-arrow { margin-left: auto; opacity: .35; flex-shrink: 0; }
 
 .workspace { padding-bottom: 86px; }
 .reader-layout-full { min-height: 555px; border: 1px solid var(--c-dbe2dc); border-radius: 15px; overflow: hidden; background: var(--c-fffdf7); }
@@ -473,8 +497,6 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .markdown-preview blockquote { margin: 0; padding-left: 14px; border-left: 3px solid #f0c34a; color: var(--c-5d6f67); }
 
 /* Subjects without notes yet */
-.subject-card-empty { opacity: .62; }
-.subject-card-empty .subject-card-icon { background: var(--c-eceee8); color: var(--c-9aa69e); }
 
 /* Subject page: fills the viewport; only the file list and the preview scroll */
 .app-shell-fixed { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
@@ -632,6 +654,14 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
   .file-body-full { grid-template-columns: 200px minmax(0, 1fr); }
   .about-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .course-table { font-size: 12px; }
+  .course-table th, .course-table td { padding: 9px 8px; }
+  .course-table th:first-child, .course-table td:first-child { padding-left: 12px; }
+  .course-table-icon { display: none; }
+  .course-table-link { font-size: 12px; }
+  .syllabus-link { padding: 4px 8px; }
+  .subject-cards-grid { grid-template-columns: 1fr; gap: 12px; }
+  .subject-card { min-height: 150px; }
   .footer-top { flex-direction: column; gap: 28px; }
 }
 
