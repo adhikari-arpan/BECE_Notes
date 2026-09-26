@@ -485,7 +485,19 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .subject-box-file { min-width: 0; display: flex; align-items: center; gap: 8px; }
 .subject-box-file-size { flex-shrink: 0; font: 500 10px 'DM Mono', monospace; color: var(--c-a1aaa4); margin-right: 4px; }
 .subject-box-file .icon-button { width: 28px; height: 28px; flex-shrink: 0; }
-.subject-box .file-body-full { flex: 1; min-height: 0; grid-template-columns: 280px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.subject-box .file-body-full { flex: 1; min-height: 0; grid-template-columns: var(--sidebar-width, 280px) 0 minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.subject-box .file-body-full.sidebar-collapsed { grid-template-columns: 0 0 minmax(0, 1fr); }
+.subject-box .sidebar-collapsed .file-tree { visibility: hidden; padding: 0; border: 0; overflow: hidden; }
+/* Resize handle: a zero-width grid column with a wider invisible grab area over the border. */
+.sidebar-resizer { position: relative; z-index: 5; width: 0; cursor: col-resize; outline: none; touch-action: none; }
+.sidebar-resizer::before { content: ''; position: absolute; top: 0; bottom: 0; left: -4px; width: 8px; }
+.sidebar-resizer::after { content: ''; position: absolute; top: 0; bottom: 0; left: -1px; width: 2px; background: transparent; transition: background .15s .1s; }
+.sidebar-resizer:hover::after, .sidebar-resizer:focus-visible::after, .sidebar-dragging .sidebar-resizer::after { background: #f0c34a; }
+.sidebar-collapsed .sidebar-resizer::before { left: 0; }
+body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !important; user-select: none !important; }
+.sidebar-toggle { flex-shrink: 0; margin-right: -4px; }
+.subject-box-head { justify-content: flex-start; }
+.subject-box-file { margin-left: auto; }
 .subject-box .file-tree { max-height: none; min-height: 0; overflow-y: auto; }
 .subject-box .preview-pane { min-height: 0; }
 .subject-box .preview-content { flex: 1; height: auto; min-height: 0; overflow-y: auto; }
@@ -645,6 +657,8 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
   .subject-box-title h2 { font-size: 16px; }
   .subject-meta, .subject-box-file-name, .subject-box-file-size, .subject-box-file .file-badge { display: none; }
   .subject-box .file-body-full { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 34%) minmax(0, 1fr); }
+  .subject-box .file-body-full.sidebar-collapsed { grid-template-columns: minmax(0, 1fr); grid-template-rows: 0 minmax(0, 1fr); }
+  .sidebar-resizer { display: none; }
   .subject-box .file-tree { max-height: none; }
   .subject-box .preview-content, .subject-box .preview-content iframe { min-height: 0; }
   .pdf-toolbar { padding: 5px 8px; gap: 4px; }
