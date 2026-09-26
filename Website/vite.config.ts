@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { notesPlugin } from './plugins/notes';
+import { pdfjsAssetsPlugin } from './plugins/pdfjsAssets';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -13,6 +14,7 @@ export default defineConfig(({ mode }) => {
     base: env.BASE_PATH || '/',
     plugins: [
       react(),
+      pdfjsAssetsPlugin(),
       notesPlugin({
         // The notes live next to this Website folder, in the repository root.
         repoRoot: fileURLToPath(new URL('..', import.meta.url)),

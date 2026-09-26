@@ -137,6 +137,7 @@ export function PrivacyView() {
               <li><ShieldCheck size={16} /> <span><strong>Vercel</strong> — hosts the website.</span></li>
               <li><ShieldCheck size={16} /> <span><strong>Microsoft Office viewer</strong> — shows previews of Word and PowerPoint files.</span></li>
               <li><ShieldCheck size={16} /> <span><strong>Google Fonts</strong> — provides the fonts used on the site.</span></li>
+              <li><ShieldCheck size={16} /> <span><strong>eSewa</strong> — optional “Buy me a Chiya” tips are paid directly in the eSewa app by scanning a QR code. This site never sees or stores any payment details.</span></li>
             </ul>
           </div>
 

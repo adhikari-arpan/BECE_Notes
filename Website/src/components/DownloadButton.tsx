@@ -2,6 +2,7 @@ import { useState, type MouseEvent, type ReactNode } from 'react';
 import { LoaderCircle } from 'lucide-react';
 import type { NoteFile } from '@/content/notes';
 import { downloadWithCredit } from '@/content/watermark';
+import { nudgeAfterDownload } from '@/content/tipJar';
 
 interface DownloadButtonProps {
   file: NoteFile;
@@ -20,6 +21,7 @@ export function DownloadButton({ file, className, children, title = 'Download' }
     setBusy(true);
     try {
       await downloadWithCredit(file.url, file.name, file.kind);
+      nudgeAfterDownload();
     } catch {
       // Network/CORS trouble: fall back to the plain file so the download still works.
       window.open(file.url, '_blank', 'noopener');

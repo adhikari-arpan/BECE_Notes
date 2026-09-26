@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  Coffee,
   Users,
   CheckCircle2,
   Heart,
@@ -13,6 +14,8 @@ import { allFiles, formatSize, isSyllabus, plural, semesterPath, semesters } fro
 import { formatCount, useSiteStats } from '@/content/visits';
 import { CountUp } from '@/components/CountUp';
 import { Logo } from '@/components/Logo';
+import { ChiyaCup } from '@/components/TipJar';
+import { openTipJar } from '@/content/tipJar';
 import { Link } from '@/components/Link';
 import { contributors } from '@/content/contributors';
 
@@ -179,6 +182,18 @@ export function HomeView() {
             <strong>{formatSize(totalBytes)}</strong>
             <span>Of study material</span>
           </div>
+        </div>
+      </section>
+
+      <section className="chiya-banner-section section-wrap">
+        <div className="chiya-banner">
+          <ChiyaCup size={76} />
+          <div className="chiya-banner-text">
+            <span className="section-kicker">Support the project</span>
+            <h3>Did these notes help you pass?</h3>
+            <p>BECE Notes is free for every student. If it saved you time before an exam, buy me a chiya — it keeps the library growing.</p>
+          </div>
+          <button className="chiya-cta" onClick={openTipJar}><Coffee size={16} /> Buy me a Chiya</button>
         </div>
       </section>
     </>

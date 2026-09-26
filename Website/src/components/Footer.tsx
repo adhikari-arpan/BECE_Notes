@@ -1,6 +1,7 @@
-import { ShieldCheck, CircleHelp, Eye, Heart, MousePointerClick, Users } from 'lucide-react';
+import { Coffee, ShieldCheck, CircleHelp, Eye, Heart, MousePointerClick, Users } from 'lucide-react';
 import { formatCount, useSiteStats } from '@/content/visits';
 import { Logo } from '@/components/Logo';
+import { openTipJar } from '@/content/tipJar';
 import { Link } from '@/components/Link';
 
 export function Footer() {
@@ -22,6 +23,7 @@ export function Footer() {
             <Link to="/contributors"><Users size={15} /> Contributors</Link>
             <Link to="/contributing"><Heart size={15} /> Contribute</Link>
             <Link to="/privacy"><ShieldCheck size={15} /> Privacy Policy</Link>
+            <button className="footer-chiya" onClick={openTipJar}><Coffee size={15} /> Buy me a Chiya</button>
           </nav>
         </div>
         <div className="footer-bottom">

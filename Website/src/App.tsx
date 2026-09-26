@@ -10,10 +10,12 @@ import { NotFoundView } from '@/components/NotFoundView';
 import { PrivacyView } from '@/components/PrivacyView';
 import { Footer } from '@/components/Footer';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { ChiyaButton, TipJar } from '@/components/TipJar';
 import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
 import { useLocation } from '@/content/router';
 import { trackPageView } from '@/content/visits';
+import { SITE_URL } from '@/content/watermark';
 
 const SITE_TITLE = 'BECE Notes — Pokhara University Computer Engineering Notes';
 /** The site-wide description from index.html, restored on pages without their own. */
@@ -63,6 +65,15 @@ function App() {
         : defaultDescription;
   }, [semester, subject]);
 
+  // Each page's official address, so search engines index every semester/subject page on its own
+  // (without ?file=…, so a subject is one page, not one per file). Missing pages are kept out of results.
+  useEffect(() => {
+    const url = `${SITE_URL}${pathname === '/' ? '/' : pathname}`;
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', url);
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', url);
+    document.querySelector('meta[name="robots"]')?.setAttribute('content', page === 'not-found' ? 'noindex, follow' : 'index, follow');
+  }, [pathname, page]);
+
   // A title per page, for browser tabs, bookmarks and search results.
   useEffect(() => {
     const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy' };
@@ -88,6 +99,7 @@ function App() {
           <nav className="top-actions">
             {page !== 'home' && <Link to="/" className="text-button">Home</Link>}
             <span className="status-pill"><span className="status-dot" /> Open collection</span>
+            <ChiyaButton />
             <ThemeToggle />
           </nav>
         </div>
@@ -107,6 +119,7 @@ function App() {
       </main>
 
       {page !== 'subject' && <Footer />}
+      <TipJar />
     </div>
   );
 }

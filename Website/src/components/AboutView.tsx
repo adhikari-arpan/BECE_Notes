@@ -1,6 +1,7 @@
 import { ArrowLeft, Coffee, FolderOpen, GraduationCap, Handshake, Mail, Shield, Sparkles, UserRound, Users } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { allFiles, semesters } from '@/content/notes';
+import { openTipJar } from '@/content/tipJar';
 
 const CONTACT_EMAIL = 'adhikariarpan2063@gmail.com';
 
@@ -92,9 +93,10 @@ export function AboutView() {
           <div className="content-page-section">
             <h3><Coffee size={18} /> Support this project</h3>
             <p>
-              If this collection saved you some time or helped you prep for an exam, consider buying me a coffee — it keeps
+              If this collection saved you some time or helped you prep for an exam, consider buying me a chiya — it keeps
               this project going and motivates future updates.
             </p>
+            <button className="chiya-cta" onClick={openTipJar}><Coffee size={16} /> Buy me a Chiya · Rs. 50 a cup</button>
           </div>
 
           <div className="content-page-section">
