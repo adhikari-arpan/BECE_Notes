@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, Coffee, Copy, Download, Heart, Minus, Plus, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Coffee, Copy, Download, Heart, Minus, Plus, RefreshCw, Server, Unlock, Wrench, X } from 'lucide-react';
 import {
   CUP_PRESETS, CUP_PRICE, ESEWA_ID, ESEWA_NAME, ESEWA_QR, MAX_CUPS,
   closeTipJar, dismissTipNudge, formatRs, openTipJar, useTipJar,
@@ -22,6 +22,30 @@ export function ChiyaCup({ size = 64, steam = true }: { size?: number; steam?: b
       <ellipse className="chiya-rim" cx="31" cy="22" rx="17" ry="3.2" />
       <rect className="chiya-saucer" x="8" y="56" width="46" height="4" rx="2" />
     </svg>
+  );
+}
+
+/** What a chiya pays for, shown in the tip jar and the home page banner. */
+const CHIYA_USES = [
+  { icon: Unlock, title: 'Free forever', text: 'No paywalls, logins or locked notes, for every student' },
+  { icon: RefreshCw, title: 'Regular updates', text: 'New notes, past questions and syllabus every semester' },
+  { icon: Wrench, title: 'Maintenance', text: 'Fixing broken files and keeping the viewer fast' },
+  { icon: Server, title: 'Hosting & domain', text: 'Keeping the site and its storage online 24/7' },
+];
+
+export function ChiyaUses({ compact = false }: { compact?: boolean }) {
+  return (
+    <ul className={`chiya-uses ${compact ? 'chiya-uses-compact' : ''}`}>
+      {CHIYA_USES.map(({ icon: Icon, title, text }) => (
+        <li key={title}>
+          <span className="chiya-use-icon"><Icon size={compact ? 13 : 15} /></span>
+          <span>
+            <strong>{title}</strong>
+            {!compact && <small>{text}</small>}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -80,6 +104,7 @@ export function TipJar() {
       {open && (
         <div className="tip-backdrop" onMouseDown={(e) => e.target === e.currentTarget && closeTipJar()}>
           <div className="tip-dialog" role="dialog" aria-modal="true" aria-labelledby="tip-title" tabIndex={-1} ref={dialogRef}>
+            <span className="tip-glyph" aria-hidden="true"><ChiyaCup size={480} /></span>
             <button className="tip-close" onClick={closeTipJar} aria-label="Close"><X size={18} /></button>
 
             {step === 'choose' && (
@@ -90,6 +115,11 @@ export function TipJar() {
                     <h2 id="tip-title">Buy me a Chiya</h2>
                     <p>This library is free and always will be. If it helped you study, a cup of chiya keeps it going. 🙏</p>
                   </div>
+                </div>
+
+                <div className="tip-uses">
+                  <span className="tip-uses-label">Your chiya helps with</span>
+                  <ChiyaUses />
                 </div>
 
                 <div className="tip-presets" role="radiogroup" aria-label="Number of cups">

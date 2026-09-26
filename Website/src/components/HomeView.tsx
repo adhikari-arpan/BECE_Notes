@@ -14,7 +14,7 @@ import { allFiles, formatSize, isSyllabus, plural, semesterPath, semesters } fro
 import { formatCount, useSiteStats } from '@/content/visits';
 import { CountUp } from '@/components/CountUp';
 import { Logo } from '@/components/Logo';
-import { ChiyaCup } from '@/components/TipJar';
+import { ChiyaCup, ChiyaUses } from '@/components/TipJar';
 import { openTipJar } from '@/content/tipJar';
 import { Link } from '@/components/Link';
 import { contributors } from '@/content/contributors';
@@ -191,7 +191,8 @@ export function HomeView() {
           <div className="chiya-banner-text">
             <span className="section-kicker">Support the project</span>
             <h3>Did these notes help you pass?</h3>
-            <p>BECE Vault is free for every student. If it saved you time before an exam, buy me a chiya — it keeps the library growing.</p>
+            <p>BECE Vault is free for every student. If it saved you time before an exam, buy me a chiya — it keeps the library free, maintained and regularly updated.</p>
+            <ChiyaUses compact />
           </div>
           <button className="chiya-cta" onClick={openTipJar}><Coffee size={16} /> Buy me a Chiya</button>
         </div>
