@@ -1,5 +1,4 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
-import { marked } from 'marked';
 import {
   ArrowDownToLine,
   Info,
@@ -30,6 +29,7 @@ import { useResizableSidebar } from '@/components/useResizableSidebar';
 import { formatDate, formatSize, isSyllabusFolder, plural, semesterPath, subjectPath, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
 
 const PdfViewer = lazy(() => import('@/components/PdfViewer'));
+const MarkdownViewer = lazy(() => import('@/components/MarkdownViewer'));
 
 const kindLabels: Record<FileKind, string> = {
   pdf: 'PDF', doc: 'Word', slides: 'Slides', sheet: 'Sheet', image: 'Image', markdown: 'Markdown', code: 'Code', text: 'Text', other: 'File',
@@ -314,7 +314,11 @@ function TextPreview({ file, onError }: { file: NoteFile; onError: () => void })
   if (text === null) return <div className="pdf-loading"><Loader /></div>;
 
   if (file.kind === 'markdown') {
-    return <article className="markdown-preview" dangerouslySetInnerHTML={{ __html: marked.parse(text, { async: false }) }} />;
+    return (
+      <Suspense fallback={<div className="pdf-loading"><Loader /></div>}>
+        <MarkdownViewer source={text} url={file.url} title={file.name} />
+      </Suspense>
+    );
   }
   return <pre className="code-preview">{file.name.endsWith('.ipynb') ? notebookSource(text) : text}</pre>;
 }
