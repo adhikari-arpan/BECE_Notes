@@ -1,4 +1,4 @@
-# BECE Notes website
+# BECE Vault website
 
 A React + Vite site that browses the notes stored in this repository (`Semester_*`, `Electives`, ...).
 

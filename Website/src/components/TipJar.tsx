@@ -151,7 +151,7 @@ export function TipJar() {
                   <ol className="tip-steps">
                     <li><strong>Open eSewa</strong> and tap <em>Scan</em>.</li>
                     <li><strong>Scan this QR</strong> — on a phone, tap <em>Save QR</em> and scan it from your gallery.</li>
-                    <li>Enter <strong>{formatRs(total)}</strong> and confirm. Add “Chiya for BECE Notes” as remarks if you like.</li>
+                    <li>Enter <strong>{formatRs(total)}</strong> and confirm. Add “Chiya for BECE Vault” as remarks if you like.</li>
                   </ol>
                 </div>
 
@@ -176,7 +176,7 @@ export function TipJar() {
                 </div>
                 <h2 id="tip-title">Dhanyabad! 🙏</h2>
                 <p>
-                  Thank you for the {cups} {cups === 1 ? 'cup' : 'cups'} of chiya. Your support helps keep BECE Notes free and
+                  Thank you for the {cups} {cups === 1 ? 'cup' : 'cups'} of chiya. Your support helps keep BECE Vault free and
                   growing for every Computer Engineering student. Happy studying!
                 </p>
                 <button className="tip-primary" onClick={closeTipJar}><Heart size={16} /> Back to notes</button>

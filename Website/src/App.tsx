@@ -17,7 +17,7 @@ import { useLocation } from '@/content/router';
 import { trackPageView } from '@/content/visits';
 import { SITE_URL } from '@/content/watermark';
 
-const SITE_TITLE = 'BECE Notes — Pokhara University Computer Engineering Notes';
+const SITE_TITLE = 'BECE Vault — Pokhara University Computer Engineering Notes';
 /** The site-wide description from index.html, restored on pages without their own. */
 let defaultDescription = '';
 
@@ -78,10 +78,10 @@ function App() {
   useEffect(() => {
     const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy' };
     document.title = page === 'home' ? SITE_TITLE
-      : staticPage ? `${titles[staticPage]} | BECE Notes`
-      : subject && semester ? `${subject.name} — ${semester.label} Notes | BECE Notes`
-      : semester ? `${semester.label} Notes — Pokhara University BECE | BECE Notes`
-      : 'Page not found | BECE Notes';
+      : staticPage ? `${titles[staticPage]} | BECE Vault`
+      : subject && semester ? `${subject.name} — ${semester.label} Notes | BECE Vault`
+      : semester ? `${semester.label} Notes — Pokhara University BECE | BECE Vault`
+      : 'Page not found | BECE Vault';
   }, [page, staticPage, semester, subject]);
 
   return (
@@ -91,7 +91,7 @@ function App() {
           <Link to="/" className="brand-lockup">
             <div className="brand-mark"><Logo /></div>
             <div>
-              <span className="brand-name">BECE</span>
+              <span className="brand-name">BECE Vault</span>
               <span className="brand-divider">/</span>
               <span className="brand-context">Notes library</span>
             </div>
