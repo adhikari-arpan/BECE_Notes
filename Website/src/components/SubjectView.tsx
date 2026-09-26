@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { marked } from 'marked';
 import {
   ArrowDownToLine,
@@ -14,11 +14,14 @@ import {
   FileText,
   Folder,
   FolderOpen,
+  PanelLeftClose,
+  PanelLeftOpen,
   Presentation,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { Loader } from '@/components/Loader';
 import { DownloadButton } from '@/components/DownloadButton';
+import { useResizableSidebar } from '@/components/useResizableSidebar';
 import { formatDate, formatSize, plural, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
 
 const PdfViewer = lazy(() => import('@/components/PdfViewer'));
@@ -57,6 +60,7 @@ export function SubjectView({ semester, subject, onBack, onContributing }: Subje
   const [activeFileId, setActiveFileId] = useState(subject.files[0]?.id ?? '');
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const activeFile = subject.files.find((f) => f.id === activeFileId) ?? subject.files[0];
+  const sidebar = useResizableSidebar();
 
   const toggleFolder = (folder: string) =>
     setCollapsed((prev) => {
@@ -75,6 +79,17 @@ export function SubjectView({ semester, subject, onBack, onContributing }: Subje
 
         <div className="subject-box">
           <div className="subject-box-head">
+            {activeFile && (
+              <button
+                className="icon-button sidebar-toggle"
+                onClick={sidebar.toggle}
+                aria-label={sidebar.collapsed ? 'Show file list' : 'Hide file list'}
+                aria-expanded={!sidebar.collapsed}
+                title={`${sidebar.collapsed ? 'Show' : 'Hide'} file list (Ctrl + B)`}
+              >
+                {sidebar.collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+              </button>
+            )}
             <div className="subject-box-title">
               <span className="subject-code">{subject.code}</span>
               <h2>{subject.name}</h2>
@@ -107,8 +122,11 @@ export function SubjectView({ semester, subject, onBack, onContributing }: Subje
           </div>
 
             {activeFile ? (
-              <div className="file-body-full">
-                <div className="file-tree">
+              <div
+                className={`file-body-full ${sidebar.collapsed ? 'sidebar-collapsed' : ''} ${sidebar.dragging ? 'sidebar-dragging' : ''}`}
+                style={{ '--sidebar-width': `${sidebar.width}px` } as CSSProperties}
+              >
+                <div className="file-tree" aria-hidden={sidebar.collapsed || undefined}>
                   <div className="tree-title">
                     <span className="tree-title-label">Files</span>
                     <span className="tree-count">{subject.files.length}</span>
@@ -143,6 +161,7 @@ export function SubjectView({ semester, subject, onBack, onContributing }: Subje
                     </div>
                   ))}
                 </div>
+                <div className="sidebar-resizer" {...sidebar.handleProps} />
                 <FilePreview key={activeFile.id} file={activeFile} />
               </div>
             ) : (
