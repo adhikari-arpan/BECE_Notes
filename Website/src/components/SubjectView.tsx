@@ -17,12 +17,13 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Presentation,
+  ScrollText,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { Loader } from '@/components/Loader';
 import { DownloadButton } from '@/components/DownloadButton';
 import { useResizableSidebar } from '@/components/useResizableSidebar';
-import { formatDate, formatSize, plural, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
+import { formatDate, formatSize, isSyllabusFolder, plural, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
 
 const PdfViewer = lazy(() => import('@/components/PdfViewer'));
 
@@ -55,11 +56,14 @@ export function SubjectView({ semester, subject, initialFileId, onBack, onContri
   const groups = useMemo(() => {
     const map = new Map<string, NoteFile[]>();
     for (const file of subject.files) map.set(file.folder, [...(map.get(file.folder) ?? []), file]);
-    // Files at the subject root first, then sub-folders in natural order.
-    return [...map.entries()].sort(([a], [b]) => (a === '' ? -1 : b === '' ? 1 : a.localeCompare(b, undefined, { numeric: true })));
+    // The subject's `_Syllabus` folder first, then files at the subject root, then other folders.
+    const rank = (folder: string) => (isSyllabusFolder(folder) ? 0 : folder === '' ? 1 : 2);
+    return [...map.entries()].sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b, undefined, { numeric: true }));
   }, [subject]);
 
-  const [activeFileId, setActiveFileId] = useState(initialFileId ?? subject.files[0]?.id ?? '');
+  // Open on the first note (not the syllabus) unless a specific file was requested.
+  const firstNote = subject.files.find((f) => !isSyllabusFolder(f.folder)) ?? subject.files[0];
+  const [activeFileId, setActiveFileId] = useState(initialFileId ?? firstNote?.id ?? '');
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const activeFile = subject.files.find((f) => f.id === activeFileId) ?? subject.files[0];
   const sidebar = useResizableSidebar();
@@ -134,14 +138,16 @@ export function SubjectView({ semester, subject, initialFileId, onBack, onContri
                     <span className="tree-count">{subject.files.length}</span>
                   </div>
                   {groups.map(([folder, files]) => (
-                    <div key={folder} className="tree-group">
+                    <div key={folder} className={`tree-group ${isSyllabusFolder(folder) ? 'tree-group-syllabus' : ''}`}>
                       {folder && (
                         <button className="tree-folder" onClick={() => toggleFolder(folder)} title={folder}>
                           {collapsed.has(folder) ? <ChevronRight size={13} className="tree-chevron" /> : <ChevronDown size={13} className="tree-chevron" />}
-                          {collapsed.has(folder) ? <Folder size={15} className="tree-folder-icon" /> : <FolderOpen size={15} className="tree-folder-icon" />}
+                          {isSyllabusFolder(folder)
+                            ? <ScrollText size={15} className="tree-folder-icon" />
+                            : collapsed.has(folder) ? <Folder size={15} className="tree-folder-icon" /> : <FolderOpen size={15} className="tree-folder-icon" />}
                           <span>
-                            {folder.includes('/') && <em>{folder.slice(0, folder.lastIndexOf('/') + 1)}</em>}
-                            {folder.slice(folder.lastIndexOf('/') + 1)}
+                            {folder.includes('/') && <em>{folder.slice(0, folder.lastIndexOf('/') + 1).replace(/^_+/, '')}</em>}
+                            {folder.slice(folder.lastIndexOf('/') + 1).replace(/^_+/, '')}
                           </span>
                           <small className="tree-count">{files.length}</small>
                         </button>

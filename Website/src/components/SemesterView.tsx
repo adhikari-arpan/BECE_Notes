@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, FileText } from 'lucide-react';
-import { isSyllabus, plural, syllabusFileFor, type Semester } from '@/content/notes';
+import { findSyllabus, isSyllabus, plural, type Semester } from '@/content/notes';
 
 interface SemesterViewProps {
   semester: Semester;
@@ -13,6 +13,8 @@ export function SemesterView({ semester, onSelectSubject, onBack }: SemesterView
   const subjects = semester.subjects.filter((s) => !isSyllabus(s));
   const courses = subjects.filter((s) => s.kind === 'course');
   const totalCredits = courses.reduce((sum, c) => sum + (c.credits ?? 0), 0);
+  // Show the Syllabus column when there's a semester syllabus folder or any subject has its own.
+  const hasSyllabusColumn = !!syllabus || courses.some((c) => findSyllabus(undefined, c));
 
   return (
     <>
@@ -38,12 +40,12 @@ export function SemesterView({ semester, onSelectSubject, onBack }: SemesterView
                   <th>Code</th>
                   <th>Subject</th>
                   <th className="num">Credits</th>
-                  {syllabus && <th>Syllabus</th>}
+                  {hasSyllabusColumn && <th>Syllabus</th>}
                 </tr>
               </thead>
               <tbody>
                 {courses.map((c) => {
-                  const syllabusFile = syllabusFileFor(syllabus, c);
+                  const syllabusFile = findSyllabus(syllabus, c);
                   return (
                     <tr key={c.id}>
                       <td className="code">{c.code}</td>
@@ -54,10 +56,10 @@ export function SemesterView({ semester, onSelectSubject, onBack }: SemesterView
                         </button>
                       </td>
                       <td className="num">{c.credits ?? '—'}</td>
-                      {syllabus && (
+                      {hasSyllabusColumn && (
                         <td>
                           {syllabusFile ? (
-                            <button className="syllabus-link" onClick={() => onSelectSubject(syllabus.id, syllabusFile.id)} title={syllabusFile.name}>
+                            <button className="syllabus-link" onClick={() => onSelectSubject(syllabusFile.subjectId, syllabusFile.file.id)} title={syllabusFile.file.name}>
                               <FileText size={13} /> View
                             </button>
                           ) : <span className="muted">—</span>}
@@ -73,11 +75,11 @@ export function SemesterView({ semester, onSelectSubject, onBack }: SemesterView
                     <td />
                     <td>Total</td>
                     <td className="num">{totalCredits}</td>
-                    {syllabus && (
+                    {hasSyllabusColumn && (
                       <td>
-                        <button className="syllabus-all-link" onClick={() => onSelectSubject(syllabus.id)}>
+                        {syllabus && <button className="syllabus-all-link" onClick={() => onSelectSubject(syllabus.id)}>
                           All syllabus files <ArrowRight size={13} />
-                        </button>
+                        </button>}
                       </td>
                     )}
                   </tr>
