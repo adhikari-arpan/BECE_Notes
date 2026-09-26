@@ -57,14 +57,47 @@ interface SubjectViewProps {
   requestedFile?: NoteFile;
 }
 
+/** A folder in the subject's file list, holding its own files and subfolders. */
+interface TreeFolder {
+  name: string;
+  /** Path relative to the subject folder, e.g. `NAST College Notes/Unit 1`. */
+  path: string;
+  files: NoteFile[];
+  folders: TreeFolder[];
+  /** Files in this folder and every folder inside it. */
+  total: number;
+}
+
+const byName = (a: string, b: string) => a.localeCompare(b, undefined, { numeric: true });
+
+function buildTree(files: NoteFile[]): TreeFolder {
+  const root: TreeFolder = { name: '', path: '', files: [], folders: [], total: 0 };
+  for (const file of files) {
+    let node = root;
+    node.total++;
+    for (const part of file.folder ? file.folder.split('/') : []) {
+      const path = node.path ? `${node.path}/${part}` : part;
+      let child = node.folders.find((f) => f.name === part);
+      if (!child) node.folders.push((child = { name: part, path, files: [], folders: [], total: 0 }));
+      node = child;
+      node.total++;
+    }
+    node.files.push(file);
+  }
+  // A `_Syllabus` folder first, then everything else by name.
+  const sort = (node: TreeFolder) => {
+    node.folders.sort((a, b) => Number(isSyllabusFolder(b.name)) - Number(isSyllabusFolder(a.name)) || byName(a.name, b.name));
+    node.folders.forEach(sort);
+  };
+  sort(root);
+  return root;
+}
+
 export function SubjectView({ semester, subject, requestedFile }: SubjectViewProps) {
-  const groups = useMemo(() => {
-    const map = new Map<string, NoteFile[]>();
-    for (const file of subject.files) map.set(file.folder, [...(map.get(file.folder) ?? []), file]);
-    // The subject's `_Syllabus` folder first, then files at the subject root, then other folders.
-    const rank = (folder: string) => (isSyllabusFolder(folder) ? 0 : folder === '' ? 1 : 2);
-    return [...map.entries()].sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b, undefined, { numeric: true }));
-  }, [subject]);
+  const tree = useMemo(() => buildTree(subject.files), [subject]);
+  // At the top: the `_Syllabus` folder, then files at the subject root, then other folders.
+  const syllabusFolders = tree.folders.filter((f) => isSyllabusFolder(f.name));
+  const otherFolders = tree.folders.filter((f) => !isSyllabusFolder(f.name));
 
   // The open file lives in the URL (?file=…) so it can be shared; otherwise start on the first note.
   const activeFile = requestedFile;
@@ -80,6 +113,45 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
       else next.add(folder);
       return next;
     });
+
+  const renderFile = (file: NoteFile, nested: boolean) => (
+    <button
+      key={file.id}
+      className={`file-row ${nested ? 'nested' : ''} ${file.id === activeFile?.id ? 'active' : ''}`}
+      onClick={() => openFile(file)}
+      title={file.name}
+    >
+      <span className={`file-badge ${file.kind}`}><FileKindIcon kind={file.kind} size={14} /></span>
+      <span>
+        <strong>{file.name}</strong>
+        <small>{kindLabels[file.kind]} · {formatSize(file.size)}</small>
+      </span>
+    </button>
+  );
+
+  // A folder, then (when open) its files and subfolders indented beneath it.
+  const renderFolder = (folder: TreeFolder): ReactNode => {
+    const open = !collapsed.has(folder.path);
+    const syllabus = isSyllabusFolder(folder.name);
+    return (
+      <div key={folder.path} className={`tree-folder-block ${syllabus ? 'tree-folder-syllabus' : ''}`}>
+        <button className="tree-folder" onClick={() => toggleFolder(folder.path)} title={folder.path} aria-expanded={open}>
+          {open ? <ChevronDown size={13} className="tree-chevron" /> : <ChevronRight size={13} className="tree-chevron" />}
+          {syllabus
+            ? <ScrollText size={15} className="tree-folder-icon" />
+            : open ? <FolderOpen size={15} className="tree-folder-icon" /> : <Folder size={15} className="tree-folder-icon" />}
+          <span>{folder.name.replace(/^_+/, '')}</span>
+          <small className="tree-count">{folder.total}</small>
+        </button>
+        {open && (
+          <div className="tree-children">
+            {folder.files.map((file) => renderFile(file, true))}
+            {folder.folders.map(renderFolder)}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -148,36 +220,14 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                     <span className="tree-title-label">Files</span>
                     <span className="tree-count">{subject.files.length}</span>
                   </div>
-                  {groups.map(([folder, files]) => (
-                    <div key={folder} className={`tree-group ${isSyllabusFolder(folder) ? 'tree-group-syllabus' : ''}`}>
-                      {folder && (
-                        <button className="tree-folder" onClick={() => toggleFolder(folder)} title={folder}>
-                          {collapsed.has(folder) ? <ChevronRight size={13} className="tree-chevron" /> : <ChevronDown size={13} className="tree-chevron" />}
-                          {isSyllabusFolder(folder)
-                            ? <ScrollText size={15} className="tree-folder-icon" />
-                            : collapsed.has(folder) ? <Folder size={15} className="tree-folder-icon" /> : <FolderOpen size={15} className="tree-folder-icon" />}
-                          <span>
-                            {folder.includes('/') && <em>{folder.slice(0, folder.lastIndexOf('/') + 1).replace(/^_+/, '')}</em>}
-                            {folder.slice(folder.lastIndexOf('/') + 1).replace(/^_+/, '')}
-                          </span>
-                          <small className="tree-count">{files.length}</small>
-                        </button>
-                      )}
-                      {!collapsed.has(folder) && files.map((file) => (
-                        <button
-                          key={file.id}
-                          className={`file-row ${folder ? 'nested' : ''} ${file.id === activeFile?.id ? 'active' : ''}`}
-                          onClick={() => openFile(file)}
-                          title={file.name}
-                        >
-                          <span className={`file-badge ${file.kind}`}><FileKindIcon kind={file.kind} size={14} /></span>
-                          <span>
-                            <strong>{file.name}</strong>
-                            <small>{kindLabels[file.kind]} · {formatSize(file.size)}</small>
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                  {syllabusFolders.map((folder) => (
+                    <div key={folder.path} className="tree-group tree-group-syllabus">{renderFolder(folder)}</div>
+                  ))}
+                  {tree.files.length > 0 && (
+                    <div className="tree-group">{tree.files.map((file) => renderFile(file, false))}</div>
+                  )}
+                  {otherFolders.map((folder) => (
+                    <div key={folder.path} className="tree-group">{renderFolder(folder)}</div>
                   ))}
                 </div>
                 <div className="sidebar-resizer" {...sidebar.handleProps} />
