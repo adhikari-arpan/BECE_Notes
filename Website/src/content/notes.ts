@@ -81,7 +81,7 @@ const electiveCourses: CourseInfo[] = [
 /** Folders holding shared material rather than a single subject (Question Collection, _Syllabus, ...). */
 const resourceIcons: [RegExp, string][] = [
   [/syllabus/i, '§'],
-  [/question|assessment/i, '?'],
+  [/question|assessment/i, '✎'],
 ];
 
 const EXTENSION_KINDS: Record<string, FileKind> = {
