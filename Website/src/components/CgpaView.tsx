@@ -1,35 +1,20 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Award, Calculator, ExternalLink, GraduationCap, HardDrive, Info, RotateCcw, TriangleAlert } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ArrowLeft, Award, Calculator, CheckCircle2, Download, ExternalLink, FileUp, GraduationCap, HardDrive, Info, Loader2, RotateCcw, TriangleAlert } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { CgpaUploadDialog } from '@/components/CgpaUploadDialog';
 import { curriculumSemesters, electiveNames } from '@/content/notes';
-import { DEANS_LIST_GPA, DISTINCTION_CGPA, GRADES, GRADING_SOURCE, MIN_CGPA, formatGpa, gpa, gradePoint, gradeRange } from '@/content/grades';
-
-/** Per semester: grade picked for each course (by code), and/or a whole-semester SGPA typed in directly (it wins). */
-interface SemesterEntry {
-  grades: Record<string, string>;
-  electives: Record<string, string>;
-  sgpa: string;
-}
-type Entries = Record<number, SemesterEntry>;
+import { DEANS_LIST_GPA, DISTINCTION_CGPA, GRADES, GRADING_SOURCE, MIN_CGPA, formatGpa, gradePoint, gradeRange } from '@/content/grades';
+import { cleanEntries, computeResults, emptyEntry, hasEntries, isElectiveSlot, type Entries, type SemesterEntry } from '@/content/cgpa';
+import { saveBlob } from '@/content/watermark';
 
 const STORAGE_KEY = 'bece-cgpa-v1';
-const emptyEntry = (): SemesterEntry => ({ grades: {}, electives: {}, sgpa: '' });
 
 function loadEntries(): Entries {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Entries;
-    return saved && typeof saved === 'object' ? saved : {};
+    return cleanEntries(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}'));
   } catch {
     return {};
   }
-}
-
-const isElectiveSlot = (code: string) => /^ELEC\b/.test(code);
-
-/** A typed SGPA counts only when it's a real value between 0 and 4. */
-function parseSgpa(text: string) {
-  const value = Number(text);
-  return text.trim() !== '' && Number.isFinite(value) && value >= 0 && value <= 4 ? value : null;
 }
 
 export function CgpaView() {
@@ -47,40 +32,43 @@ export function CgpaView() {
   const update = (id: number, change: (entry: SemesterEntry) => SemesterEntry) =>
     setEntries((prev) => ({ ...prev, [id]: change(prev[id] ?? emptyEntry()) }));
 
-  const results = useMemo(() => curriculumSemesters.map((sem) => {
-    const entry = entries[sem.id] ?? emptyEntry();
-    const totalCredits = sem.courses.reduce((sum, c) => sum + c.credits, 0);
-    const graded = sem.courses
-      .map((c) => ({ credits: c.credits, point: gradePoint(entry.grades[c.code] ?? '') }))
-      .filter((c): c is { credits: number; point: number } => c.point !== undefined);
-    const fromGrades = gpa(graded);
-    // A typed SGPA (from the marksheet) counts over the whole semester's credits and replaces the subject grades.
-    const typed = parseSgpa(entry.sgpa);
-    if (typed !== null) return { id: sem.id, totalCredits, credits: totalCredits, sgpa: typed, fromGrades, typed: true, failed: 0 };
-    return {
-      id: sem.id,
-      totalCredits,
-      credits: graded.reduce((sum, c) => sum + c.credits, 0),
-      sgpa: fromGrades,
-      fromGrades,
-      typed: false,
-      failed: sem.courses.filter((c) => entry.grades[c.code] === 'F').length,
-    };
-  }), [entries]);
+  const { results, counted, cgpa, earned, programCredits, failed, best } = useMemo(() => computeResults(entries), [entries]);
 
-  const counted = results.filter((r) => r.sgpa !== null);
-  const cgpa = gpa(counted.map((r) => ({ credits: r.credits, point: r.sgpa! })));
-  const earned = counted.reduce((sum, r) => sum + r.credits, 0);
-  const programCredits = results.reduce((sum, r) => sum + r.totalCredits, 0);
-  const failed = results.reduce((sum, r) => sum + r.failed, 0);
-  const best = counted.length ? Math.max(...counted.map((r) => r.sgpa!)) : null;
+  // PDF report: download what's entered, or upload an earlier report to carry on from it.
+  const [busy, setBusy] = useState<'download' | null>(null);
+  const [notice, setNotice] = useState<{ tone: 'ok' | 'error'; text: string } | null>(null);
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const closeUpload = useCallback(() => setUploadOpen(false), []);
+
+  const downloadReport = async () => {
+    setBusy('download');
+    setNotice(null);
+    try {
+      const { createReport, reportFileName } = await import('@/content/cgpaReport');
+      saveBlob(new Blob([(await createReport(entries)) as BlobPart], { type: 'application/pdf' }), reportFileName());
+    } catch {
+      setNotice({ tone: 'error', text: 'Couldn’t create the PDF. Please try again.' });
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const loadReport = ({ entries: loaded, generated }: { entries: Entries; generated: Date | null }) => {
+    setEntries(loaded);
+    setUploadOpen(false);
+    const semesters = computeResults(loaded).counted.length;
+    setNotice({
+      tone: 'ok',
+      text: `Loaded ${semesters} ${semesters === 1 ? 'semester' : 'semesters'}${generated ? ` from your report of ${generated.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}. Fill in the rest to see your full CGPA.`,
+    });
+  };
 
   const standing = cgpa === null ? null
     : cgpa >= DISTINCTION_CGPA ? { tone: 'great', icon: <Award size={15} />, text: `Distinction level (${DISTINCTION_CGPA.toFixed(2)}+)` }
     : cgpa >= MIN_CGPA ? { tone: 'ok', icon: <GraduationCap size={15} />, text: `Above the ${MIN_CGPA.toFixed(1)} minimum CGPA` }
     : { tone: 'low', icon: <TriangleAlert size={15} />, text: `Below the ${MIN_CGPA.toFixed(1)} minimum CGPA` };
 
-  const hasAnything = Object.values(entries).some((e) => e.sgpa || Object.values(e.grades).some(Boolean));
+  const hasAnything = hasEntries(entries);
 
   return (
     <>
@@ -99,6 +87,13 @@ export function CgpaView() {
           <p className="cgpa-lead">
             Pick a grade for each subject, or type a semester's <strong>SGPA</strong> directly. Your CGPA updates as you go.
           </p>
+          <div className="cgpa-intro-actions">
+            <button className="cgpa-action cgpa-action-primary" onClick={downloadReport} disabled={!hasAnything || busy !== null} title={hasAnything ? 'Download your grades and CGPA as a PDF' : 'Enter a grade first'}>
+              {busy === 'download' ? <Loader2 size={14} className="spin" /> : <Download size={14} />} Download PDF
+            </button>
+            <button className="cgpa-action" onClick={() => { setNotice(null); setUploadOpen(true); }} disabled={busy !== null} title="Load a CGPA report PDF downloaded from this page">
+              <FileUp size={14} /> Upload report
+            </button>
           <details className="cgpa-storage">
             <summary><HardDrive size={13} /> Saved in this browser</summary>
             <p>
@@ -107,8 +102,15 @@ export function CgpaView() {
               sent to our servers.
             </p>
           </details>
+          </div>
+          {notice && (
+            <p className={`cgpa-notice cgpa-notice-${notice.tone}`} role="status">
+              {notice.tone === 'ok' ? <CheckCircle2 size={14} /> : <TriangleAlert size={14} />} {notice.text}
+            </p>
+          )}
         </div>
       </section>
+      {uploadOpen && <CgpaUploadDialog onClose={closeUpload} onLoaded={loadReport} hasExisting={hasAnything} />}
 
       <section className="cgpa-layout section-wrap">
         <aside className="cgpa-summary">
