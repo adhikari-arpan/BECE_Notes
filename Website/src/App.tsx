@@ -8,6 +8,7 @@ import { ContributorsView } from '@/components/ContributorsView';
 import { ContributingView } from '@/components/ContributingView';
 import { NotFoundView } from '@/components/NotFoundView';
 import { PrivacyView } from '@/components/PrivacyView';
+import { CgpaView } from '@/components/CgpaView';
 import { Footer } from '@/components/Footer';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ChiyaButton, TipJar } from '@/components/TipJar';
@@ -24,7 +25,7 @@ let defaultDescription = '';
 /**
  * Routes:
  *   /                                 home
- *   /about, /contributors, /contributing, /privacy
+ *   /about, /contributors, /contributing, /privacy, /cgpa-calculator
  *   /semester-1, /electives, ...      a semester (or collection)
  *   /semester-1/programming-in-c      a subject; ?file=<path in subject> opens a specific file
  */
@@ -32,7 +33,7 @@ function App() {
   const { pathname, params } = useLocation();
   const [first, second] = pathname.split('/').filter(Boolean);
 
-  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy') ? first : null;
+  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy' || first === 'cgpa-calculator') ? first : null;
   const semester = !staticPage && first ? findSemester(first) : undefined;
   const subject = semester && second ? findSubject(semester, second) : undefined;
 
@@ -62,8 +63,10 @@ function App() {
       ? clip(`${subject.name}${subject.kind === 'course' ? ` (${subject.code})` : ''} notes for ${semester.label}, Pokhara University BECE. ${subject.description ?? 'Lecture notes, past questions and resources.'}`)
       : semester
         ? clip(`${semester.label} notes for Pokhara University BE Computer Engineering: ${semester.subjects.filter((s) => s.kind === 'course').map((s) => s.name).join(', ')}.`)
-        : defaultDescription;
-  }, [semester, subject]);
+        : staticPage === 'cgpa-calculator'
+          ? 'Free CGPA and SGPA calculator for Pokhara University BE Computer Engineering (BECE), with every semester’s subjects, credit hours and the official PU grading scale.'
+          : defaultDescription;
+  }, [semester, subject, staticPage]);
 
   // Each page's official address, so search engines index every semester/subject page on its own
   // (without ?file=…, so a subject is one page, not one per file). Missing pages are kept out of results.
@@ -76,7 +79,7 @@ function App() {
 
   // A title per page, for browser tabs, bookmarks and search results.
   useEffect(() => {
-    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy' };
+    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE' };
     document.title = page === 'home' ? SITE_TITLE
       : staticPage ? `${titles[staticPage]} | BECE Vault`
       : subject && semester ? `${subject.name} — ${semester.label} Notes | BECE Vault`
@@ -98,6 +101,7 @@ function App() {
           </Link>
           <nav className="top-actions">
             {page !== 'home' && <Link to="/" className="text-button">Home</Link>}
+            {page !== 'cgpa-calculator' && <Link to="/cgpa-calculator" className="text-button">CGPA Calculator</Link>}
             <span className="status-pill"><span className="status-dot" /> Open collection</span>
             <ChiyaButton />
             <ThemeToggle />
@@ -115,6 +119,7 @@ function App() {
         {page === 'contributors' && <ContributorsView />}
         {page === 'contributing' && <ContributingView />}
         {page === 'privacy' && <PrivacyView />}
+        {page === 'cgpa-calculator' && <CgpaView />}
         {page === 'not-found' && <NotFoundView />}
       </main>
 

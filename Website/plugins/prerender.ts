@@ -161,6 +161,7 @@ function buildPages(semesters: Semester[], opts: PrerenderOptions): Page[] {
     ['/about', 'About', `About ${opts.siteName}: a free, semester-wise library of study notes for the Bachelor of Engineering in Computer Engineering (BECE) program under Pokhara University, Nepal, started by Arpan Adhikari (NCIT).`],
     ['/contributors', 'Contributors', `The people who build and maintain ${opts.siteName}, the free notes library for Pokhara University Computer Engineering students.`],
     ['/contributing', 'Contribute', `How to contribute notes, question papers and lab reports to ${opts.siteName}. Contributors with 10+ relevant files are listed on the site.`],
+    ['/cgpa-calculator', 'CGPA Calculator — Pokhara University BECE', `Free CGPA and SGPA calculator for Pokhara University BE Computer Engineering (BECE): every semester's subjects and credit hours with the official PU grading scale (A = 4.0 … F = 0.0).`],
     ['/privacy', 'Privacy Policy', `Privacy policy of ${opts.siteName}: what information is collected, cookies, analytics and advertising.`],
   ];
   for (const [route, name, desc] of statics) {
@@ -200,6 +201,7 @@ function llmsTxt(semesters: Semester[], opts: PrerenderOptions): string {
     }
     lines.push('');
   }
+  lines.push('## Tools', '', `- [CGPA Calculator](${opts.siteUrl}/cgpa-calculator): SGPA/CGPA calculator for Pokhara University BECE with every subject's credit hours and the PU grading scale`, '');
   lines.push('## About', '', `- [About ${opts.siteName}](${opts.siteUrl}/about)`, `- [How to contribute](${opts.siteUrl}/contributing)`, '');
   return lines.join('\n');
 }
