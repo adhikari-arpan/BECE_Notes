@@ -64,7 +64,7 @@ export function CgpaView() {
   };
 
   const standing = cgpa === null ? null
-    : cgpa >= DISTINCTION_CGPA ? { tone: 'great', icon: <Award size={15} />, text: `Distinction level (${DISTINCTION_CGPA.toFixed(2)}+)` }
+    : cgpa >= DISTINCTION_CGPA ? { tone: 'great', icon: <Award size={15} />, text: 'Distinction level' }
     : cgpa >= MIN_CGPA ? { tone: 'ok', icon: <GraduationCap size={15} />, text: `Above the ${MIN_CGPA.toFixed(1)} minimum CGPA` }
     : { tone: 'low', icon: <TriangleAlert size={15} />, text: `Below the ${MIN_CGPA.toFixed(1)} minimum CGPA` };
 
