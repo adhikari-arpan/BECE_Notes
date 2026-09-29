@@ -78,6 +78,17 @@ const electiveCourses: CourseInfo[] = [
   course('ELECTIVE', 'Mobile App Development', 3, '▯', 'Mobile App Development'),
 ];
 
+/** The curriculum without notes: every semester's courses with codes and credits (used by the CGPA calculator). */
+export const curriculumSemesters = curriculum.map((s) => ({
+  id: s.id,
+  label: s.label,
+  year: s.year,
+  courses: s.courses.map(({ code, name, credits }) => ({ code, name, credits: credits ?? 0 })),
+}));
+
+/** Elective subjects a student can pick for an Elective I/II/III slot. */
+export const electiveNames = electiveCourses.map((c) => c.name);
+
 /** Folders holding shared material rather than a single subject (Question Collection, _Syllabus, ...). */
 const resourceIcons: [RegExp, string][] = [
   [/syllabus/i, '§'],

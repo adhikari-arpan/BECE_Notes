@@ -51,6 +51,7 @@ export function PrivacyView() {
             <ul>
               <li><ShieldCheck size={16} /> Your light/dark theme choice and file-list width</li>
               <li><ShieldCheck size={16} /> Highlights you make on PDFs (kept only in this browser)</li>
+              <li><ShieldCheck size={16} /> Grades and SGPAs you enter in the CGPA calculator (kept only in this browser)</li>
               <li><ShieldCheck size={16} /> The time of your last counted visit, for the visit counter</li>
             </ul>
           </div>
