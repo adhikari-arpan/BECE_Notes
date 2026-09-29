@@ -234,7 +234,8 @@ button { cursor: pointer; }
 .brand-lockup { display: flex; align-items: center; gap: 11px; color: var(--c-0b1f1a); border: 0; background: none; cursor: pointer; }
 .brand-mark { height: 34px; display: flex; align-items: center; flex-shrink: 0; }
 .brand-mark .logo { height: 100%; width: auto; display: block; }
-.brand-name { font-weight: 700; letter-spacing: -.04em; font-size: 17px; }
+/* The wordmark: Cinzel, a carved-capitals serif that suits a "vault" and the gold logo. */
+.brand-name { font-family: 'Cinzel', 'Playfair Display', serif; font-weight: 700; letter-spacing: .03em; font-size: 17px; }
 .brand-divider { color: var(--c-aeb9b1); margin: 0 8px; }
 .brand-context { color: var(--c-5c6b64); font-size: 13px; }
 
@@ -981,7 +982,7 @@ body.tip-jar-open { overflow: hidden; }
 .cgpa-summary-low .cgpa-meter-fill { background: #f08a74; box-shadow: none; }
 .cgpa-summary-label { align-self: center; display: inline-flex; align-items: center; gap: 6px; font: 600 10px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: #f0c34a; }
 .cgpa-big { align-self: stretch; display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 6px 0 4px; }
-.cgpa-value { font: 700 76px/1 'DM Sans', sans-serif; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.045em; background: linear-gradient(180deg, #fff6d6 0%, #f0c34a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 4px 18px rgba(240,195,74,.25)); }
+.cgpa-value { font: 700 76px/1 'Sora', 'DM Sans', sans-serif; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.04em; background: linear-gradient(180deg, #fff6d6 0%, #f0c34a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 4px 18px rgba(240,195,74,.25)); }
 .cgpa-value-empty { background: none; color: rgba(255,255,255,.3); filter: none; }
 .cgpa-scale { font: 500 11px 'DM Mono', monospace; letter-spacing: .14em; color: #9fb8ad; }
 .cgpa-meter { align-self: stretch; margin: 2px 0 6px; }

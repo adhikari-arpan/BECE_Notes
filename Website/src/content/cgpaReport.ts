@@ -7,15 +7,17 @@ import type { PDFFont, PDFPage } from 'pdf-lib';
 import { curriculumSemesters } from '@/content/notes';
 import { DISTINCTION_CGPA, MIN_CGPA, formatGpa, gradePoint } from '@/content/grades';
 import { cleanEntries, computeResults, emptyEntry, isElectiveSlot, type Entries } from '@/content/cgpa';
-import { SITE_HOST } from '@/content/watermark';
+import { SITE_HOST, SITE_URL } from '@/content/watermark';
+import { withBase } from '@/content/router';
 
 const CREATOR = 'BECE Vault CGPA Calculator';
 const MARKER = 'BECEVaultCGPA';
 const VERSION = 1;
 const PAGE_URL = `${SITE_HOST}/cgpa-calculator`;
 export const DISCLAIMER =
-  `Generated at ${PAGE_URL} from grades entered by the user. This is an unofficial estimate, not a transcript or ` +
-  'marksheet, and must not be used for admission, employment, scholarships, visas or any other official purpose. ' +
+  `Generated at ${PAGE_URL} entirely from grades and SGPAs entered by the user. BECE Vault has not verified this ` +
+  'information and does not guarantee its accuracy or authenticity. This is an unofficial estimate, not a transcript ' +
+  'or marksheet, and must not be used for admission, employment, scholarships, visas or any other official purpose. ' +
   'Your Pokhara University transcript is the only official record.';
 
 interface Payload {
@@ -98,12 +100,27 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
   const regular = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+  // The "BECE Vault" wordmark in Cinzel, the site's brand font; Helvetica Bold if it can't be loaded.
+  const brand = await Promise.all([import('@pdf-lib/fontkit'), fetch(withBase('/fonts/Cinzel-Bold.ttf'))])
+    .then(async ([fontkit, res]) => {
+      if (!res.ok) throw new Error('font');
+      pdf.registerFontkit(fontkit.default);
+      return pdf.embedFont(await res.arrayBuffer(), { subset: true });
+    })
+    .catch(() => bold);
   const summary = computeResults(entries);
   const generated = new Date();
   const payloadJson = JSON.stringify({ v: VERSION, generated: generated.toISOString(), entries: cleanEntries(entries) } satisfies Payload);
   const reportId = checksum(payloadJson).toUpperCase();
   const when = generated.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   const contentWidth = A4.width - MARGIN * 2;
+
+  // The site logo, if it can be fetched; the report still works without it.
+  const logo = await fetch(withBase('/logo.png'))
+    .then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error('logo'))))
+    .then((bytes) => pdf.embedPng(bytes))
+    .catch(() => null);
+  const logoSize = (height: number) => (logo ? { width: (logo.width / logo.height) * height, height } : { width: 0, height: 0 });
 
   let page: PDFPage = pdf.addPage([A4.width, A4.height]);
   let y = A4.height;
@@ -135,6 +152,28 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
     addLink(target, lx, yy, lw, size, url);
   };
 
+  /** Draws wrapped lines justified to `width` (the last line stays left-aligned); `linkText` stays a link. */
+  const justified = (target: PDFPage, lines: string[], x: number, top: number, width: number, size: number, leading: number, color: ReturnType<typeof rgb>, linkText: string, url: string) => {
+    const space = regular.widthOfTextAtSize(' ', size);
+    lines.forEach((line, i) => {
+      const yy = top - i * leading;
+      const words = line.split(' ');
+      const widths = words.map((w) => regular.widthOfTextAtSize(w, size));
+      const last = i === lines.length - 1 || words.length < 2;
+      const gap = last ? space : (width - widths.reduce((a, b) => a + b, 0)) / (words.length - 1);
+      let cx = x;
+      words.forEach((word, w) => {
+        const isLink = word === linkText;
+        target.drawText(word, { x: cx, y: yy, size, font: regular, color: isLink ? C.link : color });
+        if (isLink) {
+          target.drawLine({ start: { x: cx, y: yy - 1.2 }, end: { x: cx + widths[w], y: yy - 1.2 }, thickness: 0.4, color: C.link, opacity: 0.6 });
+          addLink(target, cx, yy, widths[w], size, url);
+        }
+        cx += widths[w] + gap;
+      });
+    });
+  };
+
   const text = (t: string, x: number, yy: number, size: number, font = regular, color = C.body) =>
     page.drawText(safe(t), { x, y: yy, size, font, color });
   const right = (t: string, xRight: number, yy: number, size: number, font = regular, color = C.body) =>
@@ -144,7 +183,10 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
   const newPage = () => {
     page = pdf.addPage([A4.width, A4.height]);
     page.drawRectangle({ x: 0, y: A4.height - 34, width: A4.width, height: 34, color: C.green });
-    text('BECE Vault', MARGIN, A4.height - 22, 11, bold, C.gold);
+    const small = logoSize(20);
+    if (logo) page.drawImage(logo, { x: MARGIN, y: A4.height - 27, ...small });
+    text('BECE Vault', MARGIN + (logo ? small.width + 6 : 0), A4.height - 22, 11, brand, C.gold);
+    addLink(page, MARGIN, A4.height - 27, (logo ? small.width + 6 : 0) + brand.widthOfTextAtSize('BECE Vault', 11), 20, SITE_URL);
     right('CGPA Report (continued)', A4.width - MARGIN, A4.height - 22, 9, regular, C.white);
     y = A4.height - 60;
   };
@@ -155,10 +197,15 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
   /* Header band */
   page.drawRectangle({ x: 0, y: A4.height - 96, width: A4.width, height: 96, color: C.green });
   page.drawRectangle({ x: 0, y: A4.height - 99, width: A4.width, height: 3, color: C.gold });
-  text('BECE Vault', MARGIN, A4.height - 44, 22, bold, C.gold);
-  text('CGPA Report  ·  Pokhara University  ·  BE Computer Engineering', MARGIN, A4.height - 64, 10, regular, C.white);
-  text(PAGE_URL, MARGIN, A4.height - 80, 8.5, regular, rgb(0.62, 0.72, 0.68));
-  addLink(page, MARGIN, A4.height - 80, regular.widthOfTextAtSize(PAGE_URL, 8.5), 8.5, `https://${PAGE_URL}`);
+  const big = logoSize(56);
+  if (logo) page.drawImage(logo, { x: MARGIN, y: A4.height - 82, ...big });
+  const tx = MARGIN + (logo ? big.width + 12 : 0);
+  text('BECE Vault', tx, A4.height - 44, 22, brand, C.gold);
+  if (logo) addLink(page, MARGIN, A4.height - 82, big.width, big.height, SITE_URL);
+  addLink(page, tx, A4.height - 46, brand.widthOfTextAtSize('BECE Vault', 22), 20, SITE_URL);
+  text('CGPA Report  ·  Pokhara University  ·  BE Computer Engineering', tx, A4.height - 64, 10, regular, C.white);
+  text(PAGE_URL, tx, A4.height - 80, 8.5, regular, rgb(0.62, 0.72, 0.68));
+  addLink(page, tx, A4.height - 80, regular.widthOfTextAtSize(PAGE_URL, 8.5), 8.5, `https://${PAGE_URL}`);
   right(`Generated ${when}`, A4.width - MARGIN, A4.height - 44, 9, regular, C.white);
   right(`Report ID ${reportId}`, A4.width - MARGIN, A4.height - 58, 8.5, regular, rgb(0.62, 0.72, 0.68));
   y = A4.height - 122;
@@ -168,8 +215,8 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
   const noteHeight = 26 + noteLines.length * 11.5;
   page.drawRectangle({ x: MARGIN, y: y - noteHeight, width: contentWidth, height: noteHeight, color: C.cream, borderColor: C.gold, borderWidth: 0.8 });
   page.drawRectangle({ x: MARGIN, y: y - noteHeight, width: 3.5, height: noteHeight, color: C.goldDeep });
-  text('NOT AN OFFICIAL DOCUMENT', MARGIN + 14, y - 15, 8.5, bold, C.goldDeep);
-  noteLines.forEach((line, i) => textWithLink(page, line, MARGIN + 14, y - 28 - i * 11.5, 8.5, C.body, PAGE_URL, `https://${PAGE_URL}`));
+  text('NOT AN OFFICIAL DOCUMENT  ·  BASED ON USER INPUT', MARGIN + 14, y - 15, 8.5, bold, C.goldDeep);
+  justified(page, noteLines, MARGIN + 14, y - 28, contentWidth - 28, 8.5, 11.5, C.body, PAGE_URL, `https://${PAGE_URL}`);
   y -= noteHeight + 22;
 
   /* Summary: the CGPA, then the key numbers */
@@ -180,7 +227,7 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
   text('out of 4.00', MARGIN + 16, y - 80, 8.5, regular, rgb(0.62, 0.72, 0.68));
 
   const standing = summary.cgpa === null ? 'No grades entered'
-    : summary.cgpa >= DISTINCTION_CGPA ? `Distinction level (${DISTINCTION_CGPA.toFixed(2)}+)`
+    : summary.cgpa >= DISTINCTION_CGPA ? 'Distinction level'
     : summary.cgpa >= MIN_CGPA ? `Above the ${MIN_CGPA.toFixed(1)} minimum CGPA`
     : `Below the ${MIN_CGPA.toFixed(1)} minimum CGPA`;
   const stats: [string, string][] = [
