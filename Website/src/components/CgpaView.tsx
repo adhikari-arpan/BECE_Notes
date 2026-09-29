@@ -73,6 +73,7 @@ export function CgpaView() {
   const earned = counted.reduce((sum, r) => sum + r.credits, 0);
   const programCredits = results.reduce((sum, r) => sum + r.totalCredits, 0);
   const failed = results.reduce((sum, r) => sum + r.failed, 0);
+  const best = counted.length ? Math.max(...counted.map((r) => r.sgpa!)) : null;
 
   const standing = cgpa === null ? null
     : cgpa >= DISTINCTION_CGPA ? { tone: 'great', icon: <Award size={15} />, text: `Distinction level (${DISTINCTION_CGPA.toFixed(2)}+)` }
@@ -112,31 +113,39 @@ export function CgpaView() {
       <section className="cgpa-layout section-wrap">
         <aside className="cgpa-summary">
           <div className={`cgpa-summary-card ${standing ? `cgpa-summary-${standing.tone}` : ''}`}>
+            <GraduationCap className="cgpa-summary-glyph" size={190} strokeWidth={1.2} aria-hidden="true" />
             <span className="cgpa-summary-label"><Calculator size={13} /> Your CGPA</span>
-            <div className="cgpa-ring">
-              <svg viewBox="0 0 120 120" aria-hidden="true">
-                <circle className="cgpa-ring-track" cx="60" cy="60" r="52" />
-                <circle className="cgpa-ring-fill" cx="60" cy="60" r="52" pathLength={100} strokeDasharray={`${((cgpa ?? 0) / 4) * 100} 100`} />
-              </svg>
-              <div className="cgpa-ring-text">
-                <strong className={`cgpa-value ${cgpa === null ? 'cgpa-value-empty' : ''}`}>{formatGpa(cgpa)}</strong>
-                <span className="cgpa-scale">out of 4.00</span>
+            <div className="cgpa-big">
+              <strong className={`cgpa-value ${cgpa === null ? 'cgpa-value-empty' : ''}`}>{formatGpa(cgpa)}</strong>
+              <span className="cgpa-scale">OUT OF 4.00</span>
+            </div>
+            {/* Where the CGPA sits between 0 and 4, with PU's pass and distinction marks. */}
+            <div className="cgpa-meter" aria-hidden="true">
+              <div className="cgpa-meter-track">
+                <span className="cgpa-meter-fill" style={{ width: `${((cgpa ?? 0) / 4) * 100}%` }} />
+                <span className="cgpa-meter-mark" style={{ left: `${(MIN_CGPA / 4) * 100}%` }} />
+                <span className="cgpa-meter-mark" style={{ left: `${(DISTINCTION_CGPA / 4) * 100}%` }} />
+              </div>
+              <div className="cgpa-meter-labels">
+                <span style={{ left: '0%' }}>0</span>
+                <span style={{ left: `${(MIN_CGPA / 4) * 100}%` }}>{MIN_CGPA.toFixed(1)} min</span>
+                <span style={{ left: `${(DISTINCTION_CGPA / 4) * 100}%` }}>{DISTINCTION_CGPA.toFixed(1)} dist.</span>
               </div>
             </div>
             {standing
               ? <span className={`cgpa-standing cgpa-standing-${standing.tone}`}>{standing.icon} {standing.text}</span>
               : <span className="cgpa-standing cgpa-standing-none">Pick a grade to start</span>}
 
-            <div className="cgpa-progress" aria-label={`${earned} of ${programCredits} credits counted`}>
-              <div className="cgpa-progress-bar"><span style={{ width: `${Math.min(100, (earned / programCredits) * 100)}%` }} /></div>
-              <span>{earned} / {programCredits} credits counted</span>
-            </div>
+            <dl className="cgpa-stats">
+              <div><dt>Credits</dt><dd>{earned}<small>/{programCredits}</small></dd></div>
+              <div><dt>Semesters</dt><dd>{counted.length}<small>/{curriculumSemesters.length}</small></dd></div>
+              <div><dt>Best SGPA</dt><dd>{formatGpa(best)}</dd></div>
+            </dl>
 
-            <ul className="cgpa-sgpa-list">
+            <ul className="cgpa-sgpa-list" aria-label="SGPA by semester">
               {curriculumSemesters.map((sem, i) => (
                 <li key={sem.id} className={results[i].sgpa === null ? 'muted' : ''}>
-                  <span>{sem.label.replace('Semester ', 'Sem ')}</span>
-                  <span className="cgpa-sgpa-bar"><span style={{ width: `${((results[i].sgpa ?? 0) / 4) * 100}%` }} /></span>
+                  <span>{sem.label}</span>
                   <strong>{formatGpa(results[i].sgpa)}</strong>
                 </li>
               ))}
@@ -153,6 +162,9 @@ export function CgpaView() {
           </div>
         </aside>
 
+        <datalist id="cgpa-elective-options">
+          {electiveNames.map((name) => <option key={name} value={name} />)}
+        </datalist>
         <div className="cgpa-semesters">
           {curriculumSemesters.map((sem, i) => {
             const entry = entries[sem.id] ?? emptyEntry();
@@ -208,15 +220,15 @@ export function CgpaView() {
                               <td className="code">{c.code}</td>
                               <td>
                                 {isElectiveSlot(c.code) ? (
-                                  <select
+                                  // Suggests the electives we know, but any subject name can be typed.
+                                  <input
                                     className="cgpa-elective"
+                                    list="cgpa-elective-options"
                                     value={entry.electives[c.code] ?? ''}
                                     onChange={(e) => update(sem.id, (en) => ({ ...en, electives: { ...en.electives, [c.code]: e.target.value } }))}
+                                    placeholder={`${c.name}: pick or type a subject`}
                                     aria-label={`Which subject you took for ${c.name}`}
-                                  >
-                                    <option value="">{c.name} (choose subject)</option>
-                                    {electiveNames.map((name) => <option key={name} value={name}>{name}</option>)}
-                                  </select>
+                                  />
                                 ) : c.name}
                               </td>
                               <td className="num">{c.credits}</td>

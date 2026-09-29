@@ -963,39 +963,45 @@ body.tip-jar-open { overflow: hidden; }
 .cgpa-layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 24px; align-items: start; padding: 8px 0 80px; }
 .cgpa-summary { position: sticky; top: 84px; }
 /* The CGPA card is always a deep green panel with gold accents, in light and dark mode alike. */
-.cgpa-summary-card { --ring: #f0c34a; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 22px 20px 18px; border-radius: 20px; color: #e7f0ea; background: linear-gradient(160deg, #173a30 0%, #0f2a22 55%, #0b1f1a 100%); border: 1px solid rgba(240,195,74,.22); box-shadow: 0 14px 34px rgba(11,31,26,.28); }
-.cgpa-summary-card::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px); background-size: 14px 14px; pointer-events: none; }
-.cgpa-summary-card > * { position: relative; }
+.cgpa-summary-card { --ring: #f0c34a; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 22px 20px 18px; border-radius: 20px; color: #e7f0ea; background: linear-gradient(160deg, #173a30 0%, #0f2a22 55%, #0b1f1a 100%); border: 1px solid rgba(240,195,74,.22); box-shadow: 0 14px 34px rgba(11,31,26,.28); }
+.cgpa-summary-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(220px 160px at 100% 0%, rgba(240,195,74,.22), transparent 70%), radial-gradient(rgba(255,255,255,.045) 1px, transparent 1px) 0 0 / 14px 14px; pointer-events: none; }
+.cgpa-summary-card > .cgpa-summary-glyph { position: absolute; right: -38px; bottom: -30px; color: #f0c34a; opacity: .06; transform: rotate(-12deg); pointer-events: none; }
+.cgpa-summary-card > :not(.cgpa-summary-glyph) { position: relative; }
 .cgpa-summary-low { --ring: #f08a74; }
-.cgpa-summary-label { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; font: 600 10px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: #f0c34a; }
-.cgpa-ring { position: relative; width: 158px; height: 158px; }
-.cgpa-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.cgpa-ring circle { fill: none; stroke-width: 9; }
-.cgpa-ring-track { stroke: rgba(255,255,255,.09); }
-.cgpa-ring-fill { stroke: var(--ring); stroke-linecap: round; transition: stroke-dasharray .6s cubic-bezier(.2,.8,.2,1), stroke .3s; filter: drop-shadow(0 0 6px rgba(240,195,74,.35)); }
-.cgpa-ring-text { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
-.cgpa-value { font: 700 44px/1 'Playfair Display', serif; color: #fff; letter-spacing: -.02em; }
-.cgpa-value-empty { color: rgba(255,255,255,.35); }
-.cgpa-scale { margin-top: 4px; font: 500 10px 'DM Mono', monospace; letter-spacing: .06em; color: #9fb8ad; }
-.cgpa-standing { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 99px; font-size: 11.5px; font-weight: 600; }
+.cgpa-summary-low .cgpa-meter-fill { background: #f08a74; box-shadow: none; }
+.cgpa-summary-label { align-self: center; display: inline-flex; align-items: center; gap: 6px; font: 600 10px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: #f0c34a; }
+.cgpa-big { align-self: stretch; display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 6px 0 4px; }
+.cgpa-value { font: 700 76px/1 'DM Sans', sans-serif; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -.045em; background: linear-gradient(180deg, #fff6d6 0%, #f0c34a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 4px 18px rgba(240,195,74,.25)); }
+.cgpa-value-empty { background: none; color: rgba(255,255,255,.3); filter: none; }
+.cgpa-scale { font: 500 11px 'DM Mono', monospace; letter-spacing: .14em; color: #9fb8ad; }
+.cgpa-meter { align-self: stretch; margin: 2px 0 6px; }
+.cgpa-meter-track { position: relative; height: 8px; border-radius: 99px; background: rgba(255,255,255,.09); }
+.cgpa-meter-fill { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: linear-gradient(90deg, #e5a927, var(--ring)); box-shadow: 0 0 10px rgba(240,195,74,.35); transition: width .5s cubic-bezier(.2,.8,.2,1); }
+.cgpa-meter-mark { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; border-radius: 2px; background: rgba(255,255,255,.55); }
+.cgpa-meter-labels { position: relative; height: 14px; margin-top: 5px; font: 500 9.5px 'DM Mono', monospace; color: #9fb8ad; }
+.cgpa-meter-labels span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.cgpa-meter-labels span:first-child { transform: none; }
+.cgpa-meter-labels span:last-child { transform: translateX(-70%); }
+.cgpa-standing { align-self: center; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 99px; font-size: 11.5px; font-weight: 600; }
 .cgpa-standing-great { background: #f0c34a; color: #0b1f1a; }
 .cgpa-standing-ok { background: rgba(255,255,255,.1); color: #e7f0ea; border: 1px solid rgba(255,255,255,.14); }
 .cgpa-standing-low { background: rgba(240,138,116,.16); color: #ffb3a3; border: 1px solid rgba(240,138,116,.4); }
 .cgpa-standing-none { background: rgba(255,255,255,.06); color: #9fb8ad; }
-.cgpa-progress { align-self: stretch; margin-top: 4px; font: 500 10.5px 'DM Mono', monospace; color: #9fb8ad; }
-.cgpa-progress-bar { height: 5px; margin-bottom: 6px; border-radius: 99px; background: rgba(255,255,255,.09); overflow: hidden; }
-.cgpa-progress-bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #e5a927, #f0c34a); transition: width .3s; }
-.cgpa-sgpa-list { list-style: none; align-self: stretch; margin: 4px 0 0; padding: 12px 0 0; border-top: 1px solid rgba(255,255,255,.1); display: grid; gap: 7px; }
-.cgpa-sgpa-list li { display: grid; grid-template-columns: 48px minmax(0, 1fr) 36px; align-items: center; gap: 8px; font-size: 11.5px; color: #cfe0d7; }
-.cgpa-sgpa-bar { height: 4px; border-radius: 99px; background: rgba(255,255,255,.08); overflow: hidden; }
-.cgpa-sgpa-bar span { display: block; height: 100%; border-radius: inherit; background: #f0c34a; transition: width .4s; }
-.cgpa-sgpa-list strong { justify-self: end; font: 600 12px 'DM Mono', monospace; color: #fff; }
+.cgpa-stats { align-self: stretch; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 4px 0 0; padding: 12px 0; border-top: 1px solid rgba(255,255,255,.1); border-bottom: 1px solid rgba(255,255,255,.1); }
+.cgpa-stats > div { padding: 0 8px; text-align: center; }
+.cgpa-stats > div + div { border-left: 1px solid rgba(255,255,255,.1); }
+.cgpa-stats dt { font: 600 9px 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #9fb8ad; }
+.cgpa-stats dd { margin: 3px 0 0; font: 700 18px 'DM Mono', monospace; color: #fff; }
+.cgpa-stats dd small { font-size: 11px; font-weight: 500; color: #9fb8ad; }
+.cgpa-sgpa-list { list-style: none; align-self: stretch; margin: 2px 0 0; padding: 0; display: grid; gap: 6px; }
+.cgpa-sgpa-list li { display: flex; justify-content: space-between; font-size: 12px; color: #cfe0d7; }
+.cgpa-sgpa-list strong { font: 600 12px 'DM Mono', monospace; color: #fff; }
 .cgpa-sgpa-list li.muted, .cgpa-sgpa-list li.muted strong { color: rgba(255,255,255,.3); font-weight: 500; }
 .cgpa-warning { align-self: stretch; display: flex; gap: 6px; align-items: flex-start; margin: 2px 0 0; font-size: 11.5px; line-height: 1.45; color: #ffb3a3; }
 .cgpa-warning svg { flex-shrink: 0; margin-top: 1px; }
 .cgpa-reset { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid rgba(255,255,255,.16); border-radius: 99px; background: transparent; color: #cfe0d7; font: 600 11.5px 'DM Sans', sans-serif; }
 .cgpa-reset:hover { color: #ffb3a3; border-color: currentColor; }
-.cgpa-semesters { display: grid; gap: 18px; min-width: 0; }
+.cgpa-semesters { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; min-width: 0; }
 .cgpa-semester { padding: 18px 18px 12px; border: 1px solid var(--c-e3e6de); border-radius: 16px; background: var(--c-fffdf7); }
 .cgpa-semester-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
 .cgpa-semester-head > div:first-child { flex: 1; min-width: 120px; }
@@ -1023,7 +1029,10 @@ body.tip-jar-open { overflow: hidden; }
 .cgpa-table select:focus-visible { outline: 2px solid #f0c34a; outline-offset: 1px; }
 .cgpa-grade { min-width: 86px; font-family: 'DM Mono', monospace !important; }
 .cgpa-grade-set { border-color: #e8c873 !important; background: var(--c-fffdf0) !important; color: var(--c-0b1f1a) !important; font-weight: 600 !important; }
-.cgpa-elective { width: 100%; }
+.cgpa-elective { width: 100%; min-width: 180px; padding: 5px 9px; border: 1px dashed var(--c-dde3dc); border-radius: 8px; background: var(--c-fffdf7); color: var(--c-1d3f35); font: 500 12.5px 'DM Sans', sans-serif; }
+.cgpa-elective:not(:placeholder-shown) { border-style: solid; border-color: #e8c873; background: var(--c-fffdf0); color: var(--c-0b1f1a); font-weight: 600; }
+.cgpa-elective:focus-visible { outline: 2px solid #f0c34a; outline-offset: 1px; }
+.cgpa-elective::placeholder { color: var(--c-7d8b84); }
 .cgpa-row-failed td { background: var(--c-f9e3dd); }
 .cgpa-semester-foot { font: 500 10.5px 'DM Mono', monospace; color: var(--c-7d8b84); text-align: right; }
 .cgpa-semester .course-table-wrap { margin-bottom: 10px; }
@@ -1044,12 +1053,13 @@ body.tip-jar-open { overflow: hidden; }
   .cgpa-layout { grid-template-columns: minmax(0, 1fr); }
   .cgpa-summary { position: sticky; top: 62px; z-index: 5; }
   .cgpa-summary-card { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 10px 14px; border-radius: 16px; }
-  .cgpa-ring { width: 74px; height: 74px; }
-  .cgpa-ring circle { stroke-width: 11; }
-  .cgpa-value { font-size: 22px; }
-  .cgpa-scale { display: none; }
-  .cgpa-progress { flex: 1; min-width: 140px; margin: 0; }
-  .cgpa-sgpa-list, .cgpa-warning, .cgpa-summary-label { display: none; }
+  .cgpa-big { align-self: auto; flex-direction: row; align-items: baseline; gap: 6px; margin: 0; }
+  .cgpa-standing { align-self: auto; }
+  .cgpa-value { font-size: 34px; }
+  .cgpa-scale { font-size: 11px; }
+  .cgpa-meter { flex-basis: 100%; margin: 0; }
+  .cgpa-meter-labels { display: none; }
+  .cgpa-stats, .cgpa-sgpa-list, .cgpa-warning, .cgpa-summary-label, .cgpa-summary-glyph { display: none; }
   .cgpa-reset { padding: 5px 10px; }
   .cgpa-intro { flex-direction: column; align-items: flex-start; }
   .cgpa-storage p { left: 0; right: auto; }
