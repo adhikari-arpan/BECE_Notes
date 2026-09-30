@@ -58,7 +58,8 @@ async function request(counter: string, key: keyof SiteStats, action: 'hit' | 'g
   }
 }
 
-// Fallback when localStorage is blocked: then each page load tracks its own 30-minute window.
+// The counter's own timestamp is always kept (it isn't part of the cookie choice); if storage is
+// blocked, each page load tracks its own 30-minute window instead.
 let memoryLastCounted = 0;
 
 function readLastCounted(): number {
@@ -92,7 +93,10 @@ function checkVisitor() {
 
 let started = false;
 
-/** Call once at startup: counts this visitor if due and keeps checking while the site is open. */
+/**
+ * Call once at startup: counts this visitor if due and keeps checking while the site is open.
+ * Visit counting always runs; it is not part of the cookie choice.
+ */
 export function startVisitTracking() {
   if (started || typeof window === 'undefined') return;
   if (!DB_URL) {

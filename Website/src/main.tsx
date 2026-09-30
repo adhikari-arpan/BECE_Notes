@@ -7,6 +7,7 @@ import "./index.css";
 import "./firebase";
 import { startVisitTracking } from "./content/visits";
 import { startThemeSync } from "./content/theme";
+import { CookieBanner } from "./components/CookieBanner";
 
 startThemeSync();
 startVisitTracking();
@@ -14,6 +15,7 @@ startVisitTracking();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
+    <CookieBanner />
     <Analytics />
     <SpeedInsights />
   </StrictMode>,
