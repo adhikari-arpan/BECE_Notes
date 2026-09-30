@@ -1,9 +1,13 @@
-import { Calculator, Coffee, Cookie, ShieldCheck, CircleHelp, Eye, Heart, MousePointerClick, Users } from 'lucide-react';
+import { BookOpen, Calculator, CircleHelp, Coffee, Cookie, Eye, Github, Heart, Home, Mail, MousePointerClick, ShieldCheck, Users } from 'lucide-react';
 import { formatCount, useSiteStats } from '@/content/visits';
 import { Logo } from '@/components/Logo';
 import { openTipJar } from '@/content/tipJar';
 import { openCookieSettings } from '@/content/consent';
+import { semesterPath, semesters } from '@/content/notes';
 import { Link } from '@/components/Link';
+
+const CONTACT_EMAIL = 'adhikariarpan2063@gmail.com';
+const REPO_URL = 'https://github.com/adhikari-arpan/BECE_Notes';
 
 export function Footer() {
   const { visitors, pageViews } = useSiteStats();
@@ -13,30 +17,52 @@ export function Footer() {
       <div className="footer-inner section-wrap">
         <div className="footer-top">
           <div className="footer-brand">
-            <div className="brand-mark"><Logo /></div>
-            <div>
+            <Link to="/" className="footer-brand-lockup">
+              <div className="brand-mark"><Logo /></div>
               <span className="brand-name">BECE Vault</span>
-              <p>A curated library for Computer Engineering students at Pokhara University.</p>
-            </div>
+            </Link>
+            <p>
+              A free, semester-wise library of notes, past questions and syllabus for Computer Engineering students at
+              Pokhara University.
+            </p>
+            {(visitors !== null || pageViews !== null) && (
+              <span className="footer-stats">
+                {visitors !== null && <span className="footer-visits"><Eye size={13} /> {formatCount(visitors)} visitors</span>}
+                {pageViews !== null && <span className="footer-visits"><MousePointerClick size={13} /> {formatCount(pageViews)} page visits</span>}
+              </span>
+            )}
+            <button className="footer-chiya-button" onClick={openTipJar}><Coffee size={15} /> Buy me a Chiya</button>
           </div>
-          <nav className="footer-links">
-            <Link to="/about"><CircleHelp size={15} /> About Us</Link>
+
+          <nav className="footer-col" aria-label="Semesters">
+            <h4>Semesters</h4>
+            <div className="footer-semesters">
+              {semesters.map((s) => (
+                <Link key={s.id} to={semesterPath(s)}><BookOpen size={14} /> {s.label}</Link>
+              ))}
+            </div>
+          </nav>
+
+          <nav className="footer-col" aria-label="Explore">
+            <h4>Explore</h4>
+            <Link to="/"><Home size={15} /> Home</Link>
             <Link to="/cgpa-calculator"><Calculator size={15} /> CGPA Calculator</Link>
+            <Link to="/about"><CircleHelp size={15} /> About Us</Link>
             <Link to="/contributors"><Users size={15} /> Contributors</Link>
             <Link to="/contributing"><Heart size={15} /> Contribute</Link>
+          </nav>
+
+          <nav className="footer-col" aria-label="Site">
+            <h4>Site</h4>
             <Link to="/privacy"><ShieldCheck size={15} /> Privacy Policy</Link>
             <button onClick={openCookieSettings}><Cookie size={15} /> Cookie settings</button>
-            <button className="footer-chiya" onClick={openTipJar}><Coffee size={15} /> Buy me a Chiya</button>
+            <a href={REPO_URL} target="_blank" rel="noreferrer"><Github size={15} /> GitHub</a>
+            <a href={`mailto:${CONTACT_EMAIL}`}><Mail size={15} /> Contact</a>
           </nav>
         </div>
+
         <div className="footer-bottom">
-          <p>Started by <strong>Arpan Adhikari</strong> · Nepal College of Information Technology (NCIT)</p>
-          {(visitors !== null || pageViews !== null) && (
-            <span className="footer-stats">
-              {visitors !== null && <span className="footer-visits"><Eye size={13} /> {formatCount(visitors)} visitors</span>}
-              {pageViews !== null && <span className="footer-visits"><MousePointerClick size={13} /> {formatCount(pageViews)} page visits</span>}
-            </span>
-          )}
+          <p>© {new Date().getFullYear()} BECE Vault · Started by <a className="footer-author" href="https://www.arpanadhikari7.com.np" target="_blank" rel="noreferrer">Arpan Adhikari</a></p>
           <span>Made for students, by students. All materials belong to their original creators.</span>
         </div>
       </div>
