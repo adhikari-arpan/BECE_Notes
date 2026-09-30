@@ -102,7 +102,6 @@ function App() {
           <nav className="top-actions">
             {page !== 'home' && <Link to="/" className="text-button">Home</Link>}
             {page !== 'cgpa-calculator' && <Link to="/cgpa-calculator" className="text-button">CGPA Calculator</Link>}
-            <span className="status-pill"><span className="status-dot" /> Open collection</span>
             <ChiyaButton />
             <ThemeToggle />
           </nav>

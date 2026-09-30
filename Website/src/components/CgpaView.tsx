@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Award, Calculator, CheckCircle2, Download, ExternalLink, FileUp, GraduationCap, HardDrive, Info, Loader2, RotateCcw, TriangleAlert } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { CgpaUploadDialog } from '@/components/CgpaUploadDialog';
+import { ElectiveInput } from '@/components/ElectiveInput';
 import { curriculumSemesters, electiveNames } from '@/content/notes';
 import { DEANS_LIST_GPA, DISTINCTION_CGPA, GRADES, GRADING_SOURCE, MIN_CGPA, formatGpa, gradePoint, gradeRange } from '@/content/grades';
 import { cleanEntries, computeResults, emptyEntry, hasEntries, isElectiveSlot, type Entries, type SemesterEntry } from '@/content/cgpa';
@@ -164,9 +165,6 @@ export function CgpaView() {
           </div>
         </aside>
 
-        <datalist id="cgpa-elective-options">
-          {electiveNames.map((name) => <option key={name} value={name} />)}
-        </datalist>
         <div className="cgpa-semesters">
           {curriculumSemesters.map((sem, i) => {
             const entry = entries[sem.id] ?? emptyEntry();
@@ -223,11 +221,10 @@ export function CgpaView() {
                               <td>
                                 {isElectiveSlot(c.code) ? (
                                   // Suggests the electives we know, but any subject name can be typed.
-                                  <input
-                                    className="cgpa-elective"
-                                    list="cgpa-elective-options"
+                                  <ElectiveInput
+                                    options={electiveNames}
                                     value={entry.electives[c.code] ?? ''}
-                                    onChange={(e) => update(sem.id, (en) => ({ ...en, electives: { ...en.electives, [c.code]: e.target.value } }))}
+                                    onChange={(value) => update(sem.id, (en) => ({ ...en, electives: { ...en.electives, [c.code]: value } }))}
                                     placeholder={`${c.name}: pick or type a subject`}
                                     aria-label={`Which subject you took for ${c.name}`}
                                   />
