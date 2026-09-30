@@ -4,7 +4,7 @@
 
 /* Navigation is done with real links now; keep them looking like the cards/buttons they replaced. */
 a.brand-lockup, a.text-button, a.back-button, a.cta-button, a.download-button, a.semester-card, a.subject-card, a.about-card,
-a.course-table-link, a.syllabus-link, a.syllabus-all-link, .footer-links a { text-decoration: none; }
+a.course-table-link, a.syllabus-link, a.syllabus-all-link { text-decoration: none; }
 .not-found { padding-bottom: 120px; }
 .not-found p { max-width: 460px; color: var(--c-4c5b54); line-height: 1.6; margin: 12px 0 24px; }
 
@@ -738,18 +738,32 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
 
 .site-footer { background: #173f37; color: #c8d8cf; padding: 50px 0 30px; margin-top: auto; }
 .footer-inner { width: min(1180px, calc(100% - 64px)); margin: 0 auto; }
-.footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; padding-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,.1); }
-.footer-brand { display: flex; gap: 12px; align-items: flex-start; }
+/* Brand column on the left, then three link columns spread across the width. */
+.footer-top { display: grid; grid-template-columns: minmax(260px, 1.5fr) minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 36px; padding-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,.1); }
+.footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+a.footer-brand-lockup { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
 .footer-brand .brand-mark { flex-shrink: 0; }
-.footer-brand span { font-size: 15px; font-weight: 600; color: #fff; }
-.footer-brand p { margin: 5px 0 0; font-size: 12px; line-height: 1.55; max-width: 300px; opacity: .75; }
-.footer-links { display: flex; flex-direction: column; gap: 10px; }
-.footer-links a, .footer-links button { border: 0; background: transparent; color: #c8d8cf; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; transition: color .18s; }
-.footer-links a:hover, .footer-links button:hover { color: #f0c34a; }
+.footer-brand .brand-name { font-size: 18px; color: #fff; }
+.footer-brand p { margin: 0; font-size: 12.5px; line-height: 1.6; max-width: 320px; color: #a8c0b6; }
+.footer-chiya-button { display: inline-flex; align-items: center; gap: 7px; margin-top: 4px; height: 34px; padding: 0 15px; border: 0; border-radius: 99px; background: linear-gradient(135deg, #f0c34a, #e5a927); color: #0b1f1a; font: 700 12.5px 'DM Sans', sans-serif; box-shadow: 0 4px 14px rgba(229,169,39,.25); transition: transform .18s; }
+.footer-chiya-button:hover { transform: translateY(-1px); }
+.footer-col { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
+.footer-col h4 { margin: 2px 0 4px; font: 600 10px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: #f0c34a; }
+.footer-col a, .footer-col button { border: 0; padding: 0; background: transparent; color: #c8d8cf; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; transition: color .18s; }
+.footer-col a:hover, .footer-col button:hover { color: #f0c34a; }
+.footer-col svg { flex-shrink: 0; opacity: .75; }
+.footer-semesters { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 10px 22px; }
+.footer-semesters a { white-space: nowrap; }
+@media (max-width: 560px) {
+  .footer-col[aria-label="Semesters"] { grid-column: 1 / -1; }
+  .footer-semesters { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; width: 100%; }
+}
 .footer-bottom { padding-top: 22px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
 .footer-bottom p { margin: 0; font-size: 12px; color: #a8c0b6; }
-.footer-bottom p strong { color: #f0c34a; }
-.footer-bottom span { font-size: 11px; color: #8ba598; }
+.footer-bottom p strong, a.footer-author { color: #f0c34a; font-weight: 700; }
+a.footer-author { text-decoration: none; transition: color .18s; }
+a.footer-author:hover { color: #f7d77a; }
+.footer-bottom > span { font-size: 11px; color: #8ba598; }
 
 @media (max-width: 900px) {
   .hero-visual { margin-right: 0; transform: scale(.85); transform-origin: right center; }
@@ -775,7 +789,8 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
   .syllabus-link { padding: 4px 8px; }
   .subject-cards-grid { grid-template-columns: 1fr; gap: 12px; }
   .subject-card { min-height: 150px; }
-  .footer-top { flex-direction: column; gap: 28px; }
+  .footer-top { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 24px; }
+  .footer-brand { grid-column: 1 / -1; }
 }
 
 @media (max-width: 680px) {
@@ -833,7 +848,6 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
 .app-shell-fixed .chiya-button { height: 28px; padding: 0 11px; }
 .chiya-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; padding: 11px 18px; border: 0; border-radius: 99px; background: linear-gradient(135deg, #f0c34a, #e5a927); color: #0b1f1a; font: 700 13px 'DM Sans', sans-serif; box-shadow: 0 6px 16px rgba(229,169,39,.3); transition: transform .18s, box-shadow .18s; }
 .chiya-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(229,169,39,.4); }
-.footer-chiya { color: #f0c34a !important; font-weight: 600; }
 
 .chiya-cup .chiya-body { fill: var(--c-fffdf7); stroke: #b8860b; stroke-width: 2; }
 .chiya-cup .chiya-tea { fill: #c07a3a; }
