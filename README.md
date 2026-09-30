@@ -1,4 +1,4 @@
-# 📚 BECE_Notes
+# 📚 BECE Vault
 
 Study notes for the Bachelor of Engineering in Computer Engineering (BECE) program at Pokhara University, Nepal: lecture notes, past questions, lab materials and syllabus for every semester. All credit goes to the people who created these notes.
 
