@@ -246,8 +246,6 @@ button { cursor: pointer; }
 .app-shell-fixed .theme-toggle { width: 28px; height: 28px; }
 body { background: var(--c-f7f7f2); }
 .text-button:hover { color: var(--c-0b1f1a); }
-.status-pill { font: 500 11px 'DM Mono', monospace; color: var(--c-43655a); background: var(--c-e6eee8); padding: 7px 10px; border-radius: 99px; display: inline-flex; gap: 7px; align-items: center; }
-.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-4d9e77); }
 
 main { flex: 1; }
 
@@ -259,6 +257,8 @@ main { flex: 1; }
 h1 { font-size: clamp(52px, 7.2vw, 88px); line-height: .94; letter-spacing: -.075em; margin: 0; font-weight: 600; color: var(--c-0b1f1a); }
 h1 em { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: -.07em; color: var(--c-467568); }
 .hero-lede { max-width: 410px; margin: 28px 0 34px; font-size: 16px; line-height: 1.6; color: var(--c-4c5b54); }
+.hero-badge { display: inline-flex; align-items: center; gap: 7px; margin: -8px 0 30px; padding: 7px 13px; border-radius: 99px; font: 600 12px 'DM Sans', sans-serif; color: var(--c-43655a); background: var(--c-e6eee8); }
+.hero-badge svg { color: var(--c-a27b3e); }
 .hero-stats { display: flex; flex-wrap: wrap; gap: 18px 30px; }
 .hero-stats div { display: flex; flex-direction: column; gap: 4px; }
 .hero-stats strong { font: 600 20px 'DM Mono', monospace; color: var(--c-0b1f1a); }
@@ -581,7 +581,6 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .app-shell-fixed .topbar { height: 48px; }
 .app-shell-fixed .brand-mark { height: 26px; }
 .app-shell-fixed .brand-name { font-size: 15px; }
-.app-shell-fixed .status-pill { padding: 5px 9px; }
 .subject-page .back-button { margin-bottom: 6px; }
 .subject-box-head { flex-shrink: 0; min-height: 46px; padding: 6px 12px 6px 18px; border-bottom: 1px solid var(--c-e0e5df); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .subject-box-title { min-width: 0; flex-shrink: 0; max-width: 55%; display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
@@ -941,7 +940,6 @@ body.tip-jar-open { overflow: hidden; }
 @media (max-width: 680px) {
   .chiya-button span { display: none; }
   .chiya-button { width: 34px; padding: 0; justify-content: center; }
-  .top-actions .status-pill { display: none; }
   .chiya-banner { flex-direction: column; text-align: center; padding: 22px 18px; }
   .tip-dialog { padding: 22px 18px 18px; }
   .tip-presets { grid-template-columns: repeat(2, 1fr); }
@@ -1044,12 +1042,18 @@ body.tip-jar-open { overflow: hidden; }
 .cgpa-elective:not(:placeholder-shown) { border-style: solid; border-color: #e8c873; background: var(--c-fffdf0); color: var(--c-0b1f1a); font-weight: 600; }
 .cgpa-elective:focus-visible { outline: 2px solid #f0c34a; outline-offset: 1px; }
 .cgpa-elective::placeholder { color: var(--c-7d8b84); }
+/* Suggestions under the elective input: same width as the input (see ElectiveInput.tsx). */
+.elective-menu { position: fixed; z-index: 80; margin: 0; padding: 4px; list-style: none; max-height: 220px; overflow-y: auto;
+  border: 1px solid #e8c873; border-radius: 10px; background: var(--c-fffdf7); box-shadow: 0 14px 34px -12px rgba(var(--shadow-rgb),.35); }
+.elective-menu-up { transform: translateY(-100%); }
+.elective-menu li { padding: 7px 10px; border-radius: 7px; font: 500 12.5px 'DM Sans', sans-serif; color: var(--c-1d3f35); cursor: pointer; }
+.elective-menu li.active { background: var(--c-fff8e1); color: var(--c-0b1f1a); }
 .cgpa-row-failed td { background: var(--c-f9e3dd); }
 .cgpa-semester-foot { font: 500 10.5px 'DM Mono', monospace; color: var(--c-7d8b84); text-align: right; }
 .cgpa-semester .course-table-wrap { margin-bottom: 10px; }
 .cgpa-info h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; font: 600 17px 'DM Sans', sans-serif; }
-.cgpa-grade-chips { list-style: none; margin: 0 0 16px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
-.cgpa-grade-chips li { display: grid; justify-items: center; gap: 1px; padding: 8px 4px; border: 1px solid var(--c-e7ebe6); border-radius: 10px; }
+.cgpa-grade-chips { list-style: none; margin: 0 0 16px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(54px, 1fr)); gap: 6px; }
+.cgpa-grade-chips li { display: grid; justify-items: center; gap: 1px; padding: 8px 2px; border: 1px solid var(--c-e7ebe6); border-radius: 10px; }
 .cgpa-grade-chips strong { font: 700 15px 'DM Mono', monospace; color: var(--c-0b1f1a); }
 .cgpa-grade-chips span { font: 600 11px 'DM Mono', monospace; color: #b8860b; }
 .cgpa-grade-chips small { font: 500 10px 'DM Mono', monospace; color: var(--c-7d8b84); }

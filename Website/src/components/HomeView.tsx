@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  BadgeCheck,
   Coffee,
   Users,
   CheckCircle2,
@@ -36,6 +37,7 @@ export function HomeView() {
           <div className="eyebrow"><span className="eyebrow-line" /> Pokhara University · Computer Engineering</div>
           <h1>Your notes,<br /><em>in one place.</em></h1>
           <p className="hero-lede">A calm, organized home for every lecture note, question paper, and resource across your BECE journey. Pick a semester to explore its subjects.</p>
+          <span className="hero-badge"><BadgeCheck size={15} /> Based on the new PU syllabus</span>
           <div className="hero-stats">
             <div><strong><CountUp value={courseSemesters.length} pad={2} /></strong><span>Semesters</span></div>
             <div><strong><CountUp value={totalSubjects} /></strong><span>Subjects</span></div>
