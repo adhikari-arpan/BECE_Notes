@@ -1,8 +1,9 @@
 import { ArrowLeft, BarChart3, Cookie, Database, ExternalLink, FileLock2, HardDrive, Mail, Megaphone, RefreshCw, ShieldCheck, Users } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { openCookieSettings } from '@/content/consent';
 
 const CONTACT_EMAIL = 'adhikariarpan2063@gmail.com';
-const EFFECTIVE_DATE = 'September 26, 2026';
+const EFFECTIVE_DATE = 'September 30, 2026';
 
 export function PrivacyView() {
   return (
@@ -38,27 +39,28 @@ export function PrivacyView() {
               The site shows how many visitors and page visits it has had. To count them, your browser sends an anonymous
               “+1” to a Firebase Realtime Database (a Google service). Only the running totals are stored — no names, no IP
               addresses and nothing that identifies you. To avoid double-counting, your browser remembers the time it was
-              last counted (see “Stored on your device” below).
+              last counted. Visit counting always runs and is not affected by your cookie choice.
             </p>
           </div>
 
           <div className="content-page-section">
             <h3><HardDrive size={18} /> Stored on your device</h3>
             <p>
-              Some features save small pieces of information in your own browser (local storage). This data stays on your
-              device, is never sent to us, and you can delete it any time by clearing your browser's site data:
+              If you accept cookies, some features save small pieces of information in your own browser (local storage). This
+              data stays on your device, is never sent to us, and you can delete it any time by clearing your browser's site
+              data or by declining cookies. If you don't accept, these features still work but forget everything when you
+              close or reload the site:
             </p>
             <ul>
               <li><ShieldCheck size={16} /> Your light/dark theme choice and file-list width</li>
               <li><ShieldCheck size={16} /> Highlights you make on PDFs (kept only in this browser)</li>
               <li><ShieldCheck size={16} /> Grades and SGPAs you enter in the CGPA calculator (kept only in this browser)</li>
-              <li><ShieldCheck size={16} /> The time of your last counted visit, for the visit counter</li>
             </ul>
           </div>
 
           <div className="content-page-section">
             <h3><BarChart3 size={18} /> Analytics</h3>
-            <p>To understand how the site is used and keep it fast, we use:</p>
+            <p>To understand how the site is used and keep it fast, we always use the following (they are not part of the cookie choice):</p>
             <ul>
               <li>
                 <ShieldCheck size={16} />
@@ -121,9 +123,19 @@ export function PrivacyView() {
           <div className="content-page-section">
             <h3><Cookie size={18} /> Cookies</h3>
             <p>
-              The site itself does not set cookies. Cookies are only set by Google Analytics and, when ads are shown, by
-              Google and its advertising partners, as described above. You can block or delete cookies in your browser
-              settings; the notes will still work, though some statistics and ads may not.
+              On your first visit, a bar at the bottom of the screen asks whether you allow cookies. This choice covers the
+              features that remember things on your device: your theme, file-list width, CGPA grades and PDF highlights.
+              Until you press <strong>Accept</strong>, they work only for the current visit and nothing is saved.{' '}
+              <strong>Decline</strong> keeps it that way and erases anything these features saved before. Site statistics
+              (Google Analytics, Vercel Analytics and the visit counters) are always collected and are not affected by this
+              choice; Google Analytics and, when ads are shown, Google and its advertising partners set their own cookies,
+              as described above.
+            </p>
+            <p>
+              You can change your choice at any time with{' '}
+              <button className="content-inline-link" onClick={openCookieSettings}>Cookie settings</button> in the site
+              footer, or block and delete cookies in your browser settings. Your choice itself is remembered in your browser
+              so we don't ask on every visit.
             </p>
           </div>
 

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { deviceStore } from '@/content/consent';
 
 /**
  * VS Code-style sidebar: drag the edge to resize, drag it narrow to snap it closed, double-click
@@ -17,7 +18,7 @@ interface SidebarState { width: number; collapsed: boolean }
 
 function load(): SidebarState {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null') as Partial<SidebarState> | null;
+    const saved = JSON.parse(deviceStore.get(STORAGE_KEY) ?? 'null') as Partial<SidebarState> | null;
     return {
       width: Math.min(MAX, Math.max(MIN, Number(saved?.width) || SIDEBAR_DEFAULT)),
       collapsed: saved?.collapsed === true,
@@ -35,12 +36,9 @@ export function useResizableSidebar() {
   /** Width when the drag started — restored if the drag ends up snapping the sidebar closed. */
   const startWidthRef = useRef(SIDEBAR_DEFAULT);
 
+  // Remembered on the device with cookie consent; otherwise just for this visit.
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch {
-      // Storage blocked — the layout still works, it just isn't remembered.
-    }
+    deviceStore.set(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
   const toggle = useCallback(() => setState((s) => ({ ...s, collapsed: !s.collapsed })), []);

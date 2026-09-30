@@ -23,6 +23,7 @@ import {
 
 import { Loader } from '@/components/Loader';
 import { stampPdf } from '@/content/watermark';
+import { deviceStore, hasConsent } from '@/content/consent';
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 const PDFJS_ASSETS = `${import.meta.env.BASE_URL}pdfjs/`;
@@ -61,10 +62,12 @@ interface PdfHighlight {
 const HIGHLIGHT_KEY = (fileKey: string) => `bece-notes:highlights:${fileKey}`;
 const STORAGE_NOTICE_KEY = 'bece-notes:highlight-notice-seen';
 const STORAGE_NOTICE = 'Highlights are saved only in this browser\'s storage (cache) on this device. Clearing browser data, using private mode, or switching browser/device will lose them.';
+const NO_CONSENT_NOTICE = 'Cookies are off, so highlights last only until you close or reload the site. Accept cookies (from the cookie bar, or Cookie settings in the site footer) to keep them in this browser.';
 
+// Kept on the device with cookie consent; otherwise only for this visit.
 function loadHighlights(fileKey: string): PdfHighlight[] {
   try {
-    const raw = localStorage.getItem(HIGHLIGHT_KEY(fileKey));
+    const raw = deviceStore.get(HIGHLIGHT_KEY(fileKey));
     return raw ? (JSON.parse(raw) as PdfHighlight[]) : [];
   } catch {
     return [];
@@ -72,12 +75,8 @@ function loadHighlights(fileKey: string): PdfHighlight[] {
 }
 
 function saveHighlights(fileKey: string, highlights: PdfHighlight[]) {
-  try {
-    if (highlights.length) localStorage.setItem(HIGHLIGHT_KEY(fileKey), JSON.stringify(highlights));
-    else localStorage.removeItem(HIGHLIGHT_KEY(fileKey));
-  } catch {
-    // Storage full or blocked — highlights last until the page is closed.
-  }
+  if (highlights.length) deviceStore.set(HIGHLIGHT_KEY(fileKey), JSON.stringify(highlights));
+  else deviceStore.remove(HIGHLIGHT_KEY(fileKey));
 }
 
 /** Point on the page at rotation 0 -> point as displayed at `rotation` (clockwise). */
@@ -418,13 +417,9 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
   /* -------------------------- Highlights -------------------------- */
 
   const showStorageNoticeOnce = () => {
-    try {
-      if (localStorage.getItem(STORAGE_NOTICE_KEY)) return;
-      localStorage.setItem(STORAGE_NOTICE_KEY, '1');
-    } catch {
-      // Storage blocked: highlights won't persist at all, so say so every time.
-    }
-    setNotice(STORAGE_NOTICE);
+    if (deviceStore.get(STORAGE_NOTICE_KEY)) return;
+    deviceStore.set(STORAGE_NOTICE_KEY, '1');
+    setNotice(hasConsent() ? STORAGE_NOTICE : NO_CONSENT_NOTICE);
   };
 
   const addHighlight = (page: number, rects: NormRect[], color: HighlightColor, text?: string) => {

@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { deviceStore } from '@/content/consent';
 
 export type Theme = 'light' | 'dark';
 /** What the visitor picked: follow the device ('system', the default) or a fixed theme. */
@@ -12,16 +13,11 @@ export type ThemeMode = 'system' | Theme;
 
 const STORAGE_KEY = 'bece-notes:theme';
 const listeners = new Set<() => void>();
-/** This visit's choice, used when the browser blocks storage. */
-let unsavedChoice: Theme | null = null;
 
+// Saved on the device only with cookie consent; otherwise the choice lasts for this visit.
 function savedTheme(): Theme | null {
-  try {
-    const value = localStorage.getItem(STORAGE_KEY);
-    return value === 'light' || value === 'dark' ? value : null;
-  } catch {
-    return unsavedChoice;
-  }
+  const value = deviceStore.get(STORAGE_KEY);
+  return value === 'light' || value === 'dark' ? value : null;
 }
 
 const systemTheme = (): Theme => (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -33,13 +29,8 @@ function apply(theme: Theme) {
 
 /** "system" forgets the saved choice, so the site goes back to following the device. */
 export function setThemeMode(mode: ThemeMode) {
-  unsavedChoice = mode === 'system' ? null : mode;
-  try {
-    if (mode === 'system') localStorage.removeItem(STORAGE_KEY);
-    else localStorage.setItem(STORAGE_KEY, mode);
-  } catch {
-    // Storage blocked — the theme still applies for this visit.
-  }
+  if (mode === 'system') deviceStore.remove(STORAGE_KEY);
+  else deviceStore.set(STORAGE_KEY, mode);
   apply(mode === 'system' ? systemTheme() : mode);
 }
 

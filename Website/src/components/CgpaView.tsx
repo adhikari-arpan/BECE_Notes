@@ -7,12 +7,13 @@ import { curriculumSemesters, electiveNames } from '@/content/notes';
 import { DEANS_LIST_GPA, DISTINCTION_CGPA, GRADES, GRADING_SOURCE, MIN_CGPA, formatGpa, gradePoint, gradeRange } from '@/content/grades';
 import { cleanEntries, computeResults, emptyEntry, hasEntries, isElectiveSlot, type Entries, type SemesterEntry } from '@/content/cgpa';
 import { saveBlob } from '@/content/watermark';
+import { deviceStore, openCookieSettings, useConsent } from '@/content/consent';
 
 const STORAGE_KEY = 'bece-cgpa-v1';
 
 function loadEntries(): Entries {
   try {
-    return cleanEntries(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}'));
+    return cleanEntries(JSON.parse(deviceStore.get(STORAGE_KEY) ?? '{}'));
   } catch {
     return {};
   }
@@ -20,14 +21,12 @@ function loadEntries(): Entries {
 
 export function CgpaView() {
   const [entries, setEntries] = useState<Entries>(loadEntries);
+  const { consent } = useConsent();
 
-  // Remembered on this device so students can come back each semester.
+  // Remembered on this device (with cookie consent) so students can come back each semester;
+  // without consent the grades last for this visit only.
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-    } catch {
-      // Storage unavailable (private mode) — the calculator still works for this visit.
-    }
+    deviceStore.set(STORAGE_KEY, JSON.stringify(entries));
   }, [entries]);
 
   const update = (id: number, change: (entry: SemesterEntry) => SemesterEntry) =>
@@ -95,14 +94,25 @@ export function CgpaView() {
             <button className="cgpa-action" onClick={() => { setNotice(null); setUploadOpen(true); }} disabled={busy !== null} title="Load a CGPA report PDF downloaded from this page">
               <FileUp size={14} /> Upload report
             </button>
-          <details className="cgpa-storage">
-            <summary><HardDrive size={13} /> Saved in this browser</summary>
-            <p>
-              Your grades stay here when you come back on the same device and browser. They don't carry over to other
-              browsers or devices, aren't kept in incognito windows, and are erased if you clear browsing data. Nothing is
-              sent to our servers.
-            </p>
-          </details>
+          {consent === 'accepted' ? (
+            <details className="cgpa-storage">
+              <summary><HardDrive size={13} /> Saved in this browser</summary>
+              <p>
+                Your grades stay here when you come back on the same device and browser. They don't carry over to other
+                browsers or devices, aren't kept in incognito windows, and are erased if you clear browsing data. Nothing is
+                sent to our servers.
+              </p>
+            </details>
+          ) : (
+            <details className="cgpa-storage cgpa-storage-off">
+              <summary><HardDrive size={13} /> Not saved: cookies off</summary>
+              <p>
+                Without cookie consent, your grades last only until you close or reload the site. Download the PDF to keep
+                them, or <button className="cgpa-inline-link" onClick={openCookieSettings}>accept cookies</button> to save
+                them in this browser.
+              </p>
+            </details>
+          )}
           </div>
           {notice && (
             <p className={`cgpa-notice cgpa-notice-${notice.tone}`} role="status">

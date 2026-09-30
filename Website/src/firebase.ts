@@ -14,7 +14,8 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig);
 
-// Only track the live site, and skip browsers where Analytics can't run (e.g. ad blockers).
+// Site analytics always run (they are not part of the cookie choice, which only covers saving
+// features). Only the live site is tracked, and browsers where Analytics can't run are skipped.
 if (import.meta.env.PROD) {
   isSupported().then((ok) => ok && getAnalytics(app));
 }

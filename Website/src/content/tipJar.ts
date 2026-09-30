@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { sessionStore } from '@/content/consent';
 
 /**
  * "Buy me a Chiya" tip jar. Tips are paid directly through eSewa by scanning the QR; the site
@@ -34,12 +35,8 @@ const NUDGE_KEY = 'bece-notes:chiya-nudge-shown';
 
 /** After a successful download, gently suggest a chiya — at most once per browser session. */
 export function nudgeAfterDownload() {
-  try {
-    if (sessionStorage.getItem(NUDGE_KEY)) return;
-    sessionStorage.setItem(NUDGE_KEY, '1');
-  } catch {
-    // Storage blocked: still show it, just not remembered.
-  }
+  if (sessionStore.get(NUDGE_KEY)) return;
+  sessionStore.set(NUDGE_KEY, '1');
   set({ nudge: true });
 }
 
