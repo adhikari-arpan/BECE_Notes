@@ -1,4 +1,4 @@
-import { BookOpen, Calculator, CircleHelp, Coffee, Cookie, Eye, Github, Heart, Home, Mail, MousePointerClick, ShieldCheck, Users } from 'lucide-react';
+import { BookOpen, Calculator, GraduationCap, ScrollText, CircleHelp, Coffee, Cookie, Eye, Github, Heart, Home, Mail, MousePointerClick, ShieldCheck, Users } from 'lucide-react';
 import { formatCount, useSiteStats } from '@/content/visits';
 import { Logo } from '@/components/Logo';
 import { openTipJar } from '@/content/tipJar';
@@ -47,6 +47,8 @@ export function Footer() {
             <h4>Explore</h4>
             <Link to="/"><Home size={15} /> Home</Link>
             <Link to="/cgpa-calculator"><Calculator size={15} /> CGPA Calculator</Link>
+            <Link to="/syllabus"><ScrollText size={15} /> Syllabus</Link>
+            <Link to="/pu-grading-system"><GraduationCap size={15} /> PU Grading Guide</Link>
             <Link to="/about"><CircleHelp size={15} /> About Us</Link>
             <Link to="/contributors"><Users size={15} /> Contributors</Link>
             <Link to="/contributing"><Heart size={15} /> Contribute</Link>

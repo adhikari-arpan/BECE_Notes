@@ -5,8 +5,6 @@
 /* Navigation is done with real links now; keep them looking like the cards/buttons they replaced. */
 a.brand-lockup, a.text-button, a.back-button, a.cta-button, a.download-button, a.semester-card, a.subject-card, a.about-card,
 a.course-table-link, a.syllabus-link, a.syllabus-all-link { text-decoration: none; }
-.not-found { padding-bottom: 120px; }
-.not-found p { max-width: 460px; color: var(--c-4c5b54); line-height: 1.6; margin: 12px 0 24px; }
 
 /* Theme colors. Light values are the original palette; dark values are derived from them
    (same hue, flipped lightness). Brand gold and the dark-green surfaces stay the same in both. */
@@ -898,6 +896,13 @@ body.tip-jar-open { overflow: hidden; }
 .tip-glyph { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; pointer-events: none; }
 .tip-glyph .chiya-cup { position: absolute; right: -110px; bottom: -90px; opacity: .08; transform: rotate(-10deg); }
 :root[data-theme="dark"] .tip-glyph .chiya-cup { opacity: .1; }
+/* Steps change height smoothly. The box is widened by its padding (and pulled back with negative
+   margins) so card shadows and the selected glow aren't clipped while it animates. */
+.tip-body { box-sizing: content-box; margin: -8px -16px -18px; padding: 8px 16px 18px; overflow: hidden; transition: height .42s cubic-bezier(.22,.9,.24,1); }
+.tip-step { animation: tip-step-in .38s cubic-bezier(.22,.9,.24,1) both; }
+@keyframes tip-step-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.tip-qr img { animation: tip-fade .3s ease; }
+@media (prefers-reduced-motion: reduce) { .tip-body { transition: none; } .tip-step, .tip-qr img { animation: none; } }
 .tip-close { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--c-eef1ec); color: var(--c-4c5b54); }
 .tip-close:hover { background: var(--c-e0ece1); color: var(--c-0b1f1a); }
 .tip-hero { display: flex; gap: 16px; align-items: center; margin-bottom: 20px; padding-right: 30px; }
@@ -1213,3 +1218,126 @@ body:has(.cookie-banner.is-shown) .tip-nudge { bottom: 96px; }
   body:has(.cookie-banner.is-shown) .tip-nudge { bottom: 150px; }
 }
 @media (prefers-reduced-motion: reduce) { .cookie-banner { transition: none; } }
+
+/* ---------------- Curriculum switch: before 2025 / 2025 onwards ---------------- */
+.structure-bar { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; margin-top: 14px; }
+.structure-bar-home { margin: -6px 0 18px; }
+.structure-toggle { display: inline-flex; padding: 3px; border-radius: 99px; background: var(--c-eef1ec); border: 1px solid var(--c-e3e6de); }
+.structure-toggle button { border: 0; padding: 6px 14px; border-radius: 99px; background: transparent; color: var(--c-5c6b64); font: 600 12px 'DM Sans', sans-serif; white-space: nowrap; transition: background .15s, color .15s, box-shadow .15s; }
+.structure-toggle button:hover { color: var(--c-0b1f1a); }
+.structure-toggle button[aria-checked="true"] { background: var(--c-fffdf7); color: var(--c-0b1f1a); box-shadow: 0 1px 5px rgba(var(--shadow-rgb),.14), inset 0 -2px 0 #e5a927; }
+.structure-note-inline { font-size: 12px; color: var(--c-7d8b84); }
+.structure-note { flex-basis: 100%; display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 10px 14px; border-radius: 12px; background: var(--c-fffdf0); border: 1px solid #efd98f; font-size: 12.5px; line-height: 1.55; color: var(--c-4c5b54); }
+.structure-note svg { flex-shrink: 0; margin-top: 2px; color: #b8860b; }
+.structure-note strong { color: var(--c-0b1f1a); }
+/* "Notes in Sem II" beside a 2025 subject whose notes are filed under another semester. */
+.notes-in-chip { margin-left: 4px; padding: 2px 8px; border-radius: 99px; background: var(--c-e6eee8); color: var(--c-43655a); font: 600 10px 'DM Mono', monospace; white-space: nowrap; }
+.cgpa-confirm-structure { font-size: 11.5px; color: var(--c-5c6b64); }
+@media (max-width: 560px) {
+  .structure-toggle { width: 100%; }
+  .structure-toggle button { flex: 1; padding: 6px 8px; font-size: 11.5px; }
+}
+
+/* ---------------- PU grading guide ---------------- */
+.guide-toc { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.guide-toc a { padding: 5px 11px; border-radius: 99px; background: var(--c-f6f7f1); border: 1px solid var(--c-e3e6de); color: var(--c-1d3f35); font-size: 12px; font-weight: 600; text-decoration: none; }
+.guide-toc a:hover { border-color: #e8c873; background: var(--c-fffdf0); }
+.content-page-section[id] { scroll-margin-top: 84px; }
+.guide-formula { margin: 14px 0 !important; padding: 12px 16px; border-radius: 12px; background: #173f37; color: #f0c34a; font: 600 14px 'DM Mono', monospace; text-align: center !important; }
+.guide-example { margin: 14px 0; padding: 12px 16px; border-radius: 12px; background: var(--c-fffdf0); border: 1px solid #efd98f; border-left: 4px solid #f0c34a; }
+.guide-example > strong { display: block; margin-bottom: 4px; font: 600 10px 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--c-6d5410); }
+.guide-example p { margin: 4px 0 !important; text-align: left !important; }
+.guide-example b { color: var(--c-0b1f1a); }
+.guide-muted { font-size: 12.5px; color: var(--c-7d8b84) !important; }
+.guide-row-fail td { color: var(--c-be4a36) !important; }
+.guide-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; padding: 10px 16px; border-radius: 99px; background: linear-gradient(135deg, #f0c34a, #e5a927); color: #0b1f1a; font-weight: 700; font-size: 13px; text-decoration: none; }
+.guide-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+.guide-cards > div { display: flex; flex-direction: column; gap: 3px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); }
+.guide-cards span { font: 600 10px 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--c-7d8b84); }
+.guide-cards strong { font: 700 26px 'Sora', 'DM Sans', sans-serif; color: var(--c-0b1f1a); letter-spacing: -.02em; }
+.guide-cards small { font-size: 12px; line-height: 1.45; color: var(--c-5c6b64); }
+.guide-facts { display: grid; gap: 10px; }
+.guide-facts > div { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; line-height: 1.6; color: var(--c-1d3f35); }
+.guide-facts svg { flex-shrink: 0; margin-top: 3px; color: #b8860b; }
+.guide-faq { display: grid; gap: 8px; }
+.guide-faq details { border: 1px solid var(--c-e3e6de); border-radius: 12px; background: var(--c-fffdf7); padding: 0 14px; }
+.guide-faq summary { cursor: pointer; padding: 12px 0; font-weight: 700; font-size: 13.5px; color: var(--c-0b1f1a); }
+.guide-faq details[open] summary { border-bottom: 1px dashed var(--c-dde3dc); }
+.guide-faq details p { margin: 10px 0 12px !important; }
+.guide-source { margin-top: 24px; padding-top: 14px; border-top: 1px dashed var(--c-dde3dc); font-size: 12px; color: var(--c-7d8b84); }
+.guide-source a { display: inline-flex; align-items: center; gap: 3px; color: #1f7a5a; }
+
+/* ---------------- Syllabus pages ---------------- */
+.syllabus-lead { max-width: 760px; margin: 12px 0 0; font-size: 14px; line-height: 1.65; color: var(--c-4c5b54); }
+.syllabus-facts { margin-bottom: 20px; }
+/* Overview: one row per year (a small label, then its two semesters side by side). */
+.syllabus-year { margin-bottom: 22px; }
+.syllabus-year-label { display: block; margin: 0 0 8px 2px; font: 600 10.5px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--c-7d8b84); }
+.syllabus-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+a.syllabus-card { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); color: var(--c-1d3f35); text-decoration: none; transition: transform .18s, border-color .18s, box-shadow .18s; }
+a.syllabus-card:hover { transform: translateY(-3px); border-color: #e8c873; box-shadow: 0 10px 22px rgba(var(--shadow-rgb),.1); }
+.syllabus-card-top { display: flex; align-items: center; justify-content: space-between; }
+.syllabus-card > strong { font: 600 19px 'Playfair Display', serif; color: var(--c-0b1f1a); }
+.syllabus-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 12.5px; }
+/* Code in its own column, so long names wrap under the name rather than under the code. */
+.syllabus-card li { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 6px; align-items: baseline; }
+.syllabus-card li span:first-child { font: 600 10.5px 'DM Mono', monospace; color: var(--c-7d8b84); }
+.syllabus-card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--c-eef1ec); font: 500 11px 'DM Mono', monospace; color: var(--c-5c6b64); }
+.syllabus-courses { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.syllabus-course { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); }
+.syllabus-course header { display: grid; gap: 4px; }
+.syllabus-course header .subject-card-code { justify-self: start; }
+.syllabus-course h4 { margin: 0; font-size: 15px; color: var(--c-0b1f1a); }
+.syllabus-course-meta { font: 500 11px 'DM Mono', monospace; color: var(--c-7d8b84); }
+.syllabus-course p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--c-4c5b54); }
+.syllabus-course-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
+.syllabus-course-links a { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 99px; border: 1px solid var(--c-e3e6de); background: var(--c-f6f7f1); color: var(--c-1d3f35); font-size: 12px; font-weight: 600; text-decoration: none; }
+.syllabus-course-links a:hover { border-color: #e8c873; background: var(--c-fffdf0); }
+.syllabus-pager { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 26px 0 60px; flex-wrap: wrap; }
+.syllabus-pager a { display: inline-flex; align-items: center; gap: 6px; color: var(--c-1d3f35); font-weight: 600; font-size: 13px; text-decoration: none; }
+.syllabus-pager a:hover { color: #b8860b; }
+@media (max-width: 720px) {
+  .guide-cards { grid-template-columns: minmax(0, 1fr); }
+  .guide-formula { font-size: 12.5px; }
+}
+.cgpa-guide-link { margin: -6px 0 12px; font-size: 12.5px; color: var(--c-5c6b64); }
+.cgpa-guide-link a { color: #1f7a5a; font-weight: 600; }
+.syllabus-facts-two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 620px; }
+@media (max-width: 720px) { .syllabus-facts-two, .syllabus-grid { grid-template-columns: minmax(0, 1fr); } }
+.home-faq-section { padding: 0 0 70px; }
+.home-faq-section .guide-faq details p { margin: 10px 0 12px; font-size: 13.5px; line-height: 1.65; color: var(--c-4c5b54); }
+/* "Cite this page" line on the guide and syllabus pages. */
+.cite-this { margin: 18px 0 0; padding: 10px 14px; border-radius: 12px; background: var(--c-f6f7f1); border: 1px dashed var(--c-dde3dc); font-size: 12px; line-height: 1.55; color: var(--c-5c6b64); }
+.cite-this strong { color: var(--c-0b1f1a); }
+.cite-this code { font: 500 11.5px 'DM Mono', monospace; color: var(--c-1d3f35); word-break: break-all; }
+
+/* ---------------- 404: "4 ☕ 4" ---------------- */
+.not-found { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 56px 0 110px; }
+.not-found-code { display: flex; align-items: center; gap: 6px; margin-bottom: 18px; font: 700 128px/1 'Sora', 'DM Sans', sans-serif; letter-spacing: -.04em; background: linear-gradient(180deg, var(--c-0b1f1a), #2f6b57); -webkit-background-clip: text; background-clip: text; color: transparent; }
+:root[data-theme="dark"] .not-found-code { background-image: linear-gradient(180deg, #fff6d6, #f0c34a); }
+.not-found-glass { width: 104px; height: 130px; overflow: visible; animation: not-found-bob 3.2s ease-in-out infinite; filter: drop-shadow(0 10px 16px rgba(var(--shadow-rgb),.18)); }
+@keyframes not-found-bob { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
+.not-found h2 { margin: 6px 0 0; font: 600 34px/1.15 'Playfair Display', serif; color: var(--c-0b1f1a); }
+.not-found-lead { max-width: 520px; margin: 12px 0 22px; font-size: 14.5px; line-height: 1.65; color: var(--c-4c5b54); }
+.not-found-lead em { display: block; margin-top: 6px; font-style: italic; color: #b8860b; }
+.not-found-home { margin-bottom: 34px; }
+.not-found-block { width: min(720px, 100%); margin-top: 10px; }
+.not-found-label { display: block; margin-bottom: 10px; font: 600 10px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--c-7d8b84); }
+.not-found-semesters { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 18px; }
+.not-found-semesters a { padding: 7px 14px; border-radius: 99px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); color: var(--c-1d3f35); font: 600 12.5px 'DM Sans', sans-serif; text-decoration: none; transition: transform .15s, border-color .15s, background .15s; }
+.not-found-semesters a:hover { transform: translateY(-2px); border-color: #e8c873; background: var(--c-fffdf0); }
+.not-found-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; text-align: left; }
+a.not-found-link { display: flex; align-items: center; gap: 10px; padding: 14px; border-radius: 14px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); color: var(--c-1d3f35); text-decoration: none; transition: transform .18s, border-color .18s, box-shadow .18s; }
+a.not-found-link:hover { transform: translateY(-3px); border-color: #e8c873; box-shadow: 0 10px 22px rgba(var(--shadow-rgb),.1); }
+.not-found-link-icon { flex-shrink: 0; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; background: var(--c-fffdf0); color: #b8860b; }
+.not-found-link strong { display: block; font-size: 13.5px; color: var(--c-0b1f1a); }
+.not-found-link small { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.4; color: var(--c-5c6b64); }
+.not-found-link-go { flex-shrink: 0; margin-left: auto; color: var(--c-7d8b84); }
+@media (max-width: 720px) {
+  .not-found { padding-top: 36px; }
+  .not-found-code { font-size: 92px; }
+  .not-found-glass { width: 76px; height: 96px; }
+  .not-found h2 { font-size: 26px; }
+  .not-found-links { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { .not-found-glass { animation: none; } }

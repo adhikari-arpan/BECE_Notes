@@ -19,6 +19,10 @@ import { ChiyaCup, ChiyaUses } from '@/components/TipJar';
 import { openTipJar } from '@/content/tipJar';
 import { Link } from '@/components/Link';
 import { contributors } from '@/content/contributors';
+import { semesters2025 } from '@/content/curriculum2025';
+import { SITE_FAQS } from '@/content/siteFaq';
+import { useStructure } from '@/content/structure';
+import { StructureToggle } from '@/components/StructureToggle';
 
 const courseSemesters = semesters.filter((s) => /^\d+$/.test(s.id));
 const subjectsWithNotes = semesters.flatMap((s) => s.subjects).filter((s) => !isSyllabus(s) && s.files.length > 0).length;
@@ -29,6 +33,7 @@ const totalBytes = allFiles.reduce((sum, f) => sum + f.size, 0);
 
 export function HomeView() {
   const { visitors, pageViews } = useSiteStats();
+  const structure = useStructure();
 
   return (
     <>
@@ -61,12 +66,26 @@ export function HomeView() {
           <div><span className="section-kicker">The curriculum</span><h2>Choose a semester</h2></div>
           <span className="semester-count">01 — {String(courseSemesters.length).padStart(2, '0')} · extras</span>
         </div>
+        <div className="structure-bar structure-bar-home">
+          <StructureToggle />
+          <span className="structure-note-inline">
+            {structure === '2025'
+              ? 'Showing the 2025 order: same subjects and credits, in their new semesters.'
+              : 'Joined in 2025 or later? Switch to see your semesters.'}
+          </span>
+        </div>
         <div className="semester-cards">
           {semesters.map((semester) => {
-            const subjects = semester.subjects.filter((s) => !isSyllabus(s));
+            const courses2025 = structure === '2025' ? semesters2025.find((s) => String(s.id) === semester.id)?.courses : undefined;
+            // In the 2025 view, a semester's numbers come from its 2025 courses (wherever their notes are filed).
+            const subjects = courses2025
+              ? courses2025.map((c) => c.subject).filter((s): s is NonNullable<typeof s> => !!s)
+              : semester.subjects.filter((s) => !isSyllabus(s));
             const withNotes = subjects.filter((s) => s.files.length > 0).length;
             const files = subjects.reduce((sum, s) => sum + s.files.length, 0);
-            const credits = subjects.reduce((sum, s) => sum + (s.kind === 'course' ? s.credits ?? 0 : 0), 0);
+            const credits = courses2025
+              ? courses2025.reduce((sum, c) => sum + c.credits, 0)
+              : subjects.reduce((sum, s) => sum + (s.kind === 'course' ? s.credits ?? 0 : 0), 0);
             return (
               <Link
                 key={semester.id}
@@ -184,6 +203,20 @@ export function HomeView() {
             <strong>{formatSize(totalBytes)}</strong>
             <span>Of study material</span>
           </div>
+        </div>
+      </section>
+
+      <section className="home-faq-section section-wrap">
+        <div className="section-heading">
+          <div><span className="section-kicker">Questions</span><h2>Frequently asked</h2></div>
+        </div>
+        <div className="guide-faq">
+          {SITE_FAQS.map((f) => (
+            <details key={f.q}>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
         </div>
       </section>
 
