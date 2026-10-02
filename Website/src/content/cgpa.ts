@@ -1,5 +1,13 @@
 import { curriculumSemesters } from '@/content/notes';
+import { curriculumSemesters2025 } from '@/content/curriculum2025';
 import { GRADES, gpa, gradePoint } from '@/content/grades';
+import type { Structure } from '@/content/structure';
+
+export type CurriculumSemesters = typeof curriculumSemesters;
+
+/** The semesters and courses the calculator uses: the earlier order, or the 2025 one. */
+export const curriculumFor = (structure: Structure): CurriculumSemesters =>
+  structure === '2025' ? curriculumSemesters2025 : curriculumSemesters;
 
 /** Per semester: grade picked for each course (by code), and/or a whole-semester SGPA typed in directly (it wins). */
 export interface SemesterEntry {
@@ -31,8 +39,8 @@ export interface SemesterResult {
   failed: number;
 }
 
-export function computeResults(entries: Entries) {
-  const results: SemesterResult[] = curriculumSemesters.map((sem) => {
+export function computeResults(entries: Entries, sems: CurriculumSemesters = curriculumSemesters) {
+  const results: SemesterResult[] = sems.map((sem) => {
     const entry = entries[sem.id] ?? emptyEntry();
     const totalCredits = sem.courses.reduce((sum, c) => sum + c.credits, 0);
     const graded = sem.courses
@@ -71,11 +79,11 @@ export const hasEntries = (entries: Entries) =>
  * Keeps only values the calculator understands: known semesters and courses, real grade letters,
  * short elective names and SGPA text. Used for saved data and uploaded reports alike.
  */
-export function cleanEntries(raw: unknown): Entries {
+export function cleanEntries(raw: unknown, sems: CurriculumSemesters = curriculumSemesters): Entries {
   const out: Entries = {};
   if (!raw || typeof raw !== 'object') return out;
   const letters = new Set<string>(GRADES.map((g) => g.letter));
-  for (const sem of curriculumSemesters) {
+  for (const sem of sems) {
     const value = (raw as Record<string, unknown>)[sem.id];
     if (!value || typeof value !== 'object') continue;
     const v = value as Partial<Record<keyof SemesterEntry, unknown>>;

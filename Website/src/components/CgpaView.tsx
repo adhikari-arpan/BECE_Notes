@@ -3,40 +3,58 @@ import { ArrowLeft, Award, Calculator, CheckCircle2, Download, ExternalLink, Fil
 import { Link } from '@/components/Link';
 import { CgpaUploadDialog } from '@/components/CgpaUploadDialog';
 import { ElectiveInput } from '@/components/ElectiveInput';
-import { curriculumSemesters, electiveNames } from '@/content/notes';
+import { electiveNames } from '@/content/notes';
 import { DEANS_LIST_GPA, DISTINCTION_CGPA, GRADES, GRADING_SOURCE, MIN_CGPA, formatGpa, gradePoint, gradeRange } from '@/content/grades';
-import { cleanEntries, computeResults, emptyEntry, hasEntries, isElectiveSlot, type Entries, type SemesterEntry } from '@/content/cgpa';
+import { cleanEntries, computeResults, curriculumFor, emptyEntry, hasEntries, isElectiveSlot, type Entries, type SemesterEntry } from '@/content/cgpa';
+import { setStructure, useStructure, type Structure } from '@/content/structure';
+import { StructureToggle } from '@/components/StructureToggle';
 import { saveBlob } from '@/content/watermark';
 import { deviceStore, openCookieSettings, useConsent } from '@/content/consent';
 
-const STORAGE_KEY = 'bece-cgpa-v1';
+/** Grades are kept separately per curriculum: course codes differ between the two orders. */
+const storageKey = (structure: Structure) => (structure === '2025' ? 'bece-cgpa-2025-v1' : 'bece-cgpa-v1');
 
-function loadEntries(): Entries {
+function loadEntries(structure: Structure): Entries {
   try {
-    return cleanEntries(JSON.parse(deviceStore.get(STORAGE_KEY) ?? '{}'));
+    return cleanEntries(JSON.parse(deviceStore.get(storageKey(structure)) ?? '{}'), curriculumFor(structure));
   } catch {
     return {};
   }
 }
 
+type Notice = { tone: 'ok' | 'error'; text: string };
+/** A message to show after switching curriculum to load a report (the calculator remounts). */
+let pendingNotice: Notice | null = null;
+
+/** The calculator follows the chosen curriculum; switching it starts a fresh calculator with that one's grades. */
 export function CgpaView() {
-  const [entries, setEntries] = useState<Entries>(loadEntries);
+  const structure = useStructure();
+  return <CgpaCalculator key={structure} structure={structure} />;
+}
+
+function CgpaCalculator({ structure }: { structure: Structure }) {
+  const sems = curriculumFor(structure);
+  const [entries, setEntries] = useState<Entries>(() => loadEntries(structure));
   const { consent } = useConsent();
 
   // Remembered on this device (with cookie consent) so students can come back each semester;
   // without consent the grades last for this visit only.
   useEffect(() => {
-    deviceStore.set(STORAGE_KEY, JSON.stringify(entries));
-  }, [entries]);
+    deviceStore.set(storageKey(structure), JSON.stringify(entries));
+  }, [entries, structure]);
 
   const update = (id: number, change: (entry: SemesterEntry) => SemesterEntry) =>
     setEntries((prev) => ({ ...prev, [id]: change(prev[id] ?? emptyEntry()) }));
 
-  const { results, counted, cgpa, earned, programCredits, failed, best } = useMemo(() => computeResults(entries), [entries]);
+  const { results, counted, cgpa, earned, programCredits, failed, best } = useMemo(() => computeResults(entries, sems), [entries, sems]);
 
   // PDF report: download what's entered, or upload an earlier report to carry on from it.
   const [busy, setBusy] = useState<'download' | null>(null);
-  const [notice, setNotice] = useState<{ tone: 'ok' | 'error'; text: string } | null>(null);
+  const [notice, setNotice] = useState<Notice | null>(() => {
+    const n = pendingNotice;
+    pendingNotice = null;
+    return n;
+  });
   const [uploadOpen, setUploadOpen] = useState(false);
   const closeUpload = useCallback(() => setUploadOpen(false), []);
 
@@ -45,7 +63,7 @@ export function CgpaView() {
     setNotice(null);
     try {
       const { createReport, reportFileName } = await import('@/content/cgpaReport');
-      saveBlob(new Blob([(await createReport(entries)) as BlobPart], { type: 'application/pdf' }), reportFileName());
+      saveBlob(new Blob([(await createReport(entries, structure)) as BlobPart], { type: 'application/pdf' }), reportFileName());
     } catch {
       setNotice({ tone: 'error', text: 'Couldn’t create the PDF. Please try again.' });
     } finally {
@@ -53,14 +71,22 @@ export function CgpaView() {
     }
   };
 
-  const loadReport = ({ entries: loaded, generated }: { entries: Entries; generated: Date | null }) => {
-    setEntries(loaded);
+  const loadReport = ({ entries: loaded, generated, structure: reportStructure }: { entries: Entries; generated: Date | null; structure: Structure }) => {
     setUploadOpen(false);
-    const semesters = computeResults(loaded).counted.length;
-    setNotice({
+    const semesters = computeResults(loaded, curriculumFor(reportStructure)).counted.length;
+    const loadedNotice: Notice = {
       tone: 'ok',
       text: `Loaded ${semesters} ${semesters === 1 ? 'semester' : 'semesters'}${generated ? ` from your report of ${generated.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}. Fill in the rest to see your full CGPA.`,
-    });
+    };
+    if (reportStructure !== structure) {
+      // A report made for the other curriculum: save its grades there and switch to it.
+      deviceStore.set(storageKey(reportStructure), JSON.stringify(loaded));
+      pendingNotice = loadedNotice;
+      setStructure(reportStructure);
+      return;
+    }
+    setEntries(loaded);
+    setNotice(loadedNotice);
   };
 
   const standing = cgpa === null ? null
@@ -81,7 +107,11 @@ export function CgpaView() {
             <span className="section-kicker">Tools · Pokhara University BECE</span>
             <h2>CGPA Calculator</h2>
           </div>
-          <span className="subject-count-pill">{curriculumSemesters.length} semesters · {programCredits} credits</span>
+          <span className="subject-count-pill">{sems.length} semesters · {programCredits} credits</span>
+        </div>
+        <div className="structure-bar">
+          <StructureToggle />
+          <span className="structure-note-inline">Grades are saved separately for each curriculum.</span>
         </div>
         <div className="cgpa-intro">
           <p className="cgpa-lead">
@@ -151,12 +181,12 @@ export function CgpaView() {
 
             <dl className="cgpa-stats">
               <div><dt>Credits</dt><dd>{earned}<small>/{programCredits}</small></dd></div>
-              <div><dt>Semesters</dt><dd>{counted.length}<small>/{curriculumSemesters.length}</small></dd></div>
+              <div><dt>Semesters</dt><dd>{counted.length}<small>/{sems.length}</small></dd></div>
               <div><dt>Best SGPA</dt><dd>{formatGpa(best)}</dd></div>
             </dl>
 
             <ul className="cgpa-sgpa-list" aria-label="SGPA by semester">
-              {curriculumSemesters.map((sem, i) => (
+              {sems.map((sem, i) => (
                 <li key={sem.id} className={results[i].sgpa === null ? 'muted' : ''}>
                   <span>{sem.label}</span>
                   <strong>{formatGpa(results[i].sgpa)}</strong>
@@ -176,7 +206,7 @@ export function CgpaView() {
         </aside>
 
         <div className="cgpa-semesters">
-          {curriculumSemesters.map((sem, i) => {
+          {sems.map((sem, i) => {
             const entry = entries[sem.id] ?? emptyEntry();
             const result = results[i];
             const invalid = entry.sgpa.trim() !== '' && !result.typed;
@@ -268,6 +298,9 @@ export function CgpaView() {
 
           <article className="cgpa-semester cgpa-info">
             <h3><Info size={17} /> PU grading at a glance</h3>
+            <p className="cgpa-guide-link">
+              Want the full rules, with worked examples? Read the <Link to="/pu-grading-system">PU grading system guide</Link>.
+            </p>
             <ul className="cgpa-grade-chips" aria-label="Grade, grade point and final score">
               {GRADES.map((g, i) => (
                 <li key={g.letter} className={g.letter === 'F' ? 'fail' : ''}>

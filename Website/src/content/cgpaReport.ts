@@ -4,9 +4,9 @@
  * the calculator back in. Only reports made here carry that data, so other PDFs are refused.
  */
 import type { PDFFont, PDFPage } from 'pdf-lib';
-import { curriculumSemesters } from '@/content/notes';
 import { DISTINCTION_CGPA, MIN_CGPA, formatGpa, gradePoint } from '@/content/grades';
-import { cleanEntries, computeResults, emptyEntry, isElectiveSlot, type Entries } from '@/content/cgpa';
+import { cleanEntries, computeResults, curriculumFor, emptyEntry, isElectiveSlot, type Entries } from '@/content/cgpa';
+import { STRUCTURE_LABELS, type Structure } from '@/content/structure';
 import { SITE_HOST, SITE_URL } from '@/content/watermark';
 import { withBase } from '@/content/router';
 
@@ -23,6 +23,8 @@ export const DISCLAIMER =
 interface Payload {
   v: number;
   generated: string;
+  /** Which curriculum order the grades follow (missing in older reports = the earlier order). */
+  structure?: Structure;
   entries: Entries;
 }
 
@@ -80,7 +82,8 @@ function fit(text: string, font: PDFFont, size: number, width: number) {
 }
 
 
-export async function createReport(entries: Entries): Promise<Uint8Array> {
+export async function createReport(entries: Entries, structure: Structure = 'pre2025'): Promise<Uint8Array> {
+  const sems = curriculumFor(structure);
   const { PDFArray, PDFDocument, PDFName, PDFString, StandardFonts, rgb } = await import('pdf-lib');
   const C = {
     ink: rgb(0.043, 0.122, 0.102),
@@ -108,9 +111,9 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
       return pdf.embedFont(await res.arrayBuffer(), { subset: true });
     })
     .catch(() => bold);
-  const summary = computeResults(entries);
+  const summary = computeResults(entries, sems);
   const generated = new Date();
-  const payloadJson = JSON.stringify({ v: VERSION, generated: generated.toISOString(), entries: cleanEntries(entries) } satisfies Payload);
+  const payloadJson = JSON.stringify({ v: VERSION, generated: generated.toISOString(), structure, entries: cleanEntries(entries, sems) } satisfies Payload);
   const reportId = checksum(payloadJson).toUpperCase();
   const when = generated.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   const contentWidth = A4.width - MARGIN * 2;
@@ -208,6 +211,7 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
   addLink(page, tx, A4.height - 80, regular.widthOfTextAtSize(PAGE_URL, 8.5), 8.5, `https://${PAGE_URL}`);
   right(`Generated ${when}`, A4.width - MARGIN, A4.height - 44, 9, regular, C.white);
   right(`Report ID ${reportId}`, A4.width - MARGIN, A4.height - 58, 8.5, regular, rgb(0.62, 0.72, 0.68));
+  right(`Curriculum: ${STRUCTURE_LABELS[structure]}`, A4.width - MARGIN, A4.height - 72, 8.5, regular, rgb(0.62, 0.72, 0.68));
   y = A4.height - 122;
 
   /* Disclaimer */
@@ -232,7 +236,7 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
     : `Below the ${MIN_CGPA.toFixed(1)} minimum CGPA`;
   const stats: [string, string][] = [
     ['Credits counted', `${summary.earned} / ${summary.programCredits}`],
-    ['Semesters entered', `${summary.counted.length} / ${curriculumSemesters.length}`],
+    ['Semesters entered', `${summary.counted.length} / ${sems.length}`],
     ['Best SGPA', formatGpa(summary.best)],
     ['Standing', standing],
   ];
@@ -259,7 +263,7 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
   text('Semester overview', MARGIN, y, 13, bold, C.ink);
   y -= 12;
   tableHeader([['SEMESTER', col.sem], ['CREDITS', col.credits, true], ['SGPA', col.sgpa, true]]);
-  curriculumSemesters.forEach((sem, i) => {
+  sems.forEach((sem, i) => {
     const r = summary.results[i];
     const has = r.sgpa !== null;
     y -= 18;
@@ -272,7 +276,7 @@ export async function createReport(entries: Entries): Promise<Uint8Array> {
 
   /* Subject grades for each semester that has them */
   const sub = { code: MARGIN + 10, name: MARGIN + 80, credits: MARGIN + 360, grade: MARGIN + 395, points: MARGIN + contentWidth - 10 };
-  curriculumSemesters.forEach((sem, i) => {
+  sems.forEach((sem, i) => {
     const entry = entries[sem.id] ?? emptyEntry();
     const graded = sem.courses.filter((c) => entry.grades[c.code]);
     if (!graded.length) return;
@@ -336,7 +340,7 @@ export class ReportError extends Error {}
 const NOT_OURS = 'Only CGPA reports downloaded from this calculator can be uploaded. This PDF wasn’t made here.';
 
 /** Reads a report made by createReport and returns its grades; throws ReportError for anything else. */
-export async function readReport(file: File): Promise<{ entries: Entries; generated: Date | null }> {
+export async function readReport(file: File): Promise<{ entries: Entries; generated: Date | null; structure: Structure }> {
   if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') throw new ReportError('Please choose a PDF file.');
   if (file.size > 5 * 1024 * 1024) throw new ReportError('This PDF is too large to be a BECE Vault CGPA report.');
   const { PDFDocument } = await import('pdf-lib');
@@ -361,7 +365,12 @@ export async function readReport(file: File): Promise<{ entries: Entries; genera
   if (Number(version) > VERSION) throw new ReportError('This report was made by a newer version of the calculator. Refresh the page and try again.');
   const payload = JSON.parse(json) as Partial<Payload>;
   const generated = payload.generated ? new Date(payload.generated) : null;
-  return { entries: cleanEntries(payload.entries), generated: generated && !isNaN(generated.getTime()) ? generated : null };
+  const structure: Structure = payload.structure === '2025' ? '2025' : 'pre2025';
+  return {
+    entries: cleanEntries(payload.entries, curriculumFor(structure)),
+    generated: generated && !isNaN(generated.getTime()) ? generated : null,
+    structure,
+  };
 }
 
 export const reportFileName = () => `BECE-Vault-CGPA-Report-${new Date().toISOString().slice(0, 10)}.pdf`;

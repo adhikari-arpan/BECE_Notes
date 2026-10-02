@@ -26,7 +26,9 @@ import { navigate } from '@/content/router';
 import { Loader } from '@/components/Loader';
 import { DownloadButton } from '@/components/DownloadButton';
 import { useResizableSidebar } from '@/components/useResizableSidebar';
-import { formatDate, formatSize, isSyllabusFolder, plural, semesterPath, subjectPath, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
+import { formatDate, formatSize, isSyllabusFolder, plural, semesterPath, semesters, subjectPath, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
+import { semester2025For } from '@/content/curriculum2025';
+import { useStructure } from '@/content/structure';
 
 const PdfViewer = lazy(() => import('@/components/PdfViewer'));
 const MarkdownViewer = lazy(() => import('@/components/MarkdownViewer'));
@@ -105,6 +107,11 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
   const openFile = (file: NoteFile) => navigate(subjectPath(semester, subject, file), { replace: true });
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const sidebar = useResizableSidebar();
+  // In the 2025 view, this subject "belongs" to its 2025 semester (e.g. Applied Physics → Semester I),
+  // even though its notes are filed under the earlier one.
+  const structure = useStructure();
+  const sem2025 = structure === '2025' ? semester2025For(subject) : undefined;
+  const homeSemester = (sem2025 && semesters.find((s) => s.id === String(sem2025.id))) || semester;
 
   const toggleFolder = (folder: string) =>
     setCollapsed((prev) => {
@@ -156,8 +163,8 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
   return (
     <>
       <section className="subject-page">
-        <Link to={semesterPath(semester)} className="back-button">
-          <ArrowLeft size={16} /> Back to {semester.label}
+        <Link to={semesterPath(homeSemester)} className="back-button">
+          <ArrowLeft size={16} /> Back to {homeSemester.label}
         </Link>
 
         <div className="subject-box">
@@ -177,7 +184,9 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
               <span className="subject-code">{subject.code}</span>
               <h2>{subject.name}</h2>
               <span className="subject-meta">
-                <span className="meta-chip meta-chip-semester">{semester.label}</span>
+                <span className="meta-chip meta-chip-semester" title={homeSemester !== semester ? `2025 batch onwards order (notes filed under ${semester.label})` : undefined}>
+                  {homeSemester.label}{homeSemester !== semester ? ' · 2025' : ''}
+                </span>
                 {subject.credits !== null && <span className="meta-chip">{plural(subject.credits, 'credit')}</span>}
                 <span className="meta-chip">{plural(subject.files.length, 'file')}</span>
               </span>
