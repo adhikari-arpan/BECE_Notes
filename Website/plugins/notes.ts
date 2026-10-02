@@ -236,7 +236,7 @@ export function notesPlugin(options: NotesPluginOptions): Plugin {
       if (!isBuild) return html;
       // A small loading screen shows until the app starts; the text summary is there for search
       // engines and screen readers but kept out of sight so it never flashes unstyled.
-      const boot = '<div class="boot" aria-hidden="true"><img src="/logo.png" alt="" /><span></span></div>';
+      const boot = '<div class="boot" aria-hidden="true"><img src="/images/logo.png" alt="" /><span></span></div>';
       const summary = `<div class="prerender-summary">${crawlableSummary(buildManifest(repoRoot, true))}</div>`;
       return html.replace('<div id="root"></div>', `<div id="root">${boot}${summary}</div>`);
     },

@@ -35,6 +35,10 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
+    server: {
+      // The Contributing page imports ../CONTRIBUTING.md from the repository root.
+      fs: { allow: [fileURLToPath(new URL('..', import.meta.url))] },
+    },
     optimizeDeps: {
       exclude: ['lucide-react'],
     },
