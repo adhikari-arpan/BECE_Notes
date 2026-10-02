@@ -119,7 +119,7 @@ export async function createReport(entries: Entries, structure: Structure = 'pre
   const contentWidth = A4.width - MARGIN * 2;
 
   // The site logo, if it can be fetched; the report still works without it.
-  const logo = await fetch(withBase('/logo.png'))
+  const logo = await fetch(withBase('/images/logo.png'))
     .then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error('logo'))))
     .then((bytes) => pdf.embedPng(bytes))
     .catch(() => null);

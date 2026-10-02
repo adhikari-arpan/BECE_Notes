@@ -1,6 +1,17 @@
-import { ArrowLeft, Globe, Mail } from 'lucide-react';
+import { ArrowLeft, Github, Globe, Linkedin, Mail } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { contributors } from '@/content/contributors';
+
+/** One contact, shown with a fitting icon: an email address or a link (LinkedIn, GitHub, any website). */
+function ContactLink({ value }: { value: string }) {
+  const isEmail = !/^https?:\/\//i.test(value) && value.includes('@');
+  const href = isEmail ? `mailto:${value}` : /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  const Icon = isEmail ? Mail : /linkedin\.com/i.test(value) ? Linkedin : /github\.com/i.test(value) ? Github : Globe;
+  const label = isEmail ? value : value.replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
+  return (
+    <a href={href} {...(isEmail ? {} : { target: '_blank', rel: 'noreferrer' })}><Icon size={14} /> {label}</a>
+  );
+}
 
 export function ContributorsView() {
   return (
@@ -36,8 +47,9 @@ export function ContributorsView() {
                 <div className="contributor-subjects">
                   {c.subjects.map((s, j) => <span key={j} className="contributor-tag">{s}</span>)}
                 </div>
-                {(c.website || c.email) && (
+                {(c.website || c.email || c.contact) && (
                   <div className="contributor-links">
+                    {c.contact && <ContactLink value={c.contact} />}
                     {c.website && (
                       <a href={c.website} target="_blank" rel="noreferrer"><Globe size={14} /> {c.website.replace(/^https?:\/\//, '')}</a>
                     )}
