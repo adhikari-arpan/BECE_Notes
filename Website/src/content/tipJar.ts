@@ -2,16 +2,62 @@ import { useSyncExternalStore } from 'react';
 import { sessionStore } from '@/content/consent';
 
 /**
- * "Buy me a Chiya" tip jar. Tips are paid directly through eSewa by scanning the QR; the site
- * only helps pick an amount and never handles money. Any component can open the tip jar.
+ * "Buy me a Chiya" tip jar. Tips are paid directly through eSewa, Khalti or a bank transfer by
+ * scanning a QR (or copying the details); the site only helps pick an amount and never handles
+ * money. Any component can open the tip jar.
  */
 
 export const CUP_PRICE = 50; // Rs. per cup of chiya
 export const CUP_PRESETS = [1, 2, 3, 5];
 export const MAX_CUPS = 99;
-export const ESEWA_NAME = 'Arpan Adhikari';
-export const ESEWA_ID = '9864389333';
-export const ESEWA_QR = `${import.meta.env.BASE_URL}esewa-qr.png`;
+export const PAYEE_NAME = 'Arpan Adhikari';
+
+export type PaymentMethodId = 'esewa' | 'khalti' | 'bank';
+
+export interface PaymentMethod {
+  id: PaymentMethodId;
+  /** Tab label, e.g. "eSewa". */
+  label: string;
+  /** How the step list refers to the app, e.g. "eSewa" or "your bank app". */
+  app: string;
+  qr: string;
+  qrFile: string;
+  /** Details shown under the QR; `copy` marks the one with a copy button. */
+  details: { label: string; value: string; copy?: boolean }[];
+}
+
+const asset = (file: string) => `${import.meta.env.BASE_URL}${file}`;
+
+export const PAYMENT_METHODS: PaymentMethod[] = [
+  {
+    id: 'esewa',
+    label: 'eSewa',
+    app: 'eSewa',
+    qr: asset('esewa-qr.png'),
+    qrFile: 'esewa-qr-arpan-adhikari.png',
+    details: [{ label: 'eSewa ID', value: '9864389333', copy: true }],
+  },
+  {
+    id: 'khalti',
+    label: 'Khalti',
+    app: 'Khalti',
+    qr: asset('khalti-qr.png'),
+    qrFile: 'khalti-qr-arpan-adhikari.png',
+    details: [{ label: 'Khalti ID', value: '9864389333', copy: true }],
+  },
+  {
+    id: 'bank',
+    label: 'Bank transfer',
+    app: 'your mobile banking app',
+    qr: asset('bank-qr.png'),
+    qrFile: 'global-ime-bank-qr-arpan-adhikari.png',
+    details: [
+      { label: 'Bank', value: 'Global IME Bank Limited' },
+      { label: 'Account name', value: 'Arpan Adhikari' },
+      { label: 'Account number', value: '37707010011413', copy: true },
+    ],
+  },
+];
 
 interface TipJarState {
   open: boolean;

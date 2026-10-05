@@ -28,6 +28,8 @@ export interface Subject {
   credits: number | null;
   /** Short summary of what the course covers (see descriptions.ts). */
   description?: string;
+  /** An "Elective I/II/III" slot: its notes live in the Electives collection, not in the semester. */
+  electiveSlot?: boolean;
   icon: string;
   /** Repo folder holding this subject's notes, or null if nothing has been added yet. */
   folder: string | null;
@@ -166,6 +168,7 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
       code: c.code,
       name: c.name,
       description: descriptionFor(c.name),
+      electiveSlot: /^ELEC\b/.test(c.code),
       credits: c.credits,
       icon: c.icon,
       folder: folder ? `${root}/${folder}` : null,

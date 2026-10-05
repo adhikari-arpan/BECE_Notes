@@ -44,15 +44,26 @@ export function SemesterView({ semester }: SemesterViewProps) {
               </thead>
               <tbody>
                 {courses.map((c) => {
-                  const syllabusFile = findSyllabus(syllabus, c);
+                  const syllabusFile = c.electiveSlot ? undefined : findSyllabus(syllabus, c);
                   return (
                     <tr key={c.id}>
                       <td className="code">{c.code}</td>
                       <td>
-                        <Link to={subjectPath(semester, c)} className="course-table-link">
-                          <span className="course-table-icon">{c.icon}</span>
-                          {c.name}
-                        </Link>
+                        {c.electiveSlot ? (
+                          // Elective notes live in the Electives collection, whichever one the student picked.
+                          <Link to="/electives" className="course-table-link elective-slot-link">
+                            <span className="course-table-icon">{c.icon}</span>
+                            {c.name}
+                            <span className="elective-slot-hint" role="tooltip">
+                              Find notes for the elective you've chosen in <strong>Electives</strong> <ArrowRight size={12} />
+                            </span>
+                          </Link>
+                        ) : (
+                          <Link to={subjectPath(semester, c)} className="course-table-link">
+                            <span className="course-table-icon">{c.icon}</span>
+                            {c.name}
+                          </Link>
+                        )}
                       </td>
                       <td className="num">{c.credits ?? '—'}</td>
                       {hasSyllabusColumn && (
@@ -91,7 +102,7 @@ export function SemesterView({ semester }: SemesterViewProps) {
 
         <h3 className="notes-heading">Subject notes</h3>
         <div className="subject-cards-grid">
-          {subjects.map((subject) => (
+          {subjects.filter((s) => !s.electiveSlot).map((subject) => (
             <Link
               key={subject.id}
               to={subjectPath(semester, subject)}
