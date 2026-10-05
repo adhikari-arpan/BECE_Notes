@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, Coffee, Copy, Download, Heart, Minus, Plus, RefreshCw, Server, Unlock, Wrench, X } from 'lucide-react';
 import {
-  CUP_PRESETS, CUP_PRICE, ESEWA_ID, ESEWA_NAME, ESEWA_QR, MAX_CUPS,
+  CUP_PRESETS, CUP_PRICE, MAX_CUPS, PAYEE_NAME, PAYMENT_METHODS, type PaymentMethodId,
   closeTipJar, dismissTipNudge, formatRs, openTipJar, useTipJar,
 } from '@/content/tipJar';
 
@@ -55,7 +55,9 @@ export function TipJar() {
   const { open, nudge } = useTipJar();
   const [step, setStep] = useState<Step>('choose');
   const [cups, setCups] = useState(2);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
+  const [methodId, setMethodId] = useState<PaymentMethodId>('esewa');
+  const method = PAYMENT_METHODS.find((m) => m.id === methodId) ?? PAYMENT_METHODS[0];
   const dialogRef = useRef<HTMLDivElement>(null);
   const total = cups * CUP_PRICE;
 
@@ -63,7 +65,7 @@ export function TipJar() {
   useEffect(() => {
     if (!open) return;
     setStep('choose');
-    setCopied(false);
+    setCopied(null);
     const previous = document.activeElement as HTMLElement | null;
     requestAnimationFrame(() => dialogRef.current?.focus());
     const onKey = (e: KeyboardEvent) => {
@@ -80,13 +82,13 @@ export function TipJar() {
 
   const setCupCount = (n: number) => setCups(Math.min(MAX_CUPS, Math.max(1, Math.round(n) || 1)));
 
-  const copyId = async () => {
+  const copy = async (value: string) => {
     try {
-      await navigator.clipboard.writeText(ESEWA_ID);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(value);
+      setCopied(value);
+      setTimeout(() => setCopied((c) => (c === value ? null : c)), 2000);
     } catch {
-      // Clipboard unavailable — the ID is visible to copy by hand.
+      // Clipboard unavailable — the value is visible to copy by hand.
     }
   };
 
@@ -166,30 +168,65 @@ export function TipJar() {
                 <button className="tip-primary" onClick={() => setStep('pay')}>
                   Send {cups} {cups === 1 ? 'chiya' : 'chiyas'} · {formatRs(total)} <ArrowRight size={17} />
                 </button>
-                <p className="tip-footnote">Sent securely through eSewa. This site never sees your payment details.</p>
+                <p className="tip-footnote">Pay with eSewa, Khalti or bank transfer. This site never sees your payment details.</p>
               </>
             )}
 
             {step === 'pay' && (
               <>
-                <h2 id="tip-title" className="tip-pay-title">Send <span>{formatRs(total)}</span> of chiya via eSewa</h2>
-                <div className="tip-pay">
+                <h2 id="tip-title" className="tip-pay-title">Send <span>{formatRs(total)}</span> of chiya via {method.label === 'Bank transfer' ? 'bank transfer' : method.label}</h2>
+
+                <div className="tip-methods" role="tablist" aria-label="Payment method">
+                  {PAYMENT_METHODS.map((m) => (
+                    <button
+                      key={m.id}
+                      role="tab"
+                      aria-selected={m.id === method.id}
+                      className={`tip-method tip-method-${m.id}`}
+                      onClick={() => setMethodId(m.id)}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="tip-pay" role="tabpanel">
                   <div className="tip-qr">
-                    <img src={ESEWA_QR} alt={`eSewa QR code for ${ESEWA_NAME}`} width={220} height={220} />
-                    <span>{ESEWA_NAME} · eSewa</span>
+                    <img key={method.id} src={method.qr} alt={`${method.label} QR code for ${PAYEE_NAME}`} width={220} height={220} />
+                    <span>{PAYEE_NAME} · {method.id === 'bank' ? 'Global IME Bank' : method.label}</span>
                   </div>
                   <ol className="tip-steps">
-                    <li><strong>Open eSewa</strong> and tap <em>Scan</em>.</li>
-                    <li><strong>Scan this QR</strong> — on a phone, tap <em>Save QR</em> and scan it from your gallery.</li>
-                    <li>Enter <strong>{formatRs(total)}</strong> and confirm. Add “Chiya for BECE Vault” as remarks if you like.</li>
+                    {method.id === 'bank' ? (
+                      <>
+                        <li><strong>Open {method.app}</strong> and choose <em>Scan</em> or <em>Fund transfer</em>.</li>
+                        <li><strong>Scan this QR</strong>, or enter the account details below.</li>
+                        <li>Send <strong>{formatRs(total)}</strong>. Add “Chiya for BECE Vault” as remarks if you like.</li>
+                      </>
+                    ) : (
+                      <>
+                        <li><strong>Open {method.app}</strong> and tap <em>Scan</em>.</li>
+                        <li><strong>Scan this QR</strong> — on a phone, tap <em>Save QR</em> and scan it from your gallery.</li>
+                        <li>Enter <strong>{formatRs(total)}</strong> and confirm. Add “Chiya for BECE Vault” as remarks if you like.</li>
+                      </>
+                    )}
                   </ol>
                 </div>
 
+                {method.details.length > 1 && (
+                  <dl className="tip-account">
+                    {method.details.map((d) => (
+                      <div key={d.label}><dt>{d.label}</dt><dd>{d.value}</dd></div>
+                    ))}
+                  </dl>
+                )}
+
                 <div className="tip-pay-actions">
-                  <a className="tip-secondary" href={ESEWA_QR} download="esewa-qr-arpan-adhikari.png"><Download size={15} /> Save QR</a>
-                  <button className="tip-secondary" onClick={copyId}>
-                    {copied ? <><Check size={15} /> Copied</> : <><Copy size={15} /> eSewa ID: {ESEWA_ID}</>}
-                  </button>
+                  <a className="tip-secondary" href={method.qr} download={method.qrFile}><Download size={15} /> Save QR</a>
+                  {method.details.filter((d) => d.copy).map((d) => (
+                    <button key={d.label} className="tip-secondary" onClick={() => copy(d.value)}>
+                      {copied === d.value ? <><Check size={15} /> Copied</> : <><Copy size={15} /> {d.label}: {d.value}</>}
+                    </button>
+                  ))}
                 </div>
 
                 <div className="tip-nav">

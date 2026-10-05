@@ -401,6 +401,13 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .course-table td.code { font: 600 11px 'DM Mono', monospace; color: var(--c-0b1f1a); white-space: nowrap; width: 1%; }
 .course-table-link { display: inline-flex; align-items: center; gap: 10px; border: 0; background: none; padding: 0; color: var(--c-0b1f1a); font: 600 13px 'DM Sans', sans-serif; text-align: left; }
 .course-table-link:hover { color: var(--c-467568); text-decoration: underline; text-underline-offset: 3px; }
+/* Elective I/II/III rows: hovering shows where their notes are (a pill next to the name, so the table's scroll box can't clip it). */
+.elective-slot-link { position: relative; }
+.elective-slot-link:hover { text-decoration: none; }
+/* Floats beside the name (position: absolute), so showing it never resizes the table's columns. */
+.elective-slot-hint { position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%); z-index: 2; box-shadow: 0 4px 12px rgba(var(--shadow-rgb),.12); display: none; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; background: var(--c-fffdf0); border: 1px solid #e8c873; color: var(--c-6d5410); font: 500 11px 'DM Sans', sans-serif; white-space: nowrap; animation: tip-fade .15s ease; }
+.elective-slot-hint strong { color: var(--c-0b1f1a); font-weight: 700; }
+.course-table tr:hover .elective-slot-hint, .elective-slot-link:focus-visible .elective-slot-hint { display: inline-flex; }
 .course-table-icon { width: 26px; height: 26px; flex-shrink: 0; display: grid; place-items: center; border-radius: 7px; background: var(--c-e0ece1); color: var(--c-467568); font: 500 10px 'DM Mono', monospace; }
 .syllabus-link { display: inline-flex; align-items: center; gap: 5px; border: 1px solid #e8c873; background: var(--c-fffdf0); color: var(--c-0b1f1a); font: 600 11px 'DM Sans', sans-serif; padding: 4px 10px; border-radius: 99px; white-space: nowrap; }
 .syllabus-link:hover { background: #f0c34a; border-color: #f0c34a; color: #0b1f1a; }
@@ -922,6 +929,20 @@ body.tip-jar-open { overflow: hidden; }
 .tip-footnote { margin: 10px 0 0; text-align: center; font-size: 11px; color: var(--c-8a978f); }
 .tip-pay-title { padding-right: 36px; margin-bottom: 16px; }
 .tip-pay-title span { color: #b8860b; }
+/* Payment method tabs: eSewa / Khalti / Bank transfer, each in its brand colour when chosen. */
+.tip-methods { display: flex; gap: 4px; padding: 4px; margin: 4px 0 16px; border-radius: 99px; background: var(--c-eef1ec); }
+.tip-method { flex: 1; height: 34px; border: 0; border-radius: 99px; background: transparent; color: var(--c-4c5b54); font: 600 12.5px 'DM Sans', sans-serif; transition: background .15s, color .15s, box-shadow .15s; }
+.tip-method:hover { color: var(--c-0b1f1a); }
+.tip-method[aria-selected="true"] { background: var(--c-fffdf7); color: var(--brand); box-shadow: 0 1px 5px rgba(var(--shadow-rgb),.14), inset 0 -2px 0 var(--brand); }
+.tip-method-esewa { --brand: #41a331; }
+.tip-method-khalti { --brand: #5c2d91; }
+.tip-method-bank { --brand: #1e4da1; }
+:root[data-theme="dark"] .tip-method-khalti { --brand: #b58ae0; }
+:root[data-theme="dark"] .tip-method-bank { --brand: #7aa2ec; }
+.tip-account { display: grid; gap: 6px; margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--c-f6f7f1); border: 1px solid var(--c-e3e6de); }
+.tip-account > div { display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; }
+.tip-account dt { color: var(--c-5c6b64); }
+.tip-account dd { margin: 0; font-weight: 700; color: var(--c-0b1f1a); text-align: right; font-variant-numeric: tabular-nums; }
 .tip-pay { display: flex; gap: 18px; align-items: center; }
 .tip-qr { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px; border-radius: 16px; background: #fff; border: 1px solid var(--c-e3e6de); box-shadow: 0 6px 18px rgba(var(--shadow-rgb),.08); }
 .tip-qr img { display: block; width: 190px; height: 190px; image-rendering: pixelated; }

@@ -109,7 +109,10 @@ function buildPages(semesters: Semester[], opts: PrerenderOptions): Page[] {
     const semRoute = `/${sem.slug}`;
     const semTitle = `${sem.label} Notes — Pokhara University BE Computer Engineering | ${opts.siteName}`;
     const semDesc = clip(`${sem.label} notes for Pokhara University BE Computer Engineering (BECE): ${courses.map((c) => c.name).join(', ')}. Free lecture notes, past questions and syllabus.`);
-    const rows = sem.subjects.map((s) => `<li><a href="/${sem.slug}/${s.slug}">${esc(s.name)}</a>${s.kind === 'course' ? ` (${esc(s.code)}${s.credits ? `, ${s.credits} credits` : ''})` : ''} — ${s.files.length ? `${s.files.length} files` : 'no notes yet'}${s.description ? `. ${esc(s.description)}` : ''}</li>`).join('');
+    const rows = sem.subjects.map((s) => s.electiveSlot
+      // Elective slots point to the Electives collection, where their notes are.
+      ? `<li>${esc(s.name)}${s.credits ? ` (${s.credits} credits)` : ''} — notes for each elective are in <a href="/electives">Electives</a></li>`
+      : `<li><a href="/${sem.slug}/${s.slug}">${esc(s.name)}</a>${s.kind === 'course' ? ` (${esc(s.code)}${s.credits ? `, ${s.credits} credits` : ''})` : ''} — ${s.files.length ? `${s.files.length} files` : 'no notes yet'}${s.description ? `. ${esc(s.description)}` : ''}</li>`).join('');
     const allFiles = sem.subjects.flatMap((s) => s.files);
     pages.push({
       route: semRoute,
@@ -122,6 +125,7 @@ function buildPages(semesters: Semester[], opts: PrerenderOptions): Page[] {
     });
 
     for (const sub of sem.subjects) {
+      if (sub.electiveSlot) continue; // no page of their own — see /electives
       const route = `${semRoute}/${sub.slug}`;
       const isCourse = sub.kind === 'course';
       const title = `${sub.name} — ${sem.label} Notes | ${opts.siteName}`;
