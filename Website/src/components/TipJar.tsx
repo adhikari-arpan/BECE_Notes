@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, Coffee, Copy, Download, Heart, Minus, Plus, RefreshCw, Server, Unlock, Wrench, X } from 'lucide-react';
+import { ChiyaGlass, ChiyaSipper } from '@/components/ChiyaSipper';
+import { Logo } from '@/components/Logo';
 import {
   CUP_PRESETS, CUP_PRICE, MAX_CUPS, PAYEE_NAME, PAYMENT_METHODS, type PaymentMethodId,
   closeTipJar, dismissTipNudge, formatRs, openTipJar, useTipJar,
@@ -46,6 +48,23 @@ export function ChiyaUses({ compact = false }: { compact?: boolean }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+/** A little label for each preset. */
+const CUP_MOODS: Record<number, string> = { 1: 'Just a sip', 2: 'Kadak ☕', 3: 'Study buddy', 5: 'Exam night 🔥' };
+
+/** Up to three glasses of chiya side by side, for the preset cards. */
+function GlassRow({ count }: { count: number }) {
+  const shown = Math.min(count, 3);
+  return (
+    <svg viewBox={`0 0 ${24 + (shown - 1) * 15} 34`} height="34">
+      {Array.from({ length: shown }, (_, i) => (
+        <g key={i} transform={`translate(${12 + i * 15} 21)`}>
+          <ChiyaGlass />
+        </g>
+      ))}
+    </svg>
   );
 }
 
@@ -133,11 +152,13 @@ export function TipJar() {
                       className={`tip-preset ${cups === n ? 'selected' : ''}`}
                       onClick={() => setCupCount(n)}
                     >
-                      <span className="tip-preset-cups" aria-hidden="true">
-                        {Array.from({ length: Math.min(n, 3) }, (_, i) => <Coffee key={i} size={16} />)}
+                      {cups === n && <span className="tip-preset-check" aria-hidden="true"><Check size={11} strokeWidth={3} /></span>}
+                      <span className="tip-preset-glasses" aria-hidden="true">
+                        <GlassRow count={n} />
                         {n > 3 && <em>+{n - 3}</em>}
                       </span>
                       <strong>{n} {n === 1 ? 'cup' : 'cups'}</strong>
+                      <span className="tip-preset-mood">{CUP_MOODS[n] ?? 'Chiya time'}</span>
                       <small>{formatRs(n * CUP_PRICE)}</small>
                     </button>
                   ))}
@@ -238,12 +259,11 @@ export function TipJar() {
 
             {step === 'thanks' && (
               <div className="tip-thanks">
-                <div className="tip-thanks-cups" aria-hidden="true">
-                  {Array.from({ length: Math.min(cups, 5) }, (_, i) => <ChiyaCup key={i} size={i === Math.floor(Math.min(cups, 5) / 2) ? 64 : 44} />)}
-                </div>
+                <ChiyaSipper cups={cups} />
+                <span className="tip-thanks-brand"><Logo /> <span className="brand-name">BECE Vault</span></span>
                 <h2 id="tip-title">Dhanyabad! 🙏</h2>
                 <p>
-                  Thank you for the {cups} {cups === 1 ? 'cup' : 'cups'} of chiya. Your support helps keep BECE Vault free and
+                  Thank you for the <span className="tip-thanks-count">{cups} {cups === 1 ? 'cup' : 'cups'} of chiya</span>. Your support helps keep BECE Vault free and
                   growing for every Computer Engineering student. Happy studying!
                 </p>
                 <button className="tip-primary" onClick={closeTipJar}><Heart size={16} /> Back to notes</button>
