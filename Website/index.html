@@ -9,18 +9,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Web fonts load without blocking the first render (text shows at once, then swaps in). -->
     <link
-      rel="stylesheet"
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
     <!-- Sora, only the characters of the big CGPA number (digits, point, dash). -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700&text=0123456789.%E2%80%94&display=swap" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@700&text=0123456789.%E2%80%94&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap" />
+    </noscript>
     <title>
-      BECE Vault — Pokhara University Computer Engineering Notes (Semester-wise)
+      BECE Notes — Pokhara University BE Computer Engineering Notes | BECE Vault
     </title>
     <meta
       name="description"
-      content="Free semester-wise notes for Pokhara University BE Computer Engineering (BECE): lecture notes, handwritten notes, question collections, past papers, lab reports and syllabus for every subject from Semester I onwards."
+      content="Free BECE notes for Pokhara University BE Computer Engineering: semester-wise lecture notes, handwritten notes, past questions, lab reports and syllabus for every subject, Semester I to VIII."
     />
     <meta
       name="keywords"
@@ -35,7 +41,7 @@
     <meta property="og:site_name" content="BECE Vault" />
     <meta
       property="og:title"
-      content="BECE Vault — Pokhara University Computer Engineering Notes"
+      content="BECE Notes — Pokhara University BE Computer Engineering Notes | BECE Vault"
     />
     <meta
       property="og:description"
@@ -60,7 +66,7 @@
     />
     <meta
       name="twitter:title"
-      content="BECE Vault — Pokhara University Computer Engineering Notes"
+      content="BECE Notes — Pokhara University BE Computer Engineering Notes | BECE Vault"
     />
     <meta
       name="twitter:description"

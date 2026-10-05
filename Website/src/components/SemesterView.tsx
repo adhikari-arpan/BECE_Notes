@@ -158,7 +158,7 @@ export function SemesterView({ semester }: SemesterViewProps) {
               to={subjectPath(noteSemester, subject)}
               className={`subject-card ${subject.files.length === 0 ? 'subject-card-empty' : ''} ${subject.kind === 'resource' ? 'subject-card-resource' : ''}`}
             >
-              <span className="subject-card-glyph" aria-hidden="true">{subject.icon}</span>
+              <span className="subject-card-glyph" data-glyph={subject.icon} aria-hidden="true" />
               <span className="subject-card-top">
                 <span className="subject-card-icon">{subject.icon}</span>
                 <span className="subject-card-code">{subject.kind === 'resource' ? 'Resources' : subject.code}</span>

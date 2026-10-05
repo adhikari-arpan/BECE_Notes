@@ -15,7 +15,7 @@ const founder: Contributor = {
   role: 'Founder & Lead Curator',
   semester: 'All semesters',
   subjects: ['Complete collection compilation', 'Repository structure & organization', 'Ongoing maintenance'],
-  photo: 'images/contributors/arpan-adhikari.jpg',
+  photo: 'images/contributors/arpan-adhikari.webp',
   website: 'https://www.arpanadhikari7.com.np',
   email: 'adhikariarpan2063@gmail.com',
 };

@@ -39,9 +39,9 @@ export function HomeView() {
     <>
       <section className="hero section-wrap">
         <div className="hero-copy">
-          <div className="eyebrow"><span className="eyebrow-line" /> Pokhara University · Computer Engineering</div>
-          <h1>Your notes,<br /><em>in one place.</em></h1>
-          <p className="hero-lede">A calm, organized home for every lecture note, question paper, and resource across your BECE journey. Pick a semester to explore its subjects.</p>
+          <div className="eyebrow"><span className="eyebrow-line" /> Pokhara University · BECE Notes</div>
+          <h1>Your BECE notes,<br /><em>in one place.</em></h1>
+          <p className="hero-lede">Free, semester-wise notes for Pokhara University BE Computer Engineering: every lecture note, past question, lab report and syllabus across your BECE journey. Pick a semester to explore its subjects.</p>
           <span className="hero-badge"><BadgeCheck size={15} /> Based on the new PU syllabus</span>
           <div className="hero-stats">
             <div><strong><CountUp value={courseSemesters.length} pad={2} /></strong><span>Semesters</span></div>
@@ -92,7 +92,7 @@ export function HomeView() {
                 to={semesterPath(semester)}
                 className={`semester-card ${files === 0 ? 'semester-card-empty' : ''}`}
               >
-                <span className="semester-card-glyph" aria-hidden="true">{semester.badge}</span>
+                <span className="semester-card-glyph" data-glyph={semester.badge} aria-hidden="true" />
                 <span className="semester-card-top">
                   <span className="semester-card-badge">{semester.badge}</span>
                   <span className="semester-card-year">{semester.year}</span>

@@ -1,16 +1,9 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { findSemester, findSubject, fileKey } from '@/content/notes';
 import { HomeView } from '@/components/HomeView';
 import { SemesterView } from '@/components/SemesterView';
 import { SubjectView } from '@/components/SubjectView';
-import { AboutView } from '@/components/AboutView';
-import { ContributorsView } from '@/components/ContributorsView';
-import { ContributingView } from '@/components/ContributingView';
-import { NotFoundView } from '@/components/NotFoundView';
-import { PrivacyView } from '@/components/PrivacyView';
-import { CgpaView } from '@/components/CgpaView';
-import { GradingGuideView } from '@/components/GradingGuideView';
-import { SyllabusView } from '@/components/SyllabusView';
+import { Loader } from '@/components/Loader';
 import { semesters2025 } from '@/content/curriculum2025';
 import { PU_GUIDE_DESCRIPTION, PU_GUIDE_TITLE } from '@/content/puGuide';
 import { Footer } from '@/components/Footer';
@@ -22,7 +15,17 @@ import { useLocation } from '@/content/router';
 import { trackPageView } from '@/content/visits';
 import { SITE_URL } from '@/content/watermark';
 
-const SITE_TITLE = 'BECE Vault — Pokhara University Computer Engineering Notes';
+// Pages other than home/semester/subject load their code only when opened, keeping the first download small.
+const AboutView = lazy(() => import('@/components/AboutView').then((m) => ({ default: m.AboutView })));
+const ContributorsView = lazy(() => import('@/components/ContributorsView').then((m) => ({ default: m.ContributorsView })));
+const ContributingView = lazy(() => import('@/components/ContributingView').then((m) => ({ default: m.ContributingView })));
+const NotFoundView = lazy(() => import('@/components/NotFoundView').then((m) => ({ default: m.NotFoundView })));
+const PrivacyView = lazy(() => import('@/components/PrivacyView').then((m) => ({ default: m.PrivacyView })));
+const CgpaView = lazy(() => import('@/components/CgpaView').then((m) => ({ default: m.CgpaView })));
+const GradingGuideView = lazy(() => import('@/components/GradingGuideView').then((m) => ({ default: m.GradingGuideView })));
+const SyllabusView = lazy(() => import('@/components/SyllabusView').then((m) => ({ default: m.SyllabusView })));
+
+const SITE_TITLE = 'BECE Notes — Pokhara University BE Computer Engineering Notes | BECE Vault';
 /** The site-wide description from index.html, restored on pages without their own. */
 let defaultDescription = '';
 
@@ -128,6 +131,7 @@ function App() {
         {page === 'subject' && semester && subject && (
           <SubjectView key={subject.id} semester={semester} subject={subject} requestedFile={initialFile} />
         )}
+        <Suspense fallback={<div className="page-loading"><Loader /></div>}>
         {page === 'about' && <AboutView />}
         {page === 'contributors' && <ContributorsView />}
         {page === 'contributing' && <ContributingView />}
@@ -137,6 +141,7 @@ function App() {
         {page === 'syllabus' && <SyllabusView />}
         {page === 'syllabus-semester' && <SyllabusView semesterId={syllabusSemester!.id} />}
         {page === 'not-found' && <NotFoundView />}
+        </Suspense>
       </main>
 
       {page !== 'subject' && <Footer />}

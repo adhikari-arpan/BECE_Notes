@@ -199,7 +199,7 @@ function crawlableSummary(entries: ManifestEntry[]): string {
       return `<section><h2>${heading}</h2><ul>${items}</ul></section>`;
     })
     .join('');
-  return `<main><h1>BECE Vault: Pokhara University Computer Engineering notes</h1>` +
+  return `<main><h1>BECE Notes: Pokhara University BE Computer Engineering notes (BECE Vault)</h1>` +
     `<p>Free semester-wise study notes for the Bachelor of Engineering in Computer Engineering (BECE) program under Pokhara University, Nepal: ` +
     `lecture notes, handwritten notes, question collections, past exam questions, lab reports and syllabus. ${entries.length} files in total.</p>` +
     `${sections}</main>`;
@@ -236,7 +236,7 @@ export function notesPlugin(options: NotesPluginOptions): Plugin {
       if (!isBuild) return html;
       // A small loading screen shows until the app starts; the text summary is there for search
       // engines and screen readers but kept out of sight so it never flashes unstyled.
-      const boot = '<div class="boot" aria-hidden="true"><img src="/images/logo.png" alt="" /><span></span></div>';
+      const boot = '<div class="boot" aria-hidden="true"><img src="/images/logo-small.webp" alt="" width="240" height="169" /><span></span></div>';
       const summary = `<div class="prerender-summary">${crawlableSummary(buildManifest(repoRoot, true))}</div>`;
       return html.replace('<div id="root"></div>', `<div id="root">${boot}${summary}</div>`);
     },
