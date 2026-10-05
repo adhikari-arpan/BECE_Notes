@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, Coffee, Copy, Download, Heart, Minus, Plus, RefreshCw, Server, Unlock, Wrench, X } from 'lucide-react';
 import { ChiyaGlass, ChiyaSipper } from '@/components/ChiyaSipper';
 import { Logo } from '@/components/Logo';
@@ -78,7 +78,21 @@ export function TipJar() {
   const [methodId, setMethodId] = useState<PaymentMethodId>('esewa');
   const method = PAYMENT_METHODS.find((m) => m.id === methodId) ?? PAYMENT_METHODS[0];
   const dialogRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const [bodyHeight, setBodyHeight] = useState<number>();
   const total = cups * CUP_PRICE;
+
+  // Follow the content's height (steps, payment tabs, the bank details box), so CSS can animate it.
+  useLayoutEffect(() => {
+    const el = bodyRef.current;
+    if (!open || !el) return;
+    const observer = new ResizeObserver(() => setBodyHeight(el.offsetHeight));
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      setBodyHeight(undefined);
+    };
+  }, [open]);
 
   // Fresh start each time it opens; close on Esc; keep focus inside the dialog.
   useEffect(() => {
@@ -127,6 +141,12 @@ export function TipJar() {
           <div className="tip-dialog" role="dialog" aria-modal="true" aria-labelledby="tip-title" tabIndex={-1} ref={dialogRef}>
             <span className="tip-glyph" aria-hidden="true"><ChiyaCup size={480} /></span>
             <button className="tip-close" onClick={closeTipJar} aria-label="Close"><X size={18} /></button>
+            {step === 'thanks' && <span className="tip-thanks-brand"><Logo /> <span className="brand-name">BECE Vault</span></span>}
+
+            {/* The box glides to each step's height (and each step fades in) instead of jumping. */}
+            <div className="tip-body" style={{ height: bodyHeight }}>
+            <div className="tip-measure" ref={bodyRef}>
+            <div className="tip-step" key={step}>
 
             {step === 'choose' && (
               <>
@@ -260,7 +280,6 @@ export function TipJar() {
             {step === 'thanks' && (
               <div className="tip-thanks">
                 <ChiyaSipper cups={cups} />
-                <span className="tip-thanks-brand"><Logo /> <span className="brand-name">BECE Vault</span></span>
                 <h2 id="tip-title">Dhanyabad! 🙏</h2>
                 <p>
                   Thank you for the <span className="tip-thanks-count">{cups} {cups === 1 ? 'cup' : 'cups'} of chiya</span>. Your support helps keep BECE Vault free and
@@ -269,6 +288,9 @@ export function TipJar() {
                 <button className="tip-primary" onClick={closeTipJar}><Heart size={16} /> Back to notes</button>
               </div>
             )}
+            </div>
+            </div>
+            </div>
           </div>
         </div>
       )}
