@@ -1,0 +1,49 @@
+BECE Vault — Licensing
+======================
+
+This repository contains two kinds of material, licensed differently.
+
+
+1. Website source code — MIT License
+------------------------------------
+
+Everything in the `Website/` folder (the code of https://notes.arpanadhikari7.com.np)
+is licensed under the MIT License. See `Website/LICENSE` for the full text.
+
+Copyright (c) 2026 Arpan Adhikari
+
+
+2. Original notes and content — CC BY-NC-SA 4.0
+------------------------------------------------
+
+Original study material created by Arpan Adhikari or by contributors to this repository
+(notes, question solutions, compiled notes, the syllabus tables, the grading guide and
+similar content) is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike
+4.0 International License (CC BY-NC-SA 4.0).
+
+You are free to share and adapt this material for non-commercial purposes, as long as you:
+
+  - Attribution:   give credit to "BECE Vault" with a link to
+                   https://notes.arpanadhikari7.com.np (and to the author, if named),
+  - NonCommercial: do not use it for commercial purposes (for example, selling it, or
+                   republishing it on paid or advertising-supported websites), and
+  - ShareAlike:    share any adapted material under the same license.
+
+Full license text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+Summary:           https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+The BECE Vault project itself may host, display and distribute contributed material on this
+repository and its website, including advertising-supported pages, as agreed by contributors
+in CONTRIBUTING.md.
+
+
+3. Third-party material — not covered by this license
+------------------------------------------------------
+
+Some files were created by teachers, colleges or other people and are shared here with credit
+for educational use. They remain the property of their original creators and are NOT licensed
+under the terms above. Pokhara University syllabus and curriculum information belongs to
+Pokhara University.
+
+If you own any material in this collection and want it credited differently or removed,
+email adhikariarpan2063@gmail.com with proof of ownership.
