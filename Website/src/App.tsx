@@ -25,7 +25,12 @@ const CgpaView = lazy(() => import('@/components/CgpaView').then((m) => ({ defau
 const GradingGuideView = lazy(() => import('@/components/GradingGuideView').then((m) => ({ default: m.GradingGuideView })));
 const SyllabusView = lazy(() => import('@/components/SyllabusView').then((m) => ({ default: m.SyllabusView })));
 
-const SITE_TITLE = 'BECE Notes — Pokhara University BE Computer Engineering Notes | BECE Vault';
+/** "Semester 1 (I)" / "Semester 1": people search with digits, the curriculum uses Roman numerals. */
+const semNumber = (s: { id: string }) => (/^\d+$/.test(s.id) ? s.id : null);
+const semFull = (s: { id: string; label: string }) => (semNumber(s) ? `Semester ${s.id} (${s.label.replace('Semester ', '')})` : s.label);
+const semShort = (s: { id: string; label: string }) => (semNumber(s) ? `Semester ${s.id}` : s.label);
+
+const SITE_TITLE = 'BECE Vault — BECE Notes for Pokhara University BE Computer Engineering';
 /** The site-wide description from index.html, restored on pages without their own. */
 let defaultDescription = '';
 
@@ -70,9 +75,9 @@ function App() {
     if (!defaultDescription) defaultDescription = meta.content;
     const clip = (text: string) => (text.length > 160 ? `${text.slice(0, 157).trimEnd()}…` : text);
     meta.content = subject && semester
-      ? clip(`${subject.name}${subject.kind === 'course' ? ` (${subject.code})` : ''} notes for ${semester.label}, Pokhara University BECE. ${subject.description ?? 'Lecture notes, past questions and resources.'}`)
+      ? clip(`${subject.name}${subject.kind === 'course' ? ` (${subject.code})` : ''} notes for ${semShort(semester)}, Pokhara University BECE. ${subject.description ?? 'Lecture notes, past questions and resources.'}`)
       : semester
-        ? clip(`${semester.label} notes for Pokhara University BE Computer Engineering: ${semester.subjects.filter((s) => s.kind === 'course').map((s) => s.name).join(', ')}.`)
+        ? clip(`${semFull(semester)} notes for Pokhara University BE Computer Engineering: ${semester.subjects.filter((s) => s.kind === 'course').map((s) => s.name).join(', ')}.`)
         : staticPage === 'cgpa-calculator'
           ? 'Free CGPA and SGPA calculator for Pokhara University BE Computer Engineering (BECE), with every semester’s subjects, credit hours and the official PU grading scale.'
           : staticPage === 'pu-grading-system'
@@ -99,8 +104,8 @@ function App() {
     document.title = page === 'home' ? SITE_TITLE
       : staticPage ? `${titles[staticPage]} | BECE Vault`
       : syllabusSemester ? `${syllabusSemester.label} Syllabus — PU BE Computer Engineering | BECE Vault`
-      : subject && semester ? `${subject.name} — ${semester.label} Notes | BECE Vault`
-      : semester ? `${semester.label} Notes — Pokhara University BECE | BECE Vault`
+      : subject && semester ? `${subject.name} Notes — ${semShort(semester)}, Pokhara University BECE | BECE Vault`
+      : semester ? `${semFull(semester)} Notes — Pokhara University BE Computer Engineering | BECE Vault`
       : 'Page not found | BECE Vault';
   }, [page, staticPage, semester, subject, syllabusSemester]);
 

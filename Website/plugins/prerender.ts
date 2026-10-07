@@ -127,11 +127,14 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
   const nav = `<nav><a href="/">${esc(opts.siteName)} home</a> · ${semesters.map((s) => `<a href="/${s.slug}">${esc(s.label)}</a>`).join(' · ')} · <a href="/about">About</a></nav>`;
   const newest = (files: NoteFile[]) => files.map((f) => f.updated ?? '').sort().pop() || null;
 
+  // "Semester 1 (I)": people search with digits, the curriculum uses Roman numerals — use both.
+  const semFull = (sem: Semester) => { const n = sem.slug.match(/^semester-(\d+)$/)?.[1]; return n ? `Semester ${n} (${sem.label.replace('Semester ', '')})` : sem.label; };
+  const semShort = (sem: Semester) => { const n = sem.slug.match(/^semester-(\d+)$/)?.[1]; return n ? `Semester ${n}` : sem.label; };
   for (const sem of semesters) {
     const courses = sem.subjects.filter((s) => s.kind === 'course');
     const semRoute = `/${sem.slug}`;
-    const semTitle = `${sem.label} Notes — Pokhara University BE Computer Engineering | ${opts.siteName}`;
-    const semDesc = clip(`${sem.label} notes for Pokhara University BE Computer Engineering (BECE): ${courses.map((c) => c.name).join(', ')}. Free lecture notes, past questions and syllabus.`);
+    const semTitle = `${semFull(sem)} Notes — Pokhara University BE Computer Engineering | ${opts.siteName}`;
+    const semDesc = clip(`${semFull(sem)} notes for Pokhara University BE Computer Engineering (BECE): ${courses.map((c) => c.name).join(', ')}. Free lecture notes, past questions and syllabus.`);
     const rows = sem.subjects.map((s) => s.electiveSlot
       // Elective slots point to the Electives collection, where their notes are.
       ? `<li>${esc(s.name)}${s.credits ? ` (${s.credits} credits)` : ''} — notes for each elective are in <a href="/electives">Electives</a></li>`
@@ -143,7 +146,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
       description: semDesc,
       index: allFiles.length > 0,
       lastmod: newest(allFiles),
-      body: `<main><h1>${esc(sem.label)} notes — Pokhara University BE Computer Engineering</h1><p>${esc(semDesc)}</p><h2>Subjects</h2><ul>${rows}</ul>${nav}</main>`,
+      body: `<main><h1>${esc(semFull(sem))} notes — Pokhara University BE Computer Engineering</h1><p>${esc(semDesc)}</p><h2>Subjects</h2><ul>${rows}</ul>${nav}</main>`,
       jsonLd: [breadcrumbs(opts, [[sem.label, semRoute]])],
     });
 
@@ -151,7 +154,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
       if (sub.electiveSlot) continue; // no page of their own — see /electives
       const route = `${semRoute}/${sub.slug}`;
       const isCourse = sub.kind === 'course';
-      const title = `${sub.name} — ${sem.label} Notes | ${opts.siteName}`;
+      const title = `${sub.name} Notes — ${semShort(sem)}, Pokhara University BECE | ${opts.siteName}`;
       const desc = clip(`${sub.name}${isCourse ? ` (${sub.code})` : ''} notes for ${sem.label}, Pokhara University BECE. ${sub.description ?? 'Lecture notes, past questions and resources.'}`);
       const byFolder = new Map<string, string[]>();
       for (const f of sub.files) byFolder.set(f.folder || 'Files', [...(byFolder.get(f.folder || 'Files') ?? []), f.name]);
@@ -162,7 +165,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
         description: desc,
         index: sub.files.length > 0,
         lastmod: newest(sub.files),
-        body: `<main><h1>${esc(sub.name)}${isCourse ? ` (${esc(sub.code)})` : ''} — ${esc(sem.label)} notes, Pokhara University BECE</h1>`
+        body: `<main><h1>${esc(sub.name)}${isCourse ? ` (${esc(sub.code)})` : ''} — ${esc(semFull(sem))} notes, Pokhara University BECE</h1>`
           + `${sub.description ? `<p>${esc(sub.description)}</p>` : ''}`
           + `<p>${sub.files.length} files: lecture notes, question collections, lab reports and more for ${esc(sub.name)}.</p>`
           + `${fileList}<p><a href="${semRoute}">All ${esc(sem.label)} subjects</a></p>${nav}</main>`,
