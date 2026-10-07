@@ -10,9 +10,11 @@ import { startThemeSync } from "./content/theme";
 import { CookieBanner } from "./components/CookieBanner";
 
 startThemeSync();
-// Visit counters (tiny requests) start once the browser is idle, after the page has rendered.
-if ('requestIdleCallback' in window) window.requestIdleCallback(startVisitTracking, { timeout: 3000 });
-else setTimeout(startVisitTracking, 1500);
+// Visit counters (tiny requests) start after the page has fully loaded and the browser is idle.
+const startCounters = () =>
+  'requestIdleCallback' in window ? window.requestIdleCallback(startVisitTracking, { timeout: 3000 }) : setTimeout(startVisitTracking, 1500);
+if (document.readyState === 'complete') startCounters();
+else window.addEventListener('load', startCounters, { once: true });
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
