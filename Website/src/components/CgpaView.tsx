@@ -10,6 +10,7 @@ import { setStructure, useStructure, type Structure } from '@/content/structure'
 import { StructureToggle } from '@/components/StructureToggle';
 import { saveBlob } from '@/content/watermark';
 import { deviceStore, openCookieSettings, useConsent } from '@/content/consent';
+import './CgpaView.css';
 
 /** Grades are kept separately per curriculum: course codes differ between the two orders. */
 const storageKey = (structure: Structure) => (structure === '2025' ? 'bece-cgpa-2025-v1' : 'bece-cgpa-v1');

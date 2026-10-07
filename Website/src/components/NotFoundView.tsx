@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Calculator, GraduationCap, ScrollText } from 'lu
 import { Link } from '@/components/Link';
 import { ChiyaGlass } from '@/components/ChiyaSipper';
 import { semesterPath, semesters } from '@/content/notes';
+import './NotFoundView.css';
 
 /** A different excuse each time someone gets lost. */
 const EXCUSES = [

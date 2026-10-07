@@ -2,7 +2,6 @@ import { lazy, Suspense, useEffect } from 'react';
 import { findSemester, findSubject, fileKey } from '@/content/notes';
 import { HomeView } from '@/components/HomeView';
 import { SemesterView } from '@/components/SemesterView';
-import { SubjectView } from '@/components/SubjectView';
 import { Loader } from '@/components/Loader';
 import { semesters2025 } from '@/content/curriculum2025';
 import { PU_GUIDE_DESCRIPTION, PU_GUIDE_TITLE } from '@/content/puGuide';
@@ -16,6 +15,7 @@ import { trackPageView } from '@/content/visits';
 import { SITE_URL } from '@/content/watermark';
 
 // Pages other than home/semester/subject load their code only when opened, keeping the first download small.
+const SubjectView = lazy(() => import('@/components/SubjectView').then((m) => ({ default: m.SubjectView })));
 const AboutView = lazy(() => import('@/components/AboutView').then((m) => ({ default: m.AboutView })));
 const ContributorsView = lazy(() => import('@/components/ContributorsView').then((m) => ({ default: m.ContributorsView })));
 const ContributingView = lazy(() => import('@/components/ContributingView').then((m) => ({ default: m.ContributingView })));
@@ -133,10 +133,10 @@ function App() {
       <main>
         {page === 'home' && <HomeView />}
         {page === 'semester' && semester && <SemesterView semester={semester} />}
+        <Suspense fallback={<div className="page-loading"><Loader /></div>}>
         {page === 'subject' && semester && subject && (
           <SubjectView key={subject.id} semester={semester} subject={subject} requestedFile={initialFile} />
         )}
-        <Suspense fallback={<div className="page-loading"><Loader /></div>}>
         {page === 'about' && <AboutView />}
         {page === 'contributors' && <ContributorsView />}
         {page === 'contributing' && <ContributingView />}

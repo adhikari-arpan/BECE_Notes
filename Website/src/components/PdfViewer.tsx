@@ -24,6 +24,7 @@ import {
 import { Loader } from '@/components/Loader';
 import { stampPdf } from '@/content/watermark';
 import { deviceStore, hasConsent } from '@/content/consent';
+import './PdfViewer.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 const PDFJS_ASSETS = `${import.meta.env.BASE_URL}pdfjs/`;

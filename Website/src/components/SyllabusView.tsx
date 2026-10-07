@@ -5,6 +5,7 @@ import { CiteThis } from '@/components/CiteThis';
 import { findSyllabus, isSyllabus, subjectPath } from '@/content/notes';
 import { syllabusPath, syllabusSemesters, type Course2025Entry } from '@/content/curriculum2025';
 import { STRUCTURE_LABELS, useStructure } from '@/content/structure';
+import './SyllabusView.css';
 
 /** Where to read a course's detailed syllabus PDF, if the repo has one. */
 function syllabusLink(c: Course2025Entry) {

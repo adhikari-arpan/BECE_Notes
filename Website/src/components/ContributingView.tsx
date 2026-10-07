@@ -4,6 +4,8 @@ import { ArrowLeft, Github, GitPullRequest, ListTree } from 'lucide-react';
 import { Link } from '@/components/Link';
 // The guide is written once, in the repository's CONTRIBUTING.md, and shown here as-is.
 import guide from '../../../CONTRIBUTING.md?raw';
+import './MarkdownViewer.css';
+import './ContributingView.css';
 
 const REPO_URL = 'https://github.com/adhikari-arpan/BECE_Notes';
 

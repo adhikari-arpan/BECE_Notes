@@ -1,0 +1,43 @@
+/* Styles for ContributingView only: loaded together with that page, not on every page. */
+.contribute-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+a.contribute-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 9px; border: 1px solid var(--c-dde3dc); background: var(--c-fffdf7); color: var(--c-1d3f35); font-size: 13px; font-weight: 600; text-decoration: none; transition: border-color .15s, background .15s; }
+a.contribute-secondary:hover { border-color: #e8c873; background: var(--c-fffdf0); }
+.contributing-guide h2 { margin-top: 1.9em; }
+.contributing-guide h2:first-of-type { margin-top: .6em; }
+.contributing-guide pre { white-space: pre; }
+.contributing-guide li > code, .contributing-guide p > code { word-break: break-word; }
+.contributing-guide p, .contributing-guide li { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.contributing-guide td, .contributing-guide th, .contributing-guide pre { text-align: left; hyphens: manual; }
+.contributing-guide h2 { margin: 2.2em 0 .8em; padding: 0 0 .45em; font: 600 23px/1.25 'Playfair Display', serif; border-bottom: 2px solid #f0c34a; }
+.contributing-guide h3 { margin: 1.6em 0 .6em; font-size: 16px; color: var(--c-1d3f35); }
+.contributing-guide ul { list-style: none; padding-left: 0; margin: 0 0 1.1em; }
+.contributing-guide ul > li { position: relative; padding-left: 22px; margin: .45em 0; }
+.contributing-guide ul > li::before { content: ''; position: absolute; left: 4px; top: .68em; width: 7px; height: 7px; border-radius: 50%; background: #e5a927; }
+.contributing-guide ul ul { margin: .35em 0 .2em; }
+.contributing-guide ul ul > li { padding-left: 18px; margin: .25em 0; font-size: 13.5px; color: var(--c-4c5b54); }
+.contributing-guide ul ul > li::before { width: 6px; height: 6px; background: transparent; border: 1.5px solid #c9a447; top: .7em; }
+.contributing-guide ol { padding-left: 1.3em; }
+.contributing-guide ol > li { margin: .7em 0; }
+.contributing-guide ol > li::marker { color: #b8860b; font-weight: 700; }
+.contributing-guide li strong { color: var(--c-0b1f1a); }
+.contributing-guide blockquote { margin: 1.2em 0; padding: 12px 16px; border-radius: 0 12px 12px 0; }
+.contributing-guide blockquote p { margin: 0; }
+.contributing-guide p > strong:only-child { display: block; margin-top: 1.2em; font-size: 14px; color: var(--c-0b1f1a); }
+.contributing-guide li pre { margin-top: .6em; }
+.contributing-layout { display: grid; grid-template-columns: 230px minmax(0, 780px); gap: 44px; align-items: start; }
+.contributing-guide h2, .contributing-guide h3 { scroll-margin-top: 84px; }
+.contributing-toc { position: sticky; top: 88px; max-height: calc(100vh - 110px); overflow-y: auto; padding: 14px 0 14px 2px; }
+.contributing-toc-title, .contributing-toc-mobile summary { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; font: 600 10px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--c-7d8b84); }
+.contributing-toc ul, .contributing-toc-mobile ul { list-style: none; margin: 0; padding: 0 0 0 2px; border-left: 2px solid var(--c-e7ebe6); }
+.contributing-toc li a, .contributing-toc-mobile li a { display: block; margin-left: -2px; padding: 5px 10px 5px 12px; border-left: 2px solid transparent; color: var(--c-5c6b64); font-size: 12.5px; line-height: 1.4; text-decoration: none; transition: color .15s, border-color .15s, background .15s; }
+.contributing-toc li.toc-level-3 a, .contributing-toc-mobile li.toc-level-3 a { padding-left: 26px; font-size: 12px; }
+.contributing-toc li a:hover, .contributing-toc-mobile li a:hover { color: var(--c-0b1f1a); }
+.contributing-toc li.active a { border-left-color: #e5a927; color: var(--c-0b1f1a); font-weight: 700; background: linear-gradient(90deg, rgba(240,195,74,.14), transparent); }
+.contributing-toc-mobile { display: none; }
+@media (max-width: 900px) {
+  .contributing-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .contributing-toc { display: none; }
+  .contributing-toc-mobile { display: block; margin: 4px 0 6px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); }
+  .contributing-toc-mobile summary { margin: 0; cursor: pointer; list-style: none; }
+  .contributing-toc-mobile[open] summary { margin-bottom: 10px; }
+}

@@ -3,6 +3,7 @@ import { Marked } from 'marked';
 import markedKatex from 'marked-katex-extension';
 import { Clock } from 'lucide-react';
 import 'katex/dist/katex.min.css';
+import './MarkdownViewer.css';
 
 /** GitHub-flavoured Markdown plus `$…$` / `$$…$$` maths, as the notes are written. */
 const markdown = new Marked(markedKatex({ throwOnError: false, nonStandard: true }));

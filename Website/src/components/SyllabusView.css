@@ -1,0 +1,31 @@
+/* Styles for SyllabusView only: loaded together with that page, not on every page. */
+.syllabus-lead { max-width: 760px; margin: 12px 0 0; font-size: 14px; line-height: 1.65; color: var(--c-4c5b54); }
+.syllabus-facts { margin-bottom: 20px; }
+.syllabus-year { margin-bottom: 22px; }
+.syllabus-year-label { display: block; margin: 0 0 8px 2px; font: 600 10.5px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--c-7d8b84); }
+.syllabus-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+a.syllabus-card { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); color: var(--c-1d3f35); text-decoration: none; transition: transform .18s, border-color .18s, box-shadow .18s; }
+a.syllabus-card:hover { transform: translateY(-3px); border-color: #e8c873; box-shadow: 0 10px 22px rgba(var(--shadow-rgb),.1); }
+.syllabus-card-top { display: flex; align-items: center; justify-content: space-between; }
+.syllabus-card > strong { font: 600 19px 'Playfair Display', serif; color: var(--c-0b1f1a); }
+.syllabus-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 12.5px; }
+.syllabus-card li { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 6px; align-items: baseline; }
+.syllabus-card li span:first-child { font: 600 10.5px 'DM Mono', monospace; color: var(--c-7d8b84); }
+.syllabus-card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--c-eef1ec); font: 500 11px 'DM Mono', monospace; color: var(--c-5c6b64); }
+.syllabus-courses { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.syllabus-course { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); }
+.syllabus-course header { display: grid; gap: 4px; }
+.syllabus-course header .subject-card-code { justify-self: start; }
+.syllabus-course h4 { margin: 0; font-size: 15px; color: var(--c-0b1f1a); }
+.syllabus-course-meta { font: 500 11px 'DM Mono', monospace; color: var(--c-7d8b84); }
+.syllabus-course p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--c-4c5b54); }
+.syllabus-course-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
+.syllabus-course-links a { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 99px; border: 1px solid var(--c-e3e6de); background: var(--c-f6f7f1); color: var(--c-1d3f35); font-size: 12px; font-weight: 600; text-decoration: none; }
+.syllabus-course-links a:hover { border-color: #e8c873; background: var(--c-fffdf0); }
+.syllabus-pager { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 26px 0 60px; flex-wrap: wrap; }
+.syllabus-pager a { display: inline-flex; align-items: center; gap: 6px; color: var(--c-1d3f35); font-weight: 600; font-size: 13px; text-decoration: none; }
+.syllabus-pager a:hover { color: #b8860b; }
+.syllabus-facts-two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 620px; }
+@media (max-width: 720px) {
+  .syllabus-facts-two, .syllabus-grid { grid-template-columns: minmax(0, 1fr); }
+}
