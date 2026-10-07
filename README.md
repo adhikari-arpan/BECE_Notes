@@ -26,3 +26,11 @@ For questions, suggestions, or to have your material credited or removed (with p
 ## ⚠️ Disclaimer
 
 These notes supplement official course materials; they don't replace them. Always follow the official syllabus, textbooks and your instructors. Materials are shared for educational use, and all rights belong to their original creators.
+
+## 📜 License
+
+- **Original notes and content:** [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). Free to share and adapt for non-commercial use, with credit to BECE Vault, under the same license.
+- **Website code** (`Website/`): [MIT](Website/LICENSE).
+- **Material from teachers and other sources** belongs to its original creators and isn't covered by these licenses.
+
+See [LICENSE](LICENSE) for details.

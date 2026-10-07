@@ -222,7 +222,17 @@ npm run build
 - 🖼️ Add **before/after screenshots** for visual changes.
 - 🌗 Check **light and dark mode**, and **phone width**.
 
-## 8. Code of conduct
+## 8. License of your contributions
+
+- By opening a pull request, you confirm that:
+  - the material is **yours**, or you have the **owner's permission** to share it;
+  - your original content is shared under **[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)**, like the rest of the notes;
+  - **BECE Vault may host, display and distribute it** on this repository and its website, including advertising-supported pages that help cover hosting costs.
+- Website code contributions are licensed under the **[MIT License](https://github.com/adhikari-arpan/BECE_Notes/blob/main/Website/LICENSE)**.
+- Material made by someone else stays theirs. Name them in your pull request so they get credit.
+- Full details: [LICENSE](https://github.com/adhikari-arpan/BECE_Notes/blob/main/LICENSE).
+
+## 9. Code of conduct
 
 - Be **respectful and helpful**.
 - **Credit the people** whose work you share.
