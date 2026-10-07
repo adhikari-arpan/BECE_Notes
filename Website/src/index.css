@@ -1396,3 +1396,5 @@ a.contribute-secondary:hover { border-color: #e8c873; background: var(--c-fffdf0
 /* The big faded number/glyph on cards is decoration: drawn from data-glyph, not real text. */
 .semester-card-glyph::before, .subject-card-glyph::before { content: attr(data-glyph); }
 .page-loading { min-height: 60vh; display: grid; place-items: center; }
+.footer-bottom > span a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.footer-bottom > span a:hover { color: #f0c34a; }

@@ -65,7 +65,12 @@ export function Footer() {
 
         <div className="footer-bottom">
           <p>© {new Date().getFullYear()} BECE Vault · Started by <a className="footer-author" href="https://www.arpanadhikari7.com.np" target="_blank" rel="noreferrer">Arpan Adhikari</a></p>
-          <span>Made for students, by students. All materials belong to their original creators.</span>
+          <span>
+            Made for students, by students. Original notes:{' '}
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer license">CC BY-NC-SA 4.0</a> · Code:{' '}
+            <a href="https://github.com/adhikari-arpan/BECE_Notes/blob/main/Website/LICENSE" target="_blank" rel="noreferrer license">MIT</a>.
+            Other materials belong to their creators.
+          </span>
         </div>
       </div>
     </footer>
