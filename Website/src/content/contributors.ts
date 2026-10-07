@@ -5,6 +5,8 @@ export interface Contributor {
   subjects: string[];
   /** Photo in Website/public, e.g. 'images/contributors/jane-doe.jpg'. Initials are shown without one. */
   photo?: string;
+  /** Optional small (96 px) version of the photo, used where it's shown tiny. */
+  photoSmall?: string;
   website?: string;
   email?: string;
   contact?: string;
@@ -16,6 +18,7 @@ const founder: Contributor = {
   semester: 'All semesters',
   subjects: ['Complete collection compilation', 'Repository structure & organization', 'Ongoing maintenance'],
   photo: 'images/contributors/arpan-adhikari.webp',
+  photoSmall: 'images/contributors/arpan-adhikari-96.webp',
   website: 'https://www.arpanadhikari7.com.np',
   email: 'adhikariarpan2063@gmail.com',
 };

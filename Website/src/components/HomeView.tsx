@@ -136,7 +136,7 @@ export function HomeView() {
             </span>
             {founder && (
               <span className="about-card-founder">
-                {founder.photo && <img src={`${import.meta.env.BASE_URL}${founder.photo}`} alt="" />}
+                {founder.photo && <img src={`${import.meta.env.BASE_URL}${founder.photoSmall ?? founder.photo}`} alt="" width={44} height={44} loading="lazy" />}
                 <span>
                   <small>Started by</small>
                   <strong>{founder.name}</strong>
