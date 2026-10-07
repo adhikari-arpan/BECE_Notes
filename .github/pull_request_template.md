@@ -21,6 +21,7 @@ Full guide: https://github.com/adhikari-arpan/BECE_Notes/blob/main/CONTRIBUTING.
 - [ ] Notes are properly scanned (upright, cropped, readable, one PDF per unit)
 - [ ] This content doesn't already exist in the subject (no duplicates)
 - [ ] No published books, paid material or personal information
+- [ ] I agree to the licensing terms in CONTRIBUTING.md (section 8)
 - [ ] Commit messages start with `Notes:`, `Questions:`, `UI:` or `feat:`
 
 <!-- For UI: / feat: pull requests -->
