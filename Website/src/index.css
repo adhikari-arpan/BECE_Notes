@@ -998,6 +998,9 @@ body:has(.cookie-banner.is-shown) .tip-nudge { bottom: 96px; }
   .guide-formula { font-size: 12.5px; }
 }
 .home-faq-section { padding: 0 0 70px; }
+/* Sections below the first screen are only laid out and painted when scrolled near, so the browser's
+   first render of the home page is lighter. The size hints keep the scrollbar steady. */
+.about-section, .stats-section, .home-faq-section, .chiya-banner-section, .site-footer { content-visibility: auto; contain-intrinsic-size: auto 600px; }
 .home-faq-section .guide-faq details p { margin: 10px 0 12px; font-size: 13.5px; line-height: 1.65; color: var(--c-4c5b54); }
 /* "Cite this page" line on the guide and syllabus pages. */
 .cite-this { margin: 18px 0 0; padding: 10px 14px; border-radius: 12px; background: var(--c-f6f7f1); border: 1px dashed var(--c-dde3dc); font-size: 12px; line-height: 1.55; color: var(--c-5c6b64); }
