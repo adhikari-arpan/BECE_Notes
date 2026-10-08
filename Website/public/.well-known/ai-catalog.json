@@ -1,10 +1,10 @@
 {
   "specVersion": "1.0",
   "host": {
-    "domain": "notes.arpanadhikari7.com.np",
     "displayName": "BECE Vault",
-    "description": "Free, semester-wise notes, past questions, syllabus, CGPA calculator and grading guide for Pokhara University BE Computer Engineering (BECE). Read-only website; no agent tools are offered.",
-    "url": "https://notes.arpanadhikari7.com.np/"
+    "identifier": "notes.arpanadhikari7.com.np",
+    "documentationUrl": "https://notes.arpanadhikari7.com.np/llms.txt",
+    "logoUrl": "https://notes.arpanadhikari7.com.np/images/logo.png"
   },
   "entries": []
 }

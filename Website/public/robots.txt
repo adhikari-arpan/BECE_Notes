@@ -28,6 +28,3 @@ User-agent: Bingbot
 Allow: /
 
 Sitemap: https://notes.arpanadhikari7.com.np/sitemap.xml
-
-# Agentic Resource Discovery catalog (for AI agents).
-Agentmap: https://notes.arpanadhikari7.com.np/.well-known/ai-catalog.json
