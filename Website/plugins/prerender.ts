@@ -373,7 +373,14 @@ export function prerenderPlugin(opts: PrerenderOptions): Plugin {
     },
     async closeBundle() {
       const outDir = path.resolve(config.root, config.build.outDir);
-      const template = fs.readFileSync(path.join(outDir, 'index.html'), 'utf8');
+      // Inline the main stylesheet into every page: one less render-blocking request, so the first
+      // paint happens as soon as the HTML arrives (it's ~5 KB compressed).
+      let template = fs.readFileSync(path.join(outDir, 'index.html'), 'utf8');
+      const cssLink = template.match(/<link rel="stylesheet"[^>]*href="(\/assets\/index-[^"]+\.css)"[^>]*>/);
+      if (cssLink) {
+        const css = fs.readFileSync(path.join(outDir, cssLink[1]), 'utf8');
+        template = template.replace(cssLink[0], () => `<style>${css}</style>`);
+      }
       const data = await loadNotes(config.root, path.resolve(opts.repoRoot));
       const { semesters } = data;
       const pages = buildPages(data, opts);
