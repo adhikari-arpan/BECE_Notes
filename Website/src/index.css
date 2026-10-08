@@ -273,9 +273,9 @@ h1 em { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing
 .hero-card-front { width: 205px; height: 242px; top: 4px; left: 24px; background: var(--c-fffdf5); padding: 18px; display: flex; flex-direction: column; color: var(--c-0b1f1a); transform: rotate(-7deg); }
 .mini-icon { height: 46px; display: flex; align-items: center; margin-bottom: 30px; }
 .mini-icon .logo { height: 100%; width: auto; }
-.hero-card-front span { font: 500 9px 'DM Mono', monospace; color: var(--c-77877d); letter-spacing: .16em; }
+.hero-card-front span { font: 500 9px 'DM Mono', monospace; color: var(--c-5c6b64); letter-spacing: .16em; }
 .hero-card-front strong { font: 600 28px 'Playfair Display', serif; line-height: 1.02; margin-top: 9px; }
-.card-footer { border-top: 1px solid var(--c-dce1d9); margin-top: auto; padding-top: 11px; display: flex; justify-content: space-between; color: var(--c-94a099); font: 500 9px 'DM Mono', monospace; }
+.card-footer { border-top: 1px solid var(--c-dce1d9); margin-top: auto; padding-top: 11px; display: flex; justify-content: space-between; color: var(--c-5c6b64); font: 500 9px 'DM Mono', monospace; }
 
 .browse-mode-section { padding: 24px 0 50px; }
 .browse-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }

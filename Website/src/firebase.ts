@@ -1,8 +1,8 @@
 /**
  * Google Analytics (through Firebase). Site analytics always run (they are not part of the cookie
  * choice, which only covers saving features), only on the live site, in browsers where Analytics can
- * run. Everything — the Firebase SDK and Google's gtag script — is downloaded only after the page has
- * finished loading and the browser is idle, so it never slows the first paint or blocks taps.
+ * run. Everything — the Firebase SDK and Google's gtag script — is downloaded only on the visitor's
+ * first interaction or 8 s after the page loads, so it never slows the first paint or blocks taps.
  */
 const firebaseConfig = {
   apiKey: 'AIzaSyD4IpOvft61a6kgoWk7zNiEtl-jMzbDT78',
@@ -20,11 +20,19 @@ async function startAnalytics() {
   if (await isSupported()) getAnalytics(initializeApp(firebaseConfig));
 }
 
+// Starts on the visitor's first interaction (scroll, tap, key) or 8 s after the page loads, whichever
+// comes first — so loading the page itself never waits on Google's scripts.
 if (import.meta.env.PROD) {
-  const whenIdle = () => {
-    if ('requestIdleCallback' in window) window.requestIdleCallback(() => void startAnalytics(), { timeout: 4000 });
-    else setTimeout(() => void startAnalytics(), 2000);
+  let started = false;
+  const events = ['pointerdown', 'keydown', 'scroll', 'touchstart'] as const;
+  const start = () => {
+    if (started) return;
+    started = true;
+    events.forEach((e) => window.removeEventListener(e, start));
+    void startAnalytics();
   };
-  if (document.readyState === 'complete') whenIdle();
-  else window.addEventListener('load', whenIdle, { once: true });
+  events.forEach((e) => window.addEventListener(e, start, { once: true, passive: true }));
+  const afterLoad = () => setTimeout(start, 8000);
+  if (document.readyState === 'complete') afterLoad();
+  else window.addEventListener('load', afterLoad, { once: true });
 }

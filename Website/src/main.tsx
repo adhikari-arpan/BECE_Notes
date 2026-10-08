@@ -10,7 +10,9 @@ import { startThemeSync } from "./content/theme";
 import { CookieBanner } from "./components/CookieBanner";
 
 startThemeSync();
-startVisitTracking();
+// Visit counters (tiny requests) start once the browser is idle, after the page has rendered.
+if ('requestIdleCallback' in window) window.requestIdleCallback(startVisitTracking, { timeout: 3000 });
+else setTimeout(startVisitTracking, 1500);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
