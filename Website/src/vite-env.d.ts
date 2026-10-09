@@ -9,6 +9,8 @@ declare module 'virtual:notes-manifest' {
   }
   export const config: { fileBase: string; lfsBase: string };
   export const entries: ManifestEntry[];
+  /** Files added per git author (from history at build time): notes and past question papers. */
+  export const authors: { name: string; email: string; notes: number; pastQuestions: number }[];
 }
 
 interface ImportMetaEnv {

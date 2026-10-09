@@ -70,7 +70,7 @@ async function loadNotes(root: string, repoRoot: string): Promise<AppData> {
       setup(b) {
         b.onResolve({ filter: /^virtual:notes-manifest$/ }, () => ({ path: 'manifest', namespace: 'virtual' }));
         b.onLoad({ filter: /.*/, namespace: 'virtual' }, () => ({
-          contents: `export const config = { fileBase: '', lfsBase: '' }; export const entries = ${JSON.stringify(manifest)};`,
+          contents: `export const config = { fileBase: '', lfsBase: '' }; export const entries = ${JSON.stringify(manifest)}; export const authors = [];`,
           loader: 'js',
         }));
         b.onResolve({ filter: /^@\// }, (args) => ({ path: path.join(src, `${args.path.slice(2)}.ts`) }));
@@ -399,12 +399,12 @@ function homeShell(): string {
   const badge = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-badge-check"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>';
   return '<div class="app-shell "><header class="topbar"><div class="topbar-inner">'
     + `<a href="/" class="brand-lockup"><div class="brand-mark">${logo}</div><div><span class="brand-name">BECE Vault</span><span class="brand-divider">/</span><span class="brand-context">Notes library</span></div></a>`
-    + '<nav class="top-actions"><a href="/cgpa-calculator" class="text-button">CGPA Calculator</a></nav></div></header><main>'
+    + '<nav class="top-actions"><a href="/past-questions" class="text-button">Past Questions</a><a href="/cgpa-calculator" class="text-button">CGPA Calculator</a></nav></div></header><main>'
     + '<section class="hero section-wrap"><div class="hero-copy">'
     + '<div class="eyebrow"><span class="eyebrow-line"></span> Pokhara University · BECE Notes</div>'
     + '<h1>Your BECE notes,<br><em>in one place.</em></h1>'
     + '<p class="hero-lede">Free, semester-wise notes for Pokhara University BE Computer Engineering: every lecture note, past question, lab report and syllabus across your BECE journey. Pick a semester to explore its subjects.</p>'
-    + `<span class="hero-badge">${badge} Based on the new PU syllabus</span>`
+    + `<a href="/syllabus" class="hero-badge">${badge} Based on the new PU syllabus</a>`
     + '<div class="hero-stats"><div><strong>00</strong><span>Semesters</span></div><div><strong>0</strong><span>Subjects</span></div><div><strong>0</strong><span>Note Files</span></div></div>'
     + '</div><div class="hero-visual" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>'
     + '<div class="hero-card hero-card-back"><span>BECE VAULT</span><ul class="hero-card-list"><li>Notes</li><li>Past questions</li><li>Syllabus</li><li>Labs</li></ul><b>Study smarter.</b></div>'

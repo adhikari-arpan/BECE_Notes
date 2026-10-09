@@ -117,6 +117,68 @@ function lfsPaths(repoRoot: string, roots: string[]): Set<string> {
   return lfs;
 }
 
+/** Files added by one git author: notes, and papers in the Past Question Collection. */
+export interface AuthorCount {
+  name: string;
+  email: string;
+  notes: number;
+  pastQuestions: number;
+}
+
+const PAST_QUESTIONS_ROOT = 'Past Question Collection/';
+
+/**
+ * Credits each file in the library to the person who first added it, following moves and renames,
+ * so reorganising folders never takes credit away. Counted from git history at build time; a shallow
+ * clone (as on some hosts) first fetches the full commit history, without file contents.
+ */
+let countsCache: { key: string; counts: AuthorCount[] } | null = null;
+
+export function authorCounts(repoRoot: string, files: string[]): AuthorCount[] {
+  // Only a new commit or a changed file list can change the counts.
+  const key = `${git(repoRoot, ['rev-parse', 'HEAD'])?.trim()}:${files.length}`;
+  if (countsCache?.key === key) return countsCache.counts;
+  const counts = countAuthors(repoRoot, files);
+  countsCache = { key, counts };
+  return counts;
+}
+
+function countAuthors(repoRoot: string, files: string[]): AuthorCount[] {
+  const roots = listNoteRoots(repoRoot);
+  if (git(repoRoot, ['rev-parse', '--is-shallow-repository'])?.trim() === 'true') {
+    git(repoRoot, ['fetch', '--unshallow', '--filter=blob:none', '--quiet']);
+  }
+  const log = git(repoRoot, ['log', '--reverse', '-M', '--name-status', '--format=%x1e%an%x1f%ae', 'HEAD', '--', ...roots]);
+  if (!log) return [];
+  const owner = new Map<string, string>();
+  for (const record of log.split('\x1e')) {
+    const [who, ...lines] = record.split('\n');
+    if (!who) continue;
+    for (const line of lines) {
+      const [status, from, to] = line.split('\t');
+      if (!status || !from) continue;
+      if (status === 'A') owner.set(from, who);
+      else if (status.startsWith('R')) {
+        owner.set(to, owner.get(from) ?? who);
+        owner.delete(from);
+      } else if (status.startsWith('C')) owner.set(to, who);
+      else if (status === 'D') owner.delete(from);
+    }
+  }
+  const counts = new Map<string, AuthorCount>();
+  for (const file of files) {
+    const who = owner.get(file);
+    // The naming guides in the collection aren't contributions.
+    if (!who || (file.startsWith(PAST_QUESTIONS_ROOT) && /\/readme\.md$/i.test(file))) continue;
+    const [name, email] = who.split('\x1f');
+    const entry = counts.get(who) ?? { name, email, notes: 0, pastQuestions: 0 };
+    if (file.startsWith(PAST_QUESTIONS_ROOT)) entry.pastQuestions++;
+    else entry.notes++;
+    counts.set(who, entry);
+  }
+  return [...counts.values()];
+}
+
 export function buildManifest(repoRoot: string, trackedOnly: boolean): ManifestEntry[] {
   const roots = listNoteRoots(repoRoot);
   let files: string[] = [];
@@ -232,7 +294,8 @@ export function notesPlugin(options: NotesPluginOptions): Plugin {
             lfsBase: URL_PREFIX,
           };
       const entries = buildManifest(repoRoot, isBuild);
-      return `export const config = ${JSON.stringify(config)};\nexport const entries = ${JSON.stringify(entries)};\n`;
+      const authors = authorCounts(repoRoot, entries.map((e) => e.path));
+      return `export const config = ${JSON.stringify(config)};\nexport const entries = ${JSON.stringify(entries)};\nexport const authors = ${JSON.stringify(authors)};\n`;
     },
     transformIndexHtml(html) {
       if (!isBuild) return html;

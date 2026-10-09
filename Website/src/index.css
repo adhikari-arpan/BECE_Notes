@@ -1104,3 +1104,33 @@ a.semester-pastq-link:hover { transform: translateY(-2px); border-color: #e8c873
   a.semester-pastq-link { flex-wrap: wrap; }
   .semester-pastq-go { width: 100%; padding-left: 54px; }
 }
+
+/* Contributors: the founder's card, then small boxes per list (notes, past questions), most files first. */
+.contributors-founder { margin-bottom: 34px; }
+.founder-intro { display: flex; align-items: center; gap: 16px; margin: 6px 0 16px; }
+.founder-intro img { width: 72px; height: 72px; flex-shrink: 0; border-radius: 50%; object-fit: cover; border: 3px solid #f0c34a; }
+.founder-intro-text { display: grid; gap: 2px; min-width: 0; }
+.founder-intro-kicker { font: 600 10px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: #b8860b; }
+:root[data-theme="dark"] .founder-intro-kicker { color: #f0c34a; }
+.founder-intro-text strong { font: 600 20px 'Playfair Display', serif; color: var(--c-0b1f1a); }
+.founder-intro-text > span:not(.founder-intro-kicker):not(.founder-intro-links) { font-size: 13px; color: var(--c-4c5b54); }
+.founder-intro-links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 4px; }
+.founder-intro-links a { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; text-decoration: none; }
+.founder-stats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.founder-stats span { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px; background: #fff4cf; color: #8a6508; font-size: 12.5px; }
+.founder-stats strong { font-weight: 700; color: #0b1f1a; }
+:root[data-theme="dark"] .founder-stats span { background: rgba(240,195,74,.14); color: #f0c34a; }
+:root[data-theme="dark"] .founder-stats strong { color: #f8e7b0; }
+.contributors-group { margin-bottom: 28px; }
+.contributors-heading { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font: 600 18px 'Playfair Display', serif; color: var(--c-0b1f1a); }
+.contributors-heading svg { color: #b8860b; }
+:root[data-theme="dark"] .contributors-heading svg { color: #f0c34a; }
+.contributor-chips { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.contributor-chip { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); }
+.contributor-chip img, .contributor-chip-initials { width: 34px; height: 34px; flex-shrink: 0; border-radius: 10px; object-fit: cover; }
+.contributor-chip-initials { display: grid; place-items: center; background: var(--c-e0ece1); color: var(--c-467568); font: 600 12px 'DM Sans', sans-serif; }
+.contributor-chip-text { min-width: 0; display: grid; gap: 1px; }
+.contributor-chip-text strong { font-size: 13px; color: var(--c-0b1f1a); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.contributor-chip-text small { font: 600 10.5px 'DM Mono', monospace; color: #8a6508; }
+:root[data-theme="dark"] .contributor-chip-text small { color: #f0c34a; }
+.contributors-empty { margin: 0; padding: 14px 18px; border-radius: 14px; border: 1px dashed var(--c-dde3dc); font-size: 13px; color: var(--c-5c6b64); }
