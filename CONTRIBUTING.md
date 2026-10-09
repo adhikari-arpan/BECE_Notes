@@ -208,8 +208,9 @@ One or two lines on what this pull request adds.
 
 - 👥 **Every merged pull request** shows you among the repository's contributors on GitHub.
 - ⭐ **To appear on the website's [Contributors page](https://notes.arpanadhikari7.com.np/contributors):**
-  - You need at least **10 valid, accepted note files**, counted across all your pull requests.
+  - You need at least **10 valid, accepted files** (notes and past question papers together), counted across all your pull requests.
   - Duplicates and rejected files don't count.
+  - The page has **two lists, notes and past questions**, each ordered by how many files you've added (counted automatically).
 
 ### How to add yourself (once you have 10 valid files)
 
@@ -222,7 +223,8 @@ Open a pull request titled `feat: Add <your name> to contributors`:
 2. 📝 **Your details**
    - Open [`Website/src/content/contributors.ts`](https://github.com/adhikari-arpan/BECE_Notes/blob/main/Website/src/content/contributors.ts)
    - Copy the commented template in the `community` list, remove the `//` and fill in your details.
-   - Add **one contact** (optional): an email, your website, LinkedIn, GitHub or similar.
+   - Add your **GitHub username** as `github`. The files you've added are then **counted automatically** from the
+     repository's history, so you never update numbers yourself.
    - Your entry goes at the **end** of the `community` list:
 
    ```ts
@@ -232,7 +234,7 @@ Open a pull request titled `feat: Add <your name> to contributors`:
      semester: 'Semester III',
      subjects: ['Database Management System', 'Operating Systems'],
      photo: 'images/contributors/sita-sharma.jpg', // optional
-     contact: 'https://linkedin.com/in/sita-sharma', // optional: ONE contact — email, website, LinkedIn, GitHub...
+     github: 'sita-sharma',
    },
    ```
 
