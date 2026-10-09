@@ -186,3 +186,8 @@
 .cgpa-batch select:hover { border-color: #e5a927; }
 .cgpa-batch select:focus-visible { outline: 2px solid #f0c34a; outline-offset: 1px; }
 .cgpa-sgpa-term { font-size: 10.5px; color: #9fb8ad; font-weight: 500; }
+
+/* Note after Semester VIII: how the Fall/Spring terms are dated. */
+.cgpa-term-note { display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 0 4px; font-size: 12.5px; line-height: 1.55; color: var(--c-5c6b64); }
+.cgpa-term-note svg { flex-shrink: 0; margin-top: 3px; color: #b8860b; }
+.cgpa-term-note strong { color: var(--c-0b1f1a); }

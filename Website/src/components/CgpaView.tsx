@@ -384,6 +384,15 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
             );
           })}
 
+          <p className="cgpa-term-note">
+            <Info size={14} />
+            <span>
+              Semester terms are dated by when each semester <strong>ends</strong>. A batch starts at the end of its batch
+              year, so {batch ? <>batch <strong>{batch}</strong>’s Semester I is <strong>{termFor(batch, 1)}</strong> and Semester II is <strong>{termFor(batch, 2)}</strong></>
+                : <>batch 2023’s Semester I is <strong>Fall 2024</strong> and Semester II is <strong>Spring 2024</strong></>}.
+            </span>
+          </p>
+
           <article className="cgpa-semester cgpa-info">
             <h3><Info size={17} /> PU grading at a glance</h3>
             <p className="cgpa-guide-link">

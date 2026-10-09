@@ -18,12 +18,12 @@ export function parseBatch(text: string | null | undefined) {
 }
 
 /**
- * The term a semester falls in for a batch: Semester I = Fall <batch>, II = Spring <batch>,
- * III = Fall <batch+1>, IV = Spring <batch+1>, … (each academic year's spring carries its fall's year).
+ * The term a semester is named after, by the year it ENDS. A batch enrols at the end of its batch
+ * year, so batch 2023: Semester I = Fall 2024, II = Spring 2024, III = Fall 2025, IV = Spring 2025, …
  */
 export function termFor(batch: number | null, semesterId: number) {
   if (!batch) return null;
-  const yearOffset = Math.floor((semesterId - 1) / 2);
+  const yearOffset = 1 + Math.floor((semesterId - 1) / 2);
   return `${semesterId % 2 === 1 ? 'Fall' : 'Spring'} ${batch + yearOffset}`;
 }
 
