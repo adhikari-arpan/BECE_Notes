@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, FileStack, FileText } from 'lucide-react';
-import { findSyllabus, pastQuestionsPath, isSyllabus, plural, subjectPath, type Semester, type Subject } from '@/content/notes';
+import { findSyllabus, pastQuestionsFor, pastQuestionsPath, isSyllabus, plural, subjectPath, type Semester, type Subject } from '@/content/notes';
 import { semesters2025 } from '@/content/curriculum2025';
 import { useStructure } from '@/content/structure';
 import { pastQuestionCount } from '@/content/pastQuestions';
@@ -167,7 +167,7 @@ export function SemesterView({ semester }: SemesterViewProps) {
           ))}
         </div>
 
-        {isCourseSemester && (
+        {pastQuestionsFor(semester) && (
           <Link to={pastQuestionsPath(semester)} className="semester-pastq-link">
             <span className="semester-pastq-icon"><FileStack size={20} /></span>
             <span className="semester-pastq-text">
