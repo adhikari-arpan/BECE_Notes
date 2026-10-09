@@ -1,13 +1,24 @@
 /**
  * Adds a "Downloaded from notes.arpanadhikari7.com.np" credit to files people download,
  * print or open from the site. The stamping runs in the visitor's browser: PDFs get a small
- * clickable line in a thin strip added below every page, images get a thin strip under the picture.
+ * clickable line in a thin strip added below every page plus a very faint logo in the middle of the
+ * page; images get a thin strip under the picture.
  * Other formats (Word, PowerPoint, code...) are downloaded unchanged.
  */
 
 export const SITE_HOST = 'notes.arpanadhikari7.com.np';
 export const SITE_URL = `https://${SITE_HOST}`;
 export const CREDIT_TEXT = `Downloaded from ${SITE_HOST}`;
+
+/** The logo for the page watermark (the full-size PNG; fetched once per download). */
+async function logoBytes(): Promise<ArrayBuffer | null> {
+  try {
+    const res = await fetch(`${import.meta.env.BASE_URL}images/logo.png`);
+    return res.ok ? await res.arrayBuffer() : null;
+  } catch {
+    return null;
+  }
+}
 
 /** Returns the PDF with a credit line on every page (or the original bytes if it can't be edited). */
 export async function stampPdf(bytes: Uint8Array | ArrayBuffer): Promise<Uint8Array> {
@@ -23,6 +34,9 @@ export async function stampPdf(bytes: Uint8Array | ArrayBuffer): Promise<Uint8Ar
     const strip = 16;
     const baseline = 5;
     const textWidth = font.widthOfTextAtSize(CREDIT_TEXT, size);
+    // A very light logo in the centre of each page: visible, but never in the way of the notes.
+    const logoData = await logoBytes();
+    const logo = logoData ? await pdf.embedPng(logoData).catch(() => null) : null;
 
     for (const page of pdf.getPages()) {
       const rotation = ((page.getRotation().angle % 360) + 360) % 360;
@@ -47,6 +61,23 @@ export async function stampPdf(bytes: Uint8Array | ArrayBuffer): Promise<Uint8Ar
       else { x = cx + (W - textWidth) / 2; y = cy + baseline; }
 
       page.drawText(CREDIT_TEXT, { x, y, size, font, color: rgb(0.35, 0.4, 0.38), opacity: 0.85, rotate: degrees(rotation) });
+
+      if (logo) {
+        // About 45% of the page's shorter side, centred, upright as the page is displayed.
+        const w = Math.min(W, H) * 0.45;
+        const h = (w * logo.height) / logo.width;
+        const rad = (rotation * Math.PI) / 180;
+        const cx0 = cx + W / 2;
+        const cy0 = cy + H / 2;
+        page.drawImage(logo, {
+          x: cx0 - ((w / 2) * Math.cos(rad) - (h / 2) * Math.sin(rad)),
+          y: cy0 - ((w / 2) * Math.sin(rad) + (h / 2) * Math.cos(rad)),
+          width: w,
+          height: h,
+          rotate: degrees(rotation),
+          opacity: 0.07,
+        });
+      }
 
       // Make the line a clickable link back to the site.
       const pad = 2;
