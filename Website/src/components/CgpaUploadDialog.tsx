@@ -9,6 +9,7 @@ interface Loaded {
   structure: CgpaMode;
   custom?: CustomData;
   semesters: number;
+  batch: number | null;
 }
 
 interface Props {

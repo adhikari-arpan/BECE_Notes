@@ -179,3 +179,10 @@
   .cgpa-custom-credits { width: 52px; }
   .cgpa-custom-table th:nth-child(4), .cgpa-custom-table td:nth-child(4) { display: none; }
 }
+
+/* Batch year box (next to the mode switch) and the term shown with each semester. */
+.cgpa-batch { display: inline-flex; align-items: center; gap: 8px; font: 600 12px 'DM Sans', sans-serif; color: var(--c-4c5b54); }
+.cgpa-batch select { min-width: 132px; padding: 7px 32px 7px 12px; border: 1.5px solid #e8c873; border-radius: 99px; background: var(--c-fffdf0) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23b8860b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center; color: var(--c-0b1f1a); font: 600 13px 'DM Sans', sans-serif; cursor: pointer; -webkit-appearance: none; appearance: none; }
+.cgpa-batch select:hover { border-color: #e5a927; }
+.cgpa-batch select:focus-visible { outline: 2px solid #f0c34a; outline-offset: 1px; }
+.cgpa-sgpa-term { font-size: 10.5px; color: #9fb8ad; font-weight: 500; }

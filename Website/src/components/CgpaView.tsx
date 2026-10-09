@@ -8,7 +8,7 @@ import { DEANS_LIST_GPA, DISTINCTION_CGPA, GRADES, GRADING_SOURCE, MIN_CGPA, for
 import { cleanEntries, computeResults, curriculumFor, emptyEntry, hasEntries, isElectiveSlot, type Entries, type SemesterEntry } from '@/content/cgpa';
 import { setStructure, useStructure, type Structure } from '@/content/structure';
 import {
-  MODE_LABELS, cleanCustom, customToCurriculum, emptyCustomSemester, hasCustomData, newCustomCourse, parseCredits,
+  MODE_LABELS, cleanCustom, parseBatch, termFor, customToCurriculum, emptyCustomSemester, hasCustomData, newCustomCourse, parseCredits,
   type CgpaMode, type CustomData, type CustomSemester,
 } from '@/content/cgpaCustom';
 import { saveBlob } from '@/content/watermark';
@@ -19,6 +19,10 @@ import './CgpaView.css';
 const storageKey = (mode: CgpaMode) => (mode === 'custom' ? 'bece-cgpa-custom-v1' : mode === '2025' ? 'bece-cgpa-2025-v1' : 'bece-cgpa-v1');
 /** Whether the calculator was last on Custom (the two curriculum orders follow the site-wide switch). */
 const MODE_KEY = 'bece-notes:cgpa-mode';
+/** The student's batch year (e.g. 2023), shared by all modes. */
+const BATCH_KEY = 'bece-notes:cgpa-batch';
+/** Batch years to choose from: next year back to 2015, newest first. */
+const BATCH_YEARS = Array.from({ length: new Date().getFullYear() + 1 - 2015 + 1 }, (_, i) => new Date().getFullYear() + 1 - i);
 
 function loadCustom(): CustomData {
   try {
@@ -75,6 +79,11 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
   const sems = derived ? derived.sems : curriculumFor(mode as Structure);
   const entries = derived ? derived.entries : curriculumEntries;
   const { consent } = useConsent();
+  const [batchText, setBatchText] = useState(() => deviceStore.get(BATCH_KEY) ?? '');
+  const batch = parseBatch(batchText);
+  useEffect(() => {
+    deviceStore.set(BATCH_KEY, batchText);
+  }, [batchText]);
 
   // Remembered on this device (with cookie consent) so students can come back each semester;
   // without consent the grades last for this visit only.
@@ -106,7 +115,7 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
     setNotice(null);
     try {
       const { createReport, reportFileName } = await import('@/content/cgpaReport');
-      saveBlob(new Blob([(await createReport(entries, mode, customData)) as BlobPart], { type: 'application/pdf' }), reportFileName());
+      saveBlob(new Blob([(await createReport(entries, mode, customData, batch)) as BlobPart], { type: 'application/pdf' }), reportFileName());
     } catch {
       setNotice({ tone: 'error', text: 'Couldn’t create the PDF. Please try again.' });
     } finally {
@@ -114,8 +123,12 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
     }
   };
 
-  const loadReport = ({ entries: loaded, generated, structure: reportStructure, custom: loadedCustom, semesters }: { entries: Entries; generated: Date | null; structure: CgpaMode; custom?: CustomData; semesters: number }) => {
+  const loadReport = ({ entries: loaded, generated, structure: reportStructure, custom: loadedCustom, semesters, batch: loadedBatch }: { entries: Entries; generated: Date | null; structure: CgpaMode; custom?: CustomData; semesters: number; batch: number | null }) => {
     setUploadOpen(false);
+    if (loadedBatch) {
+      setBatchText(String(loadedBatch));
+      deviceStore.set(BATCH_KEY, String(loadedBatch));
+    }
     const loadedNotice: Notice = {
       tone: 'ok',
       text: `Loaded ${semesters} ${semesters === 1 ? 'semester' : 'semesters'}${generated ? ` from your report of ${generated.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}. Fill in the rest to see your full CGPA.`,
@@ -154,6 +167,28 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
         </div>
         <div className="structure-bar">
           <ModeToggle mode={mode} onMode={onMode} />
+          <label className="cgpa-batch">
+            Batch
+            <select
+              value={batch ? String(batch) : ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                setBatchText(value);
+                // The batch decides the subject order: 2025 and later → 2025 onwards, earlier → before 2025.
+                // Custom stays custom. Saved first, because switching order reopens the calculator.
+                deviceStore.set(BATCH_KEY, value);
+                const year = parseBatch(value);
+                if (year && !isCustom) {
+                  const order = year >= 2025 ? '2025' : 'pre2025';
+                  if (order !== mode) onMode(order);
+                }
+              }}
+              aria-label="Your batch year, to show each semester's term (Fall / Spring)"
+            >
+              <option value="">Select batch</option>
+              {BATCH_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+            </select>
+          </label>
           {isCustom && <span className="structure-note-inline">Add your own subjects, credits and grades.</span>}
         </div>
         <div className="cgpa-intro">
@@ -231,7 +266,7 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
             <ul className="cgpa-sgpa-list" aria-label="SGPA by semester">
               {sems.map((sem, i) => (
                 <li key={sem.id} className={results[i].sgpa === null ? 'muted' : ''}>
-                  <span>{sem.label}</span>
+                  <span>{sem.label}{termFor(batch, sem.id) && <small className="cgpa-sgpa-term"> · {termFor(batch, sem.id)}</small>}</span>
                   <strong>{formatGpa(results[i].sgpa)}</strong>
                 </li>
               ))}
@@ -257,7 +292,7 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
               <article key={sem.id} className="cgpa-semester">
                 <header className="cgpa-semester-head">
                   <div>
-                    <span className="section-kicker">{sem.year}</span>
+                    <span className="section-kicker">{sem.year}{termFor(batch, sem.id) ? ` · ${termFor(batch, sem.id)}` : ''}</span>
                     <h3>{sem.label}</h3>
                   </div>
                   <label className={`cgpa-sgpa-box ${result.typed ? 'cgpa-sgpa-box-typed' : ''} ${invalid ? 'cgpa-sgpa-box-invalid' : ''} ${result.fromGrades === null ? 'cgpa-sgpa-box-empty' : ''}`}>

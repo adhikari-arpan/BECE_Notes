@@ -6,7 +6,7 @@
 import type { PDFFont, PDFPage } from 'pdf-lib';
 import { DISTINCTION_CGPA, MIN_CGPA, formatGpa, gradePoint } from '@/content/grades';
 import { cleanEntries, computeResults, curriculumFor, emptyEntry, isElectiveSlot, type Entries } from '@/content/cgpa';
-import { cleanCustom, customToCurriculum, MODE_LABELS, type CgpaMode, type CustomData } from '@/content/cgpaCustom';
+import { cleanCustom, customToCurriculum, MODE_LABELS, termFor, type CgpaMode, type CustomData } from '@/content/cgpaCustom';
 import { SITE_HOST, SITE_URL } from '@/content/watermark';
 import { withBase } from '@/content/router';
 
@@ -28,6 +28,8 @@ interface Payload {
   entries: Entries;
   /** Custom mode: the student's own subjects (names, credits, grades). */
   custom?: CustomData;
+  /** The student's batch year, if given. */
+  batch?: number;
 }
 
 /* ------------------------------ encoding ------------------------------ */
@@ -84,7 +86,8 @@ function fit(text: string, font: PDFFont, size: number, width: number) {
 }
 
 
-export async function createReport(entries: Entries, structure: CgpaMode = 'pre2025', custom?: CustomData): Promise<Uint8Array> {
+export async function createReport(entries: Entries, structure: CgpaMode = 'pre2025', custom?: CustomData, batch: number | null = null): Promise<Uint8Array> {
+  const semName = (sem: { id: number; label: string }) => (termFor(batch, sem.id) ? `${sem.label} (${termFor(batch, sem.id)})` : sem.label);
   const sems = structure === 'custom' ? customToCurriculum(custom ?? {}).sems : curriculumFor(structure);
   const { PDFArray, PDFDocument, PDFName, PDFString, StandardFonts, rgb } = await import('pdf-lib');
   const C = {
@@ -115,7 +118,7 @@ export async function createReport(entries: Entries, structure: CgpaMode = 'pre2
     .catch(() => bold);
   const summary = computeResults(entries, sems);
   const generated = new Date();
-  const payloadJson = JSON.stringify({ v: VERSION, generated: generated.toISOString(), structure, entries: structure === 'custom' ? {} : cleanEntries(entries, sems), ...(structure === 'custom' ? { custom: cleanCustom(custom) } : {}) } satisfies Payload);
+  const payloadJson = JSON.stringify({ v: VERSION, generated: generated.toISOString(), structure, entries: structure === 'custom' ? {} : cleanEntries(entries, sems), ...(structure === 'custom' ? { custom: cleanCustom(custom) } : {}), ...(batch ? { batch } : {}) } satisfies Payload);
   const reportId = checksum(payloadJson).toUpperCase();
   const when = generated.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   const contentWidth = A4.width - MARGIN * 2;
@@ -213,7 +216,7 @@ export async function createReport(entries: Entries, structure: CgpaMode = 'pre2
   addLink(page, tx, A4.height - 80, regular.widthOfTextAtSize(PAGE_URL, 8.5), 8.5, `https://${PAGE_URL}`);
   right(`Generated ${when}`, A4.width - MARGIN, A4.height - 44, 9, regular, C.white);
   right(`Report ID ${reportId}`, A4.width - MARGIN, A4.height - 58, 8.5, regular, rgb(0.62, 0.72, 0.68));
-  right(`Curriculum: ${MODE_LABELS[structure]}`, A4.width - MARGIN, A4.height - 72, 8.5, regular, rgb(0.62, 0.72, 0.68));
+  right(`Curriculum: ${MODE_LABELS[structure]}${batch ? `  ·  Batch ${batch}` : ''}`, A4.width - MARGIN, A4.height - 72, 8.5, regular, rgb(0.62, 0.72, 0.68));
   y = A4.height - 122;
 
   /* Disclaimer */
@@ -269,7 +272,7 @@ export async function createReport(entries: Entries, structure: CgpaMode = 'pre2
     const r = summary.results[i];
     const has = r.sgpa !== null;
     y -= 18;
-    text(sem.label, col.sem, y + 5.5, 9.5, has ? bold : regular, has ? C.ink : C.muted);
+    text(semName(sem), col.sem, y + 5.5, 9.5, has ? bold : regular, has ? C.ink : C.muted);
     right(`${has ? r.credits : 0} / ${r.totalCredits}`, col.credits, y + 5.5, 9.5, regular, has ? C.body : C.muted);
     right(formatGpa(r.sgpa), col.sgpa, y + 5.5, 9.5, bold, has ? C.ink : C.muted);
     rowLine();
@@ -284,7 +287,7 @@ export async function createReport(entries: Entries, structure: CgpaMode = 'pre2
     if (!graded.length) return;
     const r = summary.results[i];
     ensure(60 + graded.length * 18);
-    text(sem.label, MARGIN, y, 12, bold, C.ink);
+    text(semName(sem), MARGIN, y, 12, bold, C.ink);
     right(r.typed ? `Graded subjects: ${formatGpa(r.fromGrades)}  ·  counted SGPA (entered): ${formatGpa(r.sgpa)}` : `SGPA ${formatGpa(r.sgpa)}`,
       MARGIN + contentWidth, y, 9.5, bold, C.goldDeep);
     y -= 10;
@@ -342,7 +345,7 @@ export class ReportError extends Error {}
 const NOT_OURS = 'Only CGPA reports downloaded from this calculator can be uploaded. This PDF wasn’t made here.';
 
 /** Reads a report made by createReport and returns its grades; throws ReportError for anything else. */
-export async function readReport(file: File): Promise<{ entries: Entries; generated: Date | null; structure: CgpaMode; custom?: CustomData; semesters: number }> {
+export async function readReport(file: File): Promise<{ entries: Entries; generated: Date | null; structure: CgpaMode; custom?: CustomData; semesters: number; batch: number | null }> {
   if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') throw new ReportError('Please choose a PDF file.');
   if (file.size > 5 * 1024 * 1024) throw new ReportError('This PDF is too large to be a BECE Vault CGPA report.');
   const { PDFDocument } = await import('pdf-lib');
@@ -368,14 +371,15 @@ export async function readReport(file: File): Promise<{ entries: Entries; genera
   const payload = JSON.parse(json) as Partial<Payload>;
   const generated = payload.generated ? new Date(payload.generated) : null;
   const when = generated && !isNaN(generated.getTime()) ? generated : null;
+  const batch = typeof payload.batch === 'number' && payload.batch >= 2000 && payload.batch <= 2100 ? payload.batch : null;
   if (payload.structure === 'custom') {
     const custom = cleanCustom(payload.custom);
     const { sems, entries } = customToCurriculum(custom);
-    return { entries, custom, generated: when, structure: 'custom', semesters: computeResults(entries, sems).counted.length };
+    return { entries, custom, generated: when, structure: 'custom', semesters: computeResults(entries, sems).counted.length, batch };
   }
   const structure = payload.structure === '2025' ? '2025' : 'pre2025';
   const entries = cleanEntries(payload.entries, curriculumFor(structure));
-  return { entries, generated: when, structure, semesters: computeResults(entries, curriculumFor(structure)).counted.length };
+  return { entries, generated: when, structure, semesters: computeResults(entries, curriculumFor(structure)).counted.length, batch };
 }
 
 export const reportFileName = () => `BECE-Vault-CGPA-Report-${new Date().toISOString().slice(0, 10)}.pdf`;

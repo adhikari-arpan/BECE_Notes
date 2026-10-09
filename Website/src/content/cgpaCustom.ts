@@ -11,6 +11,22 @@ import { STRUCTURE_LABELS, type Structure } from '@/content/structure';
 
 export type CgpaMode = Structure | 'custom';
 
+/** A batch year the calculator accepts (e.g. 2023), or null. */
+export function parseBatch(text: string | null | undefined) {
+  const n = Number(text);
+  return text && /^\d{4}$/.test(text.trim()) && n >= 2000 && n <= 2100 ? n : null;
+}
+
+/**
+ * The term a semester falls in for a batch: Semester I = Fall <batch>, II = Spring <batch>,
+ * III = Fall <batch+1>, IV = Spring <batch+1>, … (each academic year's spring carries its fall's year).
+ */
+export function termFor(batch: number | null, semesterId: number) {
+  if (!batch) return null;
+  const yearOffset = Math.floor((semesterId - 1) / 2);
+  return `${semesterId % 2 === 1 ? 'Fall' : 'Spring'} ${batch + yearOffset}`;
+}
+
 export const MODE_LABELS: Record<CgpaMode, string> = { ...STRUCTURE_LABELS, custom: 'Custom' };
 
 export interface CustomCourse {
