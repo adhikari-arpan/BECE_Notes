@@ -1,20 +1,38 @@
-import { ArrowLeft, ArrowRight, BookOpen, FileText, GraduationCap, Layers } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, ArrowRight, BookOpen, Download, FileText, GraduationCap, Layers, Loader2 } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { StructureToggle } from '@/components/StructureToggle';
-import { CiteThis } from '@/components/CiteThis';
-import { findSyllabus, isSyllabus, subjectPath } from '@/content/notes';
-import { syllabusPath, syllabusSemesters, type Course2025Entry } from '@/content/curriculum2025';
-import { STRUCTURE_LABELS, useStructure } from '@/content/structure';
+import { subjectPath } from '@/content/notes';
+import { syllabusCode, syllabusLink, syllabusPath, syllabusSemesters } from '@/content/curriculum2025';
+import { STRUCTURE_LABELS, useStructure, type Structure } from '@/content/structure';
+import { saveBlob } from '@/content/watermark';
 import './SyllabusView.css';
 
-/** Where to read a course's detailed syllabus PDF, if the repo has one. */
-function syllabusLink(c: Course2025Entry) {
-  if (!c.subject || !c.noteSemester || c.subject.electiveSlot) return undefined;
-  const found = findSyllabus(c.noteSemester.subjects.find(isSyllabus), c.subject);
-  return found && subjectPath(c.noteSemester, found.subject, found.file);
+/** Downloads the syllabus shown (all semesters, or one) as a PDF, in the chosen curriculum order. */
+function DownloadSyllabus({ structure, semesterId }: { structure: Structure; semesterId?: number }) {
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const download = async () => {
+    setBusy(true);
+    setFailed(false);
+    try {
+      const { createSyllabusPdf, syllabusFileName } = await import('@/content/syllabusReport');
+      saveBlob(new Blob([(await createSyllabusPdf(structure, semesterId)) as BlobPart], { type: 'application/pdf' }), syllabusFileName(structure, semesterId));
+    } catch {
+      setFailed(true);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <>
+      <button className="syllabus-download" onClick={download} disabled={busy} title={`Download ${semesterId ? 'this semester’s' : 'the full'} syllabus as a PDF`}>
+        {busy ? <Loader2 size={14} className="spin" /> : <Download size={14} />} Download PDF
+      </button>
+      {failed && <span className="syllabus-download-error" role="alert">Couldn’t make the PDF. Please try again.</span>}
+    </>
+  );
 }
-
-const codeLabel = (code: string) => (code.startsWith('ELEC') ? '—' : code);
 
 /**
  * The BE Computer Engineering syllabus: an overview of all eight semesters at /syllabus, and one
@@ -45,7 +63,7 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
             Pokhara University’s BE Computer Engineering syllabus: every semester’s courses, course codes, credit hours and
             weekly lecture, tutorial and practical hours, with links to notes and detailed syllabus files.
           </p>
-          <div className="structure-bar"><StructureToggle /></div>
+          <div className="structure-bar"><StructureToggle /><DownloadSyllabus structure={structure} /></div>
         </section>
 
         <section className="subject-grid-section section-wrap">
@@ -67,7 +85,7 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
                 </span>
                 <strong>{s.label}</strong>
                 <ul>
-                  {s.courses.map((c) => <li key={c.code + c.name}><span>{codeLabel(c.code)}</span><span>{c.name}</span></li>)}
+                  {s.courses.map((c) => <li key={c.code + c.name}><span>{syllabusCode(c.code)}</span><span>{c.name}</span><span className="syllabus-card-credits">{c.credits} cr</span></li>)}
                 </ul>
                 <span className="syllabus-card-foot">
                   <span>{s.courses.length} courses · {s.courses.reduce((a, c) => a + c.credits, 0)} credits</span>
@@ -78,7 +96,6 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
           </div>
           </div>
           ))}
-          <CiteThis title="Pokhara University BE Computer Engineering syllabus" path={syllabusPath()} />
         </section>
       </>
     );
@@ -103,7 +120,7 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
           Pokhara University BE Computer Engineering, {semester.label}: course codes, credit hours and weekly lecture (L),
           tutorial (T) and practical (P) hours, with a summary of what each course covers.
         </p>
-        <div className="structure-bar"><StructureToggle /></div>
+        <div className="structure-bar"><StructureToggle /><DownloadSyllabus structure={structure} semesterId={semester.id} /></div>
       </section>
 
       <section className="subject-grid-section section-wrap">
@@ -115,7 +132,7 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
             <tbody>
               {semester.courses.map((c) => (
                 <tr key={c.code + c.name}>
-                  <td className="code">{codeLabel(c.code)}</td>
+                  <td className="code">{syllabusCode(c.code)}</td>
                   <td>{c.name}</td>
                   <td className="num">{c.credits}</td>
                   <td className="num">{c.hours[0]}</td>
@@ -158,7 +175,6 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
           })}
         </div>
 
-        <CiteThis title={`${semester.label} syllabus, Pokhara University BE Computer Engineering`} path={syllabusPath(semester.id)} />
 
         <nav className="syllabus-pager">
           {prev ? <Link to={syllabusPath(prev.id)}><ArrowLeft size={15} /> {prev.label}</Link> : <span />}
