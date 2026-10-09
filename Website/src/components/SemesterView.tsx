@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, FileText, Info } from 'lucide-react';
+import { ArrowLeft, ArrowRight, FileText } from 'lucide-react';
 import { findSyllabus, isSyllabus, plural, subjectPath, type Semester, type Subject } from '@/content/notes';
 import { semesters2025 } from '@/content/curriculum2025';
 import { useStructure } from '@/content/structure';
@@ -21,7 +21,6 @@ interface Row {
 }
 
 const syllabusOf = (semester: Semester) => semester.subjects.find(isSyllabus);
-const shortLabel = (semester: Semester) => semester.label.replace('Semester ', 'Sem ');
 
 export function SemesterView({ semester }: SemesterViewProps) {
   const structure = useStructure();
@@ -65,13 +64,6 @@ export function SemesterView({ semester }: SemesterViewProps) {
         {isCourseSemester && (
           <div className="structure-bar">
             <StructureToggle />
-            {in2025 && (
-              <p className="structure-note">
-                <Info size={14} /> Showing the order for the <strong>2025 batch onwards</strong>: same subjects and credits, in different semesters. Notes
-                are filed by the earlier order, so a subject may open under another semester. Question collections stay on
-                the earlier semester pages.
-              </p>
-            )}
           </div>
         )}
       </section>
@@ -92,7 +84,6 @@ export function SemesterView({ semester }: SemesterViewProps) {
                 {rows.map((r) => {
                   const c = r.subject;
                   const syllabusFile = c && !c.electiveSlot ? findSyllabus(syllabusOf(r.noteSemester), c) : undefined;
-                  const elsewhere = in2025 && r.noteSemester.id !== semester.id;
                   return (
                     <tr key={r.key}>
                       <td className="code">{r.code}</td>
@@ -110,7 +101,6 @@ export function SemesterView({ semester }: SemesterViewProps) {
                           <Link to={subjectPath(r.noteSemester, c)} className="course-table-link">
                             <span className="course-table-icon">{c.icon}</span>
                             {r.name}
-                            {elsewhere && <span className="notes-in-chip">Notes in {shortLabel(r.noteSemester)}</span>}
                           </Link>
                         ) : (
                           <span className="course-table-link">{r.name}</span>
@@ -169,7 +159,6 @@ export function SemesterView({ semester }: SemesterViewProps) {
                 <span className="subject-card-meta">
                   {subject.credits !== null && <span>{plural(subject.credits, 'credit')}</span>}
                   <span>{subject.files.length > 0 ? plural(subject.files.length, 'file') : 'No notes yet'}</span>
-                  {in2025 && noteSemester.id !== semester.id && <span>Notes in {shortLabel(noteSemester)}</span>}
                 </span>
                 <span className="subject-card-go"><ArrowRight size={15} /></span>
               </span>

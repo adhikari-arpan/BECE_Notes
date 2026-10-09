@@ -973,8 +973,6 @@ body:has(.cookie-banner.is-shown) .tip-nudge { bottom: 96px; }
 .structure-note { flex-basis: 100%; display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 10px 14px; border-radius: 12px; background: var(--c-fffdf0); border: 1px solid #efd98f; font-size: 12.5px; line-height: 1.55; color: var(--c-4c5b54); }
 .structure-note svg { flex-shrink: 0; margin-top: 2px; color: #b8860b; }
 .structure-note strong { color: var(--c-0b1f1a); }
-/* "Notes in Sem II" beside a 2025 subject whose notes are filed under another semester. */
-.notes-in-chip { margin-left: 4px; padding: 2px 8px; border-radius: 99px; background: var(--c-e6eee8); color: var(--c-43655a); font: 600 10px 'DM Mono', monospace; white-space: nowrap; }
 @media (max-width: 560px) {
   .structure-toggle { width: 100%; }
   .structure-toggle button { flex: 1; padding: 6px 8px; font-size: 11.5px; }

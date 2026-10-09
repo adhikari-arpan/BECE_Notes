@@ -184,9 +184,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
               <span className="subject-code">{subject.code}</span>
               <h2>{subject.name}</h2>
               <span className="subject-meta">
-                <span className="meta-chip meta-chip-semester" title={homeSemester !== semester ? `2025 batch onwards order (notes filed under ${semester.label})` : undefined}>
-                  {homeSemester.label}{homeSemester !== semester ? ' · 2025' : ''}
-                </span>
+                <span className="meta-chip meta-chip-semester">{homeSemester.label}</span>
                 {subject.credits !== null && <span className="meta-chip">{plural(subject.credits, 'credit')}</span>}
                 <span className="meta-chip">{plural(subject.files.length, 'file')}</span>
               </span>
