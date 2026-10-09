@@ -1,4 +1,4 @@
-import { normalizeName, semesters, type Semester, type Subject } from '@/content/notes';
+import { findSyllabus, isSyllabus, normalizeName, semesters, subjectPath, type Semester, type Subject } from '@/content/notes';
 
 /**
  * The 2025 BE Computer curriculum (Pokhara University Academic Council, 119th meeting, approved
@@ -139,6 +139,16 @@ export type Semester2025 = (typeof semesters2025)[number];
 
 /** /syllabus (all semesters) or /syllabus/semester-N. */
 export const syllabusPath = (id?: number) => (id ? `/syllabus/semester-${id}` : '/syllabus');
+
+/** Where to read a course's detailed syllabus PDF, if the repo has one. */
+export function syllabusLink(c: Course2025Entry) {
+  if (!c.subject || !c.noteSemester || c.subject.electiveSlot) return undefined;
+  const found = findSyllabus(c.noteSemester.subjects.find(isSyllabus), c.subject);
+  return found && subjectPath(c.noteSemester, found.subject, found.file);
+}
+
+/** A course code as shown in the syllabus ("—" for the elective slots). */
+export const syllabusCode = (code: string) => (code.startsWith('ELEC') ? '—' : code);
 
 /** The 2025-structure semester a subject belongs to (by its notes page). */
 export function semester2025For(subject: Subject) {

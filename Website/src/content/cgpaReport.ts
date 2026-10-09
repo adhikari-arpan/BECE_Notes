@@ -3,12 +3,13 @@
  * grades are also stored inside it (in the PDF's keywords), so uploading the report later fills
  * the calculator back in. Only reports made here carry that data, so other PDFs are refused.
  */
-import type { PDFFont, PDFPage } from 'pdf-lib';
+import type { PDFPage } from 'pdf-lib';
 import { DISTINCTION_CGPA, MIN_CGPA, formatGpa, gradePoint } from '@/content/grades';
 import { cleanEntries, computeResults, curriculumFor, emptyEntry, isElectiveSlot, type Entries } from '@/content/cgpa';
 import { cleanCustom, customToCurriculum, MODE_LABELS, termFor, type CgpaMode, type CustomData } from '@/content/cgpaCustom';
 import { SITE_HOST, SITE_URL } from '@/content/watermark';
 import { withBase } from '@/content/router';
+import { fit, safe, wrap } from '@/content/pdfText';
 
 const CREATOR = 'BECE Vault CGPA Calculator';
 const MARKER = 'BECEVaultCGPA';
@@ -60,31 +61,6 @@ const fromBase64 = (text: string) => {
 
 const A4 = { width: 595.28, height: 841.89 };
 const MARGIN = 44;
-
-/** Helvetica only covers Latin characters; anything else (e.g. in a typed elective name) becomes "?". */
-const safe = (text: string) => text.replace(/[^\x20-\x7E\u00A0-\u00FF\u2013\u2014\u2018\u2019\u201C\u201D\u2022\u2026]/g, '?');
-
-function wrap(text: string, font: PDFFont, size: number, width: number) {
-  const lines: string[] = [];
-  let line = '';
-  for (const word of safe(text).split(/\s+/)) {
-    const next = line ? `${line} ${word}` : word;
-    if (font.widthOfTextAtSize(next, size) > width && line) {
-      lines.push(line);
-      line = word;
-    } else line = next;
-  }
-  if (line) lines.push(line);
-  return lines;
-}
-
-function fit(text: string, font: PDFFont, size: number, width: number) {
-  let t = safe(text);
-  if (font.widthOfTextAtSize(t, size) <= width) return t;
-  while (t.length > 1 && font.widthOfTextAtSize(`${t}…`, size) > width) t = t.slice(0, -1);
-  return `${t.trimEnd()}…`;
-}
-
 
 export async function createReport(entries: Entries, structure: CgpaMode = 'pre2025', custom?: CustomData, batch: number | null = null): Promise<Uint8Array> {
   const semName = (sem: { id: number; label: string }) => (termFor(batch, sem.id) ? `${sem.label} (${termFor(batch, sem.id)})` : sem.label);
