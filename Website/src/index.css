@@ -253,16 +253,32 @@ h1 em { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing
 .orbit { position: absolute; border: 1px solid var(--c-d8ddd6); border-radius: 50%; transform: rotate(-25deg); }
 .orbit-one { width: 390px; height: 178px; top: 52px; left: -28px; }
 .orbit-two { width: 380px; height: 115px; top: 78px; left: -20px; transform: rotate(45deg); border-color: #e8c873; }
-.hero-card { position: absolute; border-radius: 16px; box-shadow: 0 18px 45px rgba(var(--shadow-rgb),.15); }
-.hero-card-back { width: 190px; height: 220px; right: -6px; top: 14px; background: var(--c-e0e8e0); color: var(--c-5a756b); padding: 22px; display: flex; flex-direction: column; justify-content: space-between; transform: rotate(10deg); }
+.hero-card { position: absolute; border-radius: 16px; box-shadow: 0 18px 45px rgba(var(--shadow-rgb),.15); transition: rotate .5s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s; }
+.hero-card-back { width: 190px; height: 220px; right: -6px; top: 14px; background: var(--c-e0e8e0); color: var(--c-5a756b); padding: 22px; display: flex; flex-direction: column; justify-content: space-between; rotate: 10deg; animation: hero-float 7s ease-in-out -2.5s infinite; }
 .hero-card-back span { font: 500 10px 'DM Mono', monospace; letter-spacing: .14em; }
 .hero-card-back b { font: 600 21px 'Playfair Display', serif; line-height: 1.05; }
-.hero-card-front { width: 205px; height: 242px; top: 4px; left: 24px; background: var(--c-fffdf5); padding: 18px; display: flex; flex-direction: column; color: var(--c-0b1f1a); transform: rotate(-7deg); }
-.mini-icon { height: 46px; display: flex; align-items: center; margin-bottom: 30px; }
+/* Keep the back card's words in the strip that peeks out from behind the front card. */
+.hero-card-back { align-items: flex-end; text-align: right; }
+.hero-card-back b { max-width: 96px; color: var(--c-1d3f35); }
+/* What the library holds — a small checklist in the strip above "Study smarter." */
+.hero-card-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; justify-items: end; font: 500 9.5px 'DM Mono', monospace; letter-spacing: .04em; color: var(--c-43655a); }
+.hero-card-list li::before { content: '✓ '; color: #b8860b; font-weight: 700; }
+.hero-card-front { width: 205px; height: 242px; top: 4px; left: 24px; background: var(--c-fffdf5); padding: 18px; display: flex; flex-direction: column; color: var(--c-0b1f1a); rotate: -7deg; animation: hero-float 6s ease-in-out infinite; }
+.mini-icon { height: 46px; display: flex; align-items: center; margin-bottom: 22px; }
 .mini-icon .logo { height: 100%; width: auto; }
 .hero-card-front span { font: 500 9px 'DM Mono', monospace; color: var(--c-5c6b64); letter-spacing: .16em; }
-.hero-card-front strong { font: 600 28px 'Playfair Display', serif; line-height: 1.02; margin-top: 9px; }
+.hero-card-front strong { font: 600 26px 'Playfair Display', serif; line-height: 1.02; margin-top: 8px; }
 .card-footer { border-top: 1px solid var(--c-dce1d9); margin-top: auto; padding-top: 11px; display: flex; justify-content: space-between; color: var(--c-5c6b64); font: 500 9px 'DM Mono', monospace; }
+/* The card stack floats gently, its rings turn slowly, and hovering fans the cards apart
+   (revealing "Study smarter." on the back card). Only translate/rotate/transform are animated, which
+   the browser runs on the GPU: no layout work, no layout shift. The stack is hidden on phones. */
+.orbit-one { animation: orbit-spin 80s linear infinite; }
+.orbit-two { animation: orbit-spin 110s linear infinite reverse; }
+@keyframes orbit-spin { to { rotate: 360deg; } }
+@keyframes hero-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
+.hero-visual:hover .hero-card-front { rotate: -13deg; transform: translateX(-26px); box-shadow: 0 24px 50px rgba(var(--shadow-rgb),.22); }
+.hero-visual:hover .hero-card-back { rotate: 17deg; transform: translateX(30px); }
+@media (prefers-reduced-motion: reduce) { .hero-card, .orbit-one, .orbit-two { animation: none; } }
 .browse-mode-section { padding: 24px 0 50px; }
 .browse-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .browse-card { border: 1px solid var(--c-e3e6de); border-radius: 16px; padding: 28px 24px; text-align: left; display: flex; align-items: center; gap: 18px; background: var(--c-fffdf7); transition: transform .2s, box-shadow .2s, border-color .2s; }

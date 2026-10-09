@@ -382,7 +382,7 @@ function homeShell(): string {
     + `<span class="hero-badge">${badge} Based on the new PU syllabus</span>`
     + '<div class="hero-stats"><div><strong>00</strong><span>Semesters</span></div><div><strong>0</strong><span>Subjects</span></div><div><strong>0</strong><span>Note Files</span></div></div>'
     + '</div><div class="hero-visual" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>'
-    + '<div class="hero-card hero-card-back"><span>BECE</span><b>Study smarter.</b></div>'
+    + '<div class="hero-card hero-card-back"><span>BECE VAULT</span><ul class="hero-card-list"><li>Notes</li><li>Past questions</li><li>Syllabus</li><li>Labs</li></ul><b>Study smarter.</b></div>'
     + `<div class="hero-card hero-card-front"><div class="mini-icon">${logo.replace(' fetchpriority="high"', '')}</div><span>THE LIBRARY</span><strong>Notes that<br>move with you.</strong><div class="card-footer"><span>PU</span><span>●</span></div></div>`
     + '</div></section></main></div>';
 }

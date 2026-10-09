@@ -52,7 +52,7 @@ export function HomeView() {
         </div>
         <div className="hero-visual" aria-hidden="true">
           <div className="orbit orbit-one" /><div className="orbit orbit-two" />
-          <div className="hero-card hero-card-back"><span>BECE</span><b>Study smarter.</b></div>
+          <div className="hero-card hero-card-back"><span>BECE VAULT</span><ul className="hero-card-list"><li>Notes</li><li>Past questions</li><li>Syllabus</li><li>Labs</li></ul><b>Study smarter.</b></div>
           <div className="hero-card hero-card-front">
             <div className="mini-icon"><Logo /></div>
             <span>THE LIBRARY</span>
