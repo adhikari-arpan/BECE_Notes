@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState, type DragEvent } from 'react';
 import { FileCheck2, FileUp, Loader2, Lock, PencilLine, Replace, ShieldAlert, TriangleAlert, X } from 'lucide-react';
 import type { Entries } from '@/content/cgpa';
-import { computeResults, curriculumFor } from '@/content/cgpa';
-import { STRUCTURE_LABELS, type Structure } from '@/content/structure';
+import { MODE_LABELS, type CgpaMode, type CustomData } from '@/content/cgpaCustom';
 
 interface Loaded {
   entries: Entries;
   generated: Date | null;
-  structure: Structure;
+  structure: CgpaMode;
+  custom?: CustomData;
+  semesters: number;
 }
 
 interface Props {
@@ -64,7 +65,7 @@ export function CgpaUploadDialog({ onClose, onLoaded, hasExisting }: Props) {
     void read(e.dataTransfer.files[0]);
   };
 
-  const semesters = pending ? computeResults(pending.entries, curriculumFor(pending.structure)).counted.length : 0;
+  const semesters = pending?.semesters ?? 0;
 
   return (
     <div className="cgpa-modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
@@ -77,7 +78,7 @@ export function CgpaUploadDialog({ onClose, onLoaded, hasExisting }: Props) {
           <div className="cgpa-confirm">
             <FileCheck2 size={30} />
             <strong>Report found: {semesters} {semesters === 1 ? 'semester' : 'semesters'}{pending.generated ? `, made on ${formatDate(pending.generated)}` : ''}</strong>
-            <small className="cgpa-confirm-structure">Curriculum: {STRUCTURE_LABELS[pending.structure]}</small>
+            <small className="cgpa-confirm-structure">Curriculum: {MODE_LABELS[pending.structure]}</small>
             <p>This will replace the grades currently on the page.</p>
             <div className="cgpa-confirm-actions">
               <button className="cgpa-action" onClick={() => setPending(null)}>Choose another</button>
