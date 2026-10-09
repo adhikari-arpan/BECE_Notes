@@ -21,8 +21,9 @@ const storageKey = (mode: CgpaMode) => (mode === 'custom' ? 'bece-cgpa-custom-v1
 const MODE_KEY = 'bece-notes:cgpa-mode';
 /** The student's batch year (e.g. 2023), shared by all modes. */
 const BATCH_KEY = 'bece-notes:cgpa-batch';
-/** Batch years to choose from: next year back to 2015, newest first. */
-const BATCH_YEARS = Array.from({ length: new Date().getFullYear() + 1 - 2015 + 1 }, (_, i) => new Date().getFullYear() + 1 - i);
+/** Batch years to choose from: the current year back to 2020, newest first (follows the visitor's date). */
+const CURRENT_YEAR = new Date().getFullYear();
+const BATCH_YEARS = Array.from({ length: CURRENT_YEAR - 2020 + 1 }, (_, i) => CURRENT_YEAR - i);
 
 function loadCustom(): CustomData {
   try {
