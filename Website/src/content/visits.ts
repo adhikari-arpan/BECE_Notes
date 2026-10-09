@@ -10,6 +10,9 @@ import { useSyncExternalStore } from 'react';
  *   since its last counted visit — returning later, or still using the site 30 minutes on.
  *   The timestamp lives in localStorage, so all open tabs share it and don't double count.
  * - Page visits: +1 every time a page of the site is opened (home, a semester, a subject...).
+ *
+ * Each count also goes into a counter for the current day (Nepal time), stored as its own "site"
+ * — counters/bece-notes-2026-10-09/visitors — so the same database rules apply unchanged.
  */
 
 /** e.g. https://your-project-default-rtdb.firebaseio.com — set in Website/.env */
@@ -21,16 +24,26 @@ const SUFFIX = import.meta.env.DEV ? '-dev' : '';
 const VISITORS = `visitors${SUFFIX}`;
 const PAGE_VIEWS = `pageviews${SUFFIX}`;
 
+/** The day the lifetime counters started (shown as "Counted since …" on the home page). */
+export const COUNTING_SINCE = '25 September 2026';
+
 const VISIT_WINDOW_MS = 30 * 60 * 1000;
 const STORAGE_KEY = 'bece-notes:last-counted-visit';
 const CHECK_INTERVAL_MS = 60 * 1000;
 
 export interface SiteStats {
+  /** Lifetime totals. */
   visitors: number | null;
   pageViews: number | null;
+  /** Today's totals (Nepal time). */
+  todayVisitors: number | null;
+  todayPageViews: number | null;
 }
 
-let stats: SiteStats = { visitors: null, pageViews: null };
+let stats: SiteStats = { visitors: null, pageViews: null, todayVisitors: null, todayPageViews: null };
+
+/** Today's date in Nepal, e.g. "2026-10-09" — the day counters reset at midnight Nepal time. */
+const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kathmandu', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const listeners = new Set<() => void>();
 
 function update(key: keyof SiteStats, value: number) {
@@ -38,18 +51,25 @@ function update(key: keyof SiteStats, value: number) {
   listeners.forEach((l) => l());
 }
 
-const endpoint = (counter: string) => `${DB_URL}/counters/${SITE}/${counter}.json`;
+const endpoint = (counter: string, day?: string) => `${DB_URL}/counters/${day ? `${SITE}-${day}` : SITE}/${counter}.json`;
 
-async function request(counter: string, key: keyof SiteStats, action: 'hit' | 'get') {
+/** Counts (or just reads) both the lifetime counter and today's. */
+function request(counter: string, key: 'visitors' | 'pageViews', action: 'hit' | 'get') {
+  const todayKey = key === 'visitors' ? 'todayVisitors' : 'todayPageViews';
+  void requestOne(endpoint(counter), key, action);
+  void requestOne(endpoint(counter, today()), todayKey, action);
+}
+
+async function requestOne(url: string, key: keyof SiteStats, action: 'hit' | 'get') {
   if (!DB_URL) return;
   try {
     if (action === 'hit') {
       // Atomic server-side increment; safe when many visitors arrive at once.
-      const res = await fetch(endpoint(counter), { method: 'PUT', body: JSON.stringify({ '.sv': { increment: 1 } }) });
+      const res = await fetch(url, { method: 'PUT', body: JSON.stringify({ '.sv': { increment: 1 } }) });
       const value: unknown = res.ok ? await res.json() : null;
       if (typeof value === 'number') return update(key, value);
     }
-    const res = await fetch(endpoint(counter));
+    const res = await fetch(url);
     if (!res.ok) return;
     const value: unknown = await res.json();
     update(key, typeof value === 'number' ? value : 0); // null = nothing recorded yet
@@ -121,7 +141,7 @@ export function trackPageView(pageKey: string) {
   request(PAGE_VIEWS, 'pageViews', 'hit');
 }
 
-/** Current lifetime visitors and page visits; each is null while loading or if unavailable. */
+/** Lifetime and today's visitors and page visits; each is null while loading or if unavailable. */
 export function useSiteStats(): SiteStats {
   return useSyncExternalStore(
     (listener) => {
