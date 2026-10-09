@@ -222,19 +222,16 @@ Open a pull request titled `feat: Add <your name> to contributors`:
    - Square, at least 400 × 400 px, under 300 KB
 2. 📝 **Your details**
    - Open [`Website/src/content/contributors.ts`](https://github.com/adhikari-arpan/BECE_Notes/blob/main/Website/src/content/contributors.ts)
-   - Copy the commented template in the `community` list, remove the `//` and fill in your details.
-   - Add your **GitHub username** as `github`. The files you've added are then **counted automatically** from the
-     repository's history, so you never update numbers yourself.
-   - Your entry goes at the **end** of the `community` list:
+   - Find the section marked **`CONTRIBUTORS: ADD YOURSELF HERE`**, copy its template, remove the `//` and fill it in.
+   - Add your **GitHub username** as `github`. Files uploaded on GitHub are recorded under your GitHub account, not
+     the name you type, so this is how the files you've added are **counted automatically**. You never update numbers yourself.
+   - Your entry goes at the **end** of the list:
 
    ```ts
    {
      name: 'Sita Sharma',
-     role: 'Contributor',
-     semester: 'Semester III',
-     subjects: ['Database Management System', 'Operating Systems'],
-     photo: 'images/contributors/sita-sharma.jpg', // optional
      github: 'sita-sharma',
+     photo: 'images/contributors/sita-sharma.jpg', // optional
    },
    ```
 
