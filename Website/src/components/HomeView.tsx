@@ -1,6 +1,7 @@
 import {
   ArrowRight,
   BadgeCheck,
+  CalendarDays,
   Coffee,
   Users,
   CheckCircle2,
@@ -12,7 +13,7 @@ import {
   HardDrive,
 } from 'lucide-react';
 import { allFiles, formatSize, isSyllabus, plural, semesterPath, semesters } from '@/content/notes';
-import { formatCount, useSiteStats } from '@/content/visits';
+import { COUNTING_SINCE, formatCount, useSiteStats } from '@/content/visits';
 import { CountUp } from '@/components/CountUp';
 import { Logo } from '@/components/Logo';
 import { ChiyaCup, ChiyaUses } from '@/components/TipJar';
@@ -32,7 +33,7 @@ const totalSubjects = courseSemesters.flatMap((s) => s.subjects).filter((s) => s
 const totalBytes = allFiles.reduce((sum, f) => sum + f.size, 0);
 
 export function HomeView() {
-  const { visitors, pageViews } = useSiteStats();
+  const { visitors, pageViews, todayVisitors, todayPageViews } = useSiteStats();
   const structure = useStructure();
 
   return (
@@ -177,17 +178,29 @@ export function HomeView() {
         <div className="section-heading">
           <div><span className="section-kicker">By the numbers</span><h2>Collection stats</h2></div>
         </div>
-        <div className="stats-grid">
-          <div className="stat-card stat-card-highlight">
-            <Eye size={18} />
-            <strong>{formatCount(visitors)}</strong>
-            <span>Visitors</span>
+        {/* Visits: one panel, today (Nepal time) next to all time. */}
+        <div className="visits-panel">
+          <div className="visits-group visits-group-today">
+            <span className="visits-label"><span className="visits-label-title"><span className="visits-live" aria-hidden="true" /> Today</span><small>Nepal time</small></span>
+            <div className="visits-metrics">
+              <div><strong>{formatCount(todayVisitors)}</strong><span><Eye size={13} /> Visitors</span></div>
+              <div><strong>{formatCount(todayPageViews)}</strong><span><MousePointerClick size={13} /> Page visits</span></div>
+            </div>
           </div>
-          <div className="stat-card stat-card-highlight">
-            <MousePointerClick size={18} />
-            <strong>{formatCount(pageViews)}</strong>
-            <span>Page visits</span>
+          <div className="visits-group">
+            <span className="visits-label visits-label-hint" tabIndex={0} aria-describedby="visits-since">
+              <span className="visits-label-title"><CalendarDays size={13} /> All time</span><small>Lifetime</small>
+              <span className="visits-tip" id="visits-since" role="tooltip">
+                Counting from <strong>{COUNTING_SINCE}</strong>
+              </span>
+            </span>
+            <div className="visits-metrics">
+              <div><strong>{formatCount(visitors)}</strong><span><Eye size={13} /> Visitors</span></div>
+              <div><strong>{formatCount(pageViews)}</strong><span><MousePointerClick size={13} /> Page visits</span></div>
+            </div>
           </div>
+        </div>
+        <div className="stats-grid stats-grid-library">
           <div className="stat-card">
             <FileText size={18} />
             <strong>{formatCount(allFiles.length)}</strong>
