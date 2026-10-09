@@ -1,15 +1,47 @@
-import { ArrowLeft, Github, Globe, Linkedin, Mail } from 'lucide-react';
+import { ArrowLeft, BookOpen, FileStack } from 'lucide-react';
 import { Link } from '@/components/Link';
-import { contributors } from '@/content/contributors';
+import { FounderCard } from '@/components/FounderCard';
+import { FOUNDER, filesAdded, noteContributors, pastQuestionContributors, type Contributor } from '@/content/contributors';
 
-/** One contact, shown with a fitting icon: an email address or a link (LinkedIn, GitHub, any website). */
-function ContactLink({ value }: { value: string }) {
-  const isEmail = !/^https?:\/\//i.test(value) && value.includes('@');
-  const href = isEmail ? `mailto:${value}` : /^https?:\/\//i.test(value) ? value : `https://${value}`;
-  const Icon = isEmail ? Mail : /linkedin\.com/i.test(value) ? Linkedin : /github\.com/i.test(value) ? Github : Globe;
-  const label = isEmail ? value : value.replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
+/** A small box: photo or initials, name, and how many files they added. */
+function ContributorChip({ c, count, word }: { c: Contributor; count: number; word: string }) {
+  const photo = c.photoSmall ?? c.photo;
   return (
-    <a href={href} {...(isEmail ? {} : { target: '_blank', rel: 'noreferrer' })}><Icon size={14} /> {label}</a>
+    <li className="contributor-chip">
+      {photo ? (
+        <img src={`${import.meta.env.BASE_URL}${photo}`} alt="" loading="lazy" />
+      ) : (
+        <span className="contributor-chip-initials" aria-hidden="true">{c.name.split(' ').map((w) => w[0]).join('').slice(0, 2)}</span>
+      )}
+      <span className="contributor-chip-text">
+        <strong>{c.name}</strong>
+        <small>{count} {word}{count === 1 ? '' : 's'}</small>
+      </span>
+    </li>
+  );
+}
+
+/** One list (notes or past questions): everyone except the founder, most files first. */
+function ContributorList({ title, icon, people, count, word, empty }: {
+  title: string;
+  icon: React.ReactNode;
+  people: Contributor[];
+  count: (c: Contributor) => number;
+  word: string;
+  empty: React.ReactNode;
+}) {
+  const others = people.filter((c) => c !== FOUNDER);
+  return (
+    <div className="contributors-group">
+      <h3 className="contributors-heading">{icon} {title}</h3>
+      {others.length ? (
+        <ul className="contributor-chips">
+          {others.map((c) => <ContributorChip key={c.name} c={c} count={count(c)} word={word} />)}
+        </ul>
+      ) : (
+        <p className="contributors-empty">{empty}</p>
+      )}
+    </div>
   );
 }
 
@@ -29,43 +61,28 @@ export function ContributorsView() {
       </section>
 
       <section className="contributors-section section-wrap">
-        <div className="contributors-list">
-          {contributors.map((c, i) => (
-            <div key={i} className={`contributor-card ${i === 0 ? 'contributor-card-lead' : ''}`}>
-              {c.photo ? (
-                <img className="contributor-avatar contributor-photo" src={`${import.meta.env.BASE_URL}${c.photo}`} alt={c.name} loading="lazy" />
-              ) : (
-                <div className="contributor-avatar">{c.name.split(' ').map(w => w[0]).join('').slice(0, 2)}</div>
-              )}
-              <div className="contributor-info">
-                <div className="contributor-name-row">
-                  <strong>{c.name}</strong>
-                  {i === 0 && <span className="lead-badge">Founder</span>}
-                </div>
-                <span className="contributor-role">{c.role}</span>
-                <span className="contributor-semester">{c.semester}</span>
-                <div className="contributor-subjects">
-                  {c.subjects.map((s, j) => <span key={j} className="contributor-tag">{s}</span>)}
-                </div>
-                {(c.website || c.email || c.contact) && (
-                  <div className="contributor-links">
-                    {c.contact && <ContactLink value={c.contact} />}
-                    {c.website && (
-                      <a href={c.website} target="_blank" rel="noreferrer"><Globe size={14} /> {c.website.replace(/^https?:\/\//, '')}</a>
-                    )}
-                    {c.email && (
-                      <a href={`mailto:${c.email}`}><Mail size={14} /> {c.email}</a>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        <div className="contributors-founder"><FounderCard /></div>
+
+        <ContributorList
+          title="Contributors of notes"
+          icon={<BookOpen size={18} />}
+          people={noteContributors}
+          count={(c) => filesAdded(c).notes}
+          word="note file"
+          empty={<>No other note contributors yet. <Link to="/contributing">Share your notes</Link> and you’ll be listed here.</>}
+        />
+        <ContributorList
+          title="Contributors of past questions"
+          icon={<FileStack size={18} />}
+          people={pastQuestionContributors}
+          count={(c) => filesAdded(c).pastQuestions}
+          word="past paper"
+          empty={<>No other past paper contributors yet. <Link to="/past-questions">Have a past paper? Add it</Link> and you’ll be listed here.</>}
+        />
 
         <div className="contribute-cta">
           <h3>Your name could be here</h3>
-          <p>Contribute 10 or more relevant study note files and your name joins the list of people helping fellow BECE students. Every contribution, however small, still shows up among the contributors on GitHub.</p>
+          <p>Contribute 10 or more relevant files (notes or past question papers) and your name joins the list of people helping fellow BECE students. Every contribution, however small, still shows up among the contributors on GitHub.</p>
           <Link to="/contributing" className="cta-button">See contributing guidelines</Link>
         </div>
       </section>
