@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Award, Calculator, CheckCircle2, Download, ExternalLink, FileUp, GraduationCap, HardDrive, Info, Loader2, RotateCcw, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, Award, Calculator, CheckCircle2, Download, ExternalLink, FileUp, GraduationCap, HardDrive, Info, Loader2, Plus, RotateCcw, Trash2, TriangleAlert, X } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { CgpaUploadDialog } from '@/components/CgpaUploadDialog';
 import { ElectiveInput } from '@/components/ElectiveInput';
@@ -7,13 +7,26 @@ import { electiveNames } from '@/content/notes';
 import { DEANS_LIST_GPA, DISTINCTION_CGPA, GRADES, GRADING_SOURCE, MIN_CGPA, formatGpa, gradePoint, gradeRange } from '@/content/grades';
 import { cleanEntries, computeResults, curriculumFor, emptyEntry, hasEntries, isElectiveSlot, type Entries, type SemesterEntry } from '@/content/cgpa';
 import { setStructure, useStructure, type Structure } from '@/content/structure';
-import { StructureToggle } from '@/components/StructureToggle';
+import {
+  MODE_LABELS, cleanCustom, customToCurriculum, emptyCustomSemester, hasCustomData, newCustomCourse, parseCredits,
+  type CgpaMode, type CustomData, type CustomSemester,
+} from '@/content/cgpaCustom';
 import { saveBlob } from '@/content/watermark';
 import { deviceStore, openCookieSettings, useConsent } from '@/content/consent';
 import './CgpaView.css';
 
-/** Grades are kept separately per curriculum: course codes differ between the two orders. */
-const storageKey = (structure: Structure) => (structure === '2025' ? 'bece-cgpa-2025-v1' : 'bece-cgpa-v1');
+/** Grades are kept separately per curriculum (course codes differ between orders), and for Custom. */
+const storageKey = (mode: CgpaMode) => (mode === 'custom' ? 'bece-cgpa-custom-v1' : mode === '2025' ? 'bece-cgpa-2025-v1' : 'bece-cgpa-v1');
+/** Whether the calculator was last on Custom (the two curriculum orders follow the site-wide switch). */
+const MODE_KEY = 'bece-notes:cgpa-mode';
+
+function loadCustom(): CustomData {
+  try {
+    return cleanCustom(JSON.parse(deviceStore.get(storageKey('custom')) ?? '{}'));
+  } catch {
+    return {};
+  }
+}
 
 function loadEntries(structure: Structure): Entries {
   try {
@@ -27,25 +40,54 @@ type Notice = { tone: 'ok' | 'error'; text: string };
 /** A message to show after switching curriculum to load a report (the calculator remounts). */
 let pendingNotice: Notice | null = null;
 
-/** The calculator follows the chosen curriculum; switching it starts a fresh calculator with that one's grades. */
+/**
+ * The calculator follows the chosen curriculum (the site-wide switch), or Custom, where students add
+ * their own subjects. Switching starts a fresh calculator with that mode's saved grades.
+ */
 export function CgpaView() {
   const structure = useStructure();
-  return <CgpaCalculator key={structure} structure={structure} />;
+  const [custom, setCustom] = useState(() => deviceStore.get(MODE_KEY) === 'custom');
+  const mode: CgpaMode = custom ? 'custom' : structure;
+  const choose = useCallback((next: CgpaMode) => {
+    deviceStore.set(MODE_KEY, next === 'custom' ? 'custom' : 'curriculum');
+    setCustom(next === 'custom');
+    if (next !== 'custom') setStructure(next);
+  }, []);
+  return <CgpaCalculator key={mode} mode={mode} onMode={choose} />;
 }
 
-function CgpaCalculator({ structure }: { structure: Structure }) {
-  const sems = curriculumFor(structure);
-  const [entries, setEntries] = useState<Entries>(() => loadEntries(structure));
+/** "Before 2025 batch | 2025 batch onwards | Custom" — styled like the site's curriculum switch. */
+function ModeToggle({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode) => void }) {
+  return (
+    <div className="structure-toggle" role="radiogroup" aria-label="Which subjects to use">
+      {(Object.keys(MODE_LABELS) as CgpaMode[]).map((m) => (
+        <button key={m} role="radio" aria-checked={mode === m} onClick={() => onMode(m)}>{MODE_LABELS[m]}</button>
+      ))}
+    </div>
+  );
+}
+
+function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode) => void }) {
+  const isCustom = mode === 'custom';
+  const [curriculumEntries, setEntries] = useState<Entries>(() => (isCustom ? {} : loadEntries(mode)));
+  const [customData, setCustomData] = useState<CustomData>(() => (isCustom ? loadCustom() : {}));
+  const derived = useMemo(() => (isCustom ? customToCurriculum(customData) : null), [isCustom, customData]);
+  const sems = derived ? derived.sems : curriculumFor(mode as Structure);
+  const entries = derived ? derived.entries : curriculumEntries;
   const { consent } = useConsent();
 
   // Remembered on this device (with cookie consent) so students can come back each semester;
   // without consent the grades last for this visit only.
   useEffect(() => {
-    deviceStore.set(storageKey(structure), JSON.stringify(entries));
-  }, [entries, structure]);
+    deviceStore.set(storageKey(mode), JSON.stringify(isCustom ? customData : curriculumEntries));
+  }, [curriculumEntries, customData, isCustom, mode]);
 
   const update = (id: number, change: (entry: SemesterEntry) => SemesterEntry) =>
     setEntries((prev) => ({ ...prev, [id]: change(prev[id] ?? emptyEntry()) }));
+  /** Custom mode: change one semester's subjects / typed SGPA. */
+  const patchCustom = (id: number, change: (sem: CustomSemester) => CustomSemester) =>
+    setCustomData((prev) => ({ ...prev, [id]: change(prev[id] ?? emptyCustomSemester()) }));
+  const setSgpa = (id: number, sgpa: string) => (isCustom ? patchCustom(id, (s) => ({ ...s, sgpa })) : update(id, (en) => ({ ...en, sgpa })));
 
   const { results, counted, cgpa, earned, programCredits, failed, best } = useMemo(() => computeResults(entries, sems), [entries, sems]);
 
@@ -64,7 +106,7 @@ function CgpaCalculator({ structure }: { structure: Structure }) {
     setNotice(null);
     try {
       const { createReport, reportFileName } = await import('@/content/cgpaReport');
-      saveBlob(new Blob([(await createReport(entries, structure)) as BlobPart], { type: 'application/pdf' }), reportFileName());
+      saveBlob(new Blob([(await createReport(entries, mode, customData)) as BlobPart], { type: 'application/pdf' }), reportFileName());
     } catch {
       setNotice({ tone: 'error', text: 'Couldn’t create the PDF. Please try again.' });
     } finally {
@@ -72,21 +114,21 @@ function CgpaCalculator({ structure }: { structure: Structure }) {
     }
   };
 
-  const loadReport = ({ entries: loaded, generated, structure: reportStructure }: { entries: Entries; generated: Date | null; structure: Structure }) => {
+  const loadReport = ({ entries: loaded, generated, structure: reportStructure, custom: loadedCustom, semesters }: { entries: Entries; generated: Date | null; structure: CgpaMode; custom?: CustomData; semesters: number }) => {
     setUploadOpen(false);
-    const semesters = computeResults(loaded, curriculumFor(reportStructure)).counted.length;
     const loadedNotice: Notice = {
       tone: 'ok',
       text: `Loaded ${semesters} ${semesters === 1 ? 'semester' : 'semesters'}${generated ? ` from your report of ${generated.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}. Fill in the rest to see your full CGPA.`,
     };
-    if (reportStructure !== structure) {
-      // A report made for the other curriculum: save its grades there and switch to it.
-      deviceStore.set(storageKey(reportStructure), JSON.stringify(loaded));
+    if (reportStructure !== mode) {
+      // A report made for another mode: save its grades there and switch to it.
+      deviceStore.set(storageKey(reportStructure), JSON.stringify(reportStructure === 'custom' ? loadedCustom ?? {} : loaded));
       pendingNotice = loadedNotice;
-      setStructure(reportStructure);
+      onMode(reportStructure);
       return;
     }
-    setEntries(loaded);
+    if (isCustom) setCustomData(loadedCustom ?? {});
+    else setEntries(loaded);
     setNotice(loadedNotice);
   };
 
@@ -95,7 +137,7 @@ function CgpaCalculator({ structure }: { structure: Structure }) {
     : cgpa >= MIN_CGPA ? { tone: 'ok', icon: <GraduationCap size={15} />, text: `Above the ${MIN_CGPA.toFixed(1)} minimum CGPA` }
     : { tone: 'low', icon: <TriangleAlert size={15} />, text: `Below the ${MIN_CGPA.toFixed(1)} minimum CGPA` };
 
-  const hasAnything = hasEntries(entries);
+  const hasAnything = isCustom ? hasCustomData(customData) : hasEntries(entries);
 
   return (
     <>
@@ -111,8 +153,8 @@ function CgpaCalculator({ structure }: { structure: Structure }) {
           <span className="subject-count-pill">{sems.length} semesters · {programCredits} credits</span>
         </div>
         <div className="structure-bar">
-          <StructureToggle />
-          <span className="structure-note-inline">Grades are saved separately for each curriculum.</span>
+          <ModeToggle mode={mode} onMode={onMode} />
+          {isCustom && <span className="structure-note-inline">Add your own subjects, credits and grades.</span>}
         </div>
         <div className="cgpa-intro">
           <p className="cgpa-lead">
@@ -199,7 +241,7 @@ function CgpaCalculator({ structure }: { structure: Structure }) {
               <p className="cgpa-warning"><TriangleAlert size={14} /> {failed} failed {failed === 1 ? 'subject counts' : 'subjects count'} as 0.0 until you retake {failed === 1 ? 'it' : 'them'}.</p>
             )}
             {hasAnything && (
-              <button className="cgpa-reset" onClick={() => window.confirm('Clear every grade you entered?') && setEntries({})}>
+              <button className="cgpa-reset" onClick={() => window.confirm(isCustom ? 'Clear every subject and grade you entered?' : 'Clear every grade you entered?') && (isCustom ? setCustomData({}) : setEntries({}))}>
                 <RotateCcw size={14} /> Reset all
               </button>
             )}
@@ -228,7 +270,7 @@ function CgpaCalculator({ structure }: { structure: Structure }) {
                       step={0.01}
                       placeholder={result.fromGrades === null ? '0.00' : formatGpa(result.fromGrades)}
                       value={entry.sgpa}
-                      onChange={(e) => update(sem.id, (en) => ({ ...en, sgpa: e.target.value }))}
+                      onChange={(e) => setSgpa(sem.id, e.target.value)}
                       aria-label={`${sem.label} SGPA — type it directly, or leave empty to calculate from grades`}
                     />
                     <small>{invalid ? '0 – 4 only' : result.typed ? 'entered directly' : 'or type it directly'}</small>
@@ -237,10 +279,18 @@ function CgpaCalculator({ structure }: { structure: Structure }) {
 
                 {result.typed && (
                   <p className="cgpa-typed-note">
-                    Using the SGPA you entered ({formatGpa(result.sgpa)}) over all {result.totalCredits} credits.{' '}
-                    <button onClick={() => update(sem.id, (en) => ({ ...en, sgpa: '' }))}>Use subject grades instead</button>
+                    Using the SGPA you entered ({formatGpa(result.sgpa)}) over {result.totalCredits ? `all ${result.totalCredits}` : 'the semester’s'} credits.{' '}
+                    <button onClick={() => setSgpa(sem.id, '')}>Use subject grades instead</button>
                   </p>
                 )}
+                {isCustom ? (
+                  <CustomSubjects
+                    semesterLabel={sem.label}
+                    data={customData[sem.id] ?? emptyCustomSemester()}
+                    dimmed={result.typed}
+                    onChange={(change) => patchCustom(sem.id, change)}
+                  />
+                ) : (
                 <div className={`course-table-wrap ${result.typed ? 'cgpa-table-off' : ''}`}>
                     <table className="course-table cgpa-table">
                       <thead>
@@ -290,6 +340,7 @@ function CgpaCalculator({ structure }: { structure: Structure }) {
                       </tbody>
                     </table>
                 </div>
+                )}
                 <footer className="cgpa-semester-foot">
                   {result.credits} of {result.totalCredits} credits graded
                 </footer>
@@ -326,5 +377,106 @@ function CgpaCalculator({ structure }: { structure: Structure }) {
         </div>
       </section>
     </>
+  );
+}
+
+/** Custom mode: one semester's own subjects — name, credits, grade — with add / remove. */
+function CustomSubjects({ semesterLabel, data, dimmed, onChange }: {
+  semesterLabel: string;
+  data: CustomSemester;
+  dimmed: boolean;
+  onChange: (change: (sem: CustomSemester) => CustomSemester) => void;
+}) {
+  const setCourse = (id: string, patch: Partial<CustomSemester['courses'][number]>) =>
+    onChange((s) => ({ ...s, courses: s.courses.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
+  const remove = (id: string) => onChange((s) => ({ ...s, courses: s.courses.filter((c) => c.id !== id) }));
+  const add = () => onChange((s) => ({ ...s, courses: [...s.courses, newCustomCourse()] }));
+  const typedWithoutSubjects = data.sgpa.trim() !== '' && data.courses.length === 0;
+
+  return (
+    <div className={`cgpa-custom ${dimmed ? 'cgpa-table-off' : ''}`}>
+      {data.courses.length > 0 && (
+        <div className="course-table-wrap">
+          <table className="course-table cgpa-table cgpa-custom-table">
+            <thead>
+              <tr><th>Subject</th><th className="num">Credits</th><th>Grade</th><th className="num">Points</th><th aria-label="Remove" /></tr>
+            </thead>
+            <tbody>
+              {data.courses.map((c, i) => {
+                const credits = parseCredits(c.credits);
+                const point = gradePoint(c.grade);
+                return (
+                  <tr key={c.id} className={c.grade === 'F' ? 'cgpa-row-failed' : ''}>
+                    <td>
+                      <input
+                        className="cgpa-custom-name"
+                        value={c.name}
+                        maxLength={80}
+                        placeholder={`Subject ${i + 1} name`}
+                        onChange={(e) => setCourse(c.id, { name: e.target.value })}
+                        aria-label={`${semesterLabel}: subject ${i + 1} name`}
+                      />
+                    </td>
+                    <td className="num">
+                      <input
+                        className={`cgpa-custom-credits ${c.credits && credits === null ? 'invalid' : ''}`}
+                        type="number"
+                        inputMode="decimal"
+                        min={0.5}
+                        max={30}
+                        step={0.5}
+                        value={c.credits}
+                        placeholder="3"
+                        onChange={(e) => setCourse(c.id, { credits: e.target.value })}
+                        aria-label={`${semesterLabel}: credits for subject ${i + 1}`}
+                      />
+                    </td>
+                    <td>
+                      <select
+                        className={`cgpa-grade ${c.grade ? 'cgpa-grade-set' : ''}`}
+                        value={c.grade}
+                        onChange={(e) => setCourse(c.id, { grade: e.target.value })}
+                        aria-label={`${semesterLabel}: grade for subject ${i + 1}`}
+                      >
+                        <option value="">—</option>
+                        {GRADES.map((g) => <option key={g.letter} value={g.letter}>{g.letter} ({g.point.toFixed(1)})</option>)}
+                      </select>
+                    </td>
+                    <td className="num">{point === undefined || credits === null ? <span className="muted">—</span> : (point * credits).toFixed(1)}</td>
+                    <td className="num">
+                      <button className="cgpa-custom-remove" onClick={() => remove(c.id)} aria-label={`Remove subject ${i + 1}`} title="Remove subject">
+                        <Trash2 size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <div className="cgpa-custom-actions">
+        <button className="cgpa-custom-add" onClick={add}><Plus size={14} /> Add subject</button>
+        {data.courses.length === 0 && !typedWithoutSubjects && (
+          <span className="cgpa-custom-hint">No subjects yet: add them, or type this semester’s SGPA above.</span>
+        )}
+        {typedWithoutSubjects && (
+          <label className="cgpa-custom-semcredits">
+            Semester credits
+            <input
+              type="number"
+              inputMode="decimal"
+              min={1}
+              max={30}
+              value={data.credits}
+              placeholder="18"
+              onChange={(e) => onChange((s) => ({ ...s, credits: e.target.value }))}
+              aria-label={`${semesterLabel}: total credits, used with the SGPA you typed`}
+            />
+            {!parseCredits(data.credits) && <X size={13} className="cgpa-custom-need" aria-label="Needed" />}
+          </label>
+        )}
+      </div>
+    </div>
   );
 }
