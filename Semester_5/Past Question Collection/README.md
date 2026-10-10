@@ -20,7 +20,10 @@ Semester_5/Past Question Collection/
 - **ShortForm** is the subject's short form from the table below, e.g. `2024_Spring_AG.pdf`.
 - **College assessments** (internal exams, all-college assessments) go in `College Assessments/<Year>_College_Assessments/`,
   e.g. `College Assessments/2024_College_Assessments/`. Name each file after its subject.
-- Use one file per paper, PDF preferred. Scan it clearly (see the scanning checklist in CONTRIBUTING.md).
+- **Formats:** PDF or image (`.pdf`, `.jpg`, `.png`). Keep files small: a PDF under **5 MB**, an image under **1 MB**.
+  Compress large scans first, and scan clearly (see the scanning checklist in CONTRIBUTING.md).
+- **One paper per file.** A paper photographed as several images: combine them into one PDF if you can,
+  otherwise number them, e.g. `2024_Spring_AG_1.jpg`, `2024_Spring_AG_2.jpg`.
 
 | Folder | Short form | Example file name |
 |---|---|---|
