@@ -8,31 +8,28 @@ still small, so every paper you add helps the next batch. See [CONTRIBUTING.md](
 ```text
 Semester_2/Past Question Collection/
 ├── <Subject Name>/
-│   ├── 2025_Spring_<Subject_Name>.pdf      ← end-semester exam papers
-│   └── Assessment Questions/              ← internal / assessment papers (optional)
+│   └── 2025_Spring_AG.pdf                 ← exam papers, named as below
 └── (files for all subjects together, e.g. a full board paper set)
 ```
 
-## File name: `Year_Fall/Spring_SubjectName`
+## File name: `Year_Spring/Fall_ShortForm`
 
 - **Year** is when the exam was held, in AD (e.g. `2025`).
-- **Fall** or **Spring** is the exam term.
-- **SubjectName** is the subject's full name with `_` for spaces.
+- **Spring** or **Fall** is the exam term.
+- **ShortForm** is the subject's short form from the table below, e.g. `2024_Spring_AG.pdf`.
 - Use one file per paper, PDF preferred. Scan it clearly (see the scanning checklist in CONTRIBUTING.md).
-- Assessment papers go in the subject's `Assessment Questions/` folder, named the same way plus the college:
-  `2025_Spring_<Subject_Name>_NCIT.pdf`.
 
-| Folder | Example file name |
-|---|---|
-| `Algebra and Geometry/` | `2025_Spring_Algebra_and_Geometry.pdf` |
-| `Applied Physics/` | `2025_Spring_Applied_Physics.pdf` |
-| `Applied Chemistry/` | `2025_Spring_Applied_Chemistry.pdf` |
-| `Basic Engineering Drawing/` | `2025_Spring_Basic_Engineering_Drawing.pdf` |
-| `Object Oriented Programming in C++/` | `2025_Spring_Object_Oriented_Programming_in_Cpp.pdf` |
-| `Data Structure and Algorithm/` | `2025_Spring_Data_Structure_and_Algorithm.pdf` |
-| `Instrumentation/` | `2025_Spring_Instrumentation.pdf` |
+| Folder | Short form | Example file name |
+|---|---|---|
+| `Algebra and Geometry/` | `AG` | `2025_Spring_AG.pdf` |
+| `Applied Physics/` | `AP` | `2025_Spring_AP.pdf` |
+| `Applied Chemistry/` | `AC` | `2025_Spring_AC.pdf` |
+| `Basic Engineering Drawing/` | `BED` | `2025_Spring_BED.pdf` |
+| `Object Oriented Programming in C++/` | `OOP` | `2025_Spring_OOP.pdf` |
+| `Data Structure and Algorithm/` | `DSA` | `2025_Spring_DSA.pdf` |
+| `Instrumentation/` | `INST` | `2025_Spring_INST.pdf` |
 
-Electives: put the elective's own name in the file, e.g. `2025_Spring_Big_Data_Technologies.pdf`.
+Electives: use the elective's short form, e.g. `2025_Spring_BDT.pdf` for Big Data Technologies.
 
 Folders follow the before-2025 semester order. Papers from the 2025 curriculum go in the same subject's folder,
 wherever that subject is listed here.

@@ -293,17 +293,65 @@ export function findSyllabus(semesterSyllabus: Subject | undefined, subject: Sub
   return own ? { subject, file: own } : undefined;
 }
 
+/** Short forms used in past paper file names (`2024_Spring_AG.pdf`), by subject folder name. */
+const PAST_PAPER_SHORT: Record<string, string> = {
+  'Calculus I': 'CAL1',
+  'Digital Logic': 'DL',
+  'Programming in C': 'C',
+  'Basic Electrical Engineering': 'BEE',
+  'Computer Workshop': 'CW',
+  'Communication Technique': 'CT',
+  'Electronic Devices and Circuits': 'EDC',
+  'Algebra and Geometry': 'AG',
+  'Applied Physics': 'AP',
+  'Applied Chemistry': 'AC',
+  'Basic Engineering Drawing': 'BED',
+  'Object Oriented Programming in C++': 'OOP',
+  'Data Structure and Algorithm': 'DSA',
+  'Instrumentation': 'INST',
+  'Calculus II': 'CAL2',
+  'Database Management System': 'DBMS',
+  'Operating Systems': 'OS',
+  'Microprocessor and Assembly Language Programming': 'MP',
+  'Computer Graphics': 'CG',
+  'Data Communication': 'DC',
+  'Applied Mathematics': 'AM',
+  'Numerical Methods': 'NM',
+  'Advanced Programming with Java': 'JAVA',
+  'Theory of Computation': 'TOC',
+  'Computer Architecture': 'CA',
+  'Research Fundamentals': 'RF',
+  'Probability and Statistics': 'PNS',
+  'Embedded System': 'ES',
+  'Engineering Management': 'EM',
+  'Artificial Intelligence': 'AI',
+  'Digital Signal Analysis and Processing': 'DSAP',
+  'Software Engineering': 'SE',
+  'Image Processing and Pattern Recognition': 'IPPR',
+  'Machine Learning': 'ML',
+  'Computer Networks': 'CN',
+  'Simulation and Modeling': 'SM',
+  'Compiler Design': 'CD',
+  'Entrepreneurship and Professional Practice': 'EPP',
+  'Engineering Economics': 'EE',
+  'Network and Cyber Security': 'NCS',
+  'Cloud Computing and Virtualization': 'CCV',
+  'Data Science and Analytics': 'DSCA',
+};
+
 /** One subject's folder in a semester's Past Question Collection, with an example file name. */
 export interface PastQuestionFolder {
   name: string;
   folder: string;
+  /** Short form for file names, or null for an elective slot (the elective's own short form is used). */
+  short: string | null;
   example: string;
   papers: number;
 }
 
 /**
  * The subject folders of a semester's Past Question Collection (exam subjects only: no project or
- * internship) and how many papers each has. File names follow `Year_Fall/Spring_SubjectName`.
+ * internship) and how many papers each has. File names follow `Year_Spring/Fall_ShortForm`.
  */
 export function pastQuestionFolders(semester: Semester): PastQuestionFolder[] {
   const courses = curriculum.find((c) => String(c.id) === semester.id)?.courses ?? [];
@@ -313,12 +361,13 @@ export function pastQuestionFolders(semester: Semester): PastQuestionFolder[] {
     .filter((c) => !/^(PRJ|INT)\b/.test(c.code))
     .map((c) => {
       const folder = c.name.replace(/&/g, 'and');
-      const elective = /^ELEC\b/.test(c.code);
+      const short = /^ELEC\b/.test(c.code) ? null : PAST_PAPER_SHORT[folder] ?? null;
       const key = normalizeName(folder);
       return {
         name: c.name,
         folder,
-        example: `2025_${term}_${elective ? '<Elective_Name>' : folder.replace(/\+/g, 'p').replace(/\s+/g, '_')}.pdf`,
+        short,
+        example: `2025_${term}_${short ?? '<Elective_Short>'}.pdf`,
         papers: collection?.files.filter((f) => f.folder && normalizeName(f.folder.split('/')[0]) === key).length ?? 0,
       };
     });

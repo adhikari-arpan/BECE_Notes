@@ -8,30 +8,27 @@ still small, so every paper you add helps the next batch. See [CONTRIBUTING.md](
 ```text
 Semester_7/Past Question Collection/
 ├── <Subject Name>/
-│   ├── 2025_Fall_<Subject_Name>.pdf      ← end-semester exam papers
-│   └── Assessment Questions/              ← internal / assessment papers (optional)
+│   └── 2025_Fall_EPP.pdf                 ← exam papers, named as below
 └── (files for all subjects together, e.g. a full board paper set)
 ```
 
-## File name: `Year_Fall/Spring_SubjectName`
+## File name: `Year_Spring/Fall_ShortForm`
 
 - **Year** is when the exam was held, in AD (e.g. `2025`).
-- **Fall** or **Spring** is the exam term.
-- **SubjectName** is the subject's full name with `_` for spaces.
+- **Spring** or **Fall** is the exam term.
+- **ShortForm** is the subject's short form from the table below, e.g. `2024_Spring_AG.pdf`.
 - Use one file per paper, PDF preferred. Scan it clearly (see the scanning checklist in CONTRIBUTING.md).
-- Assessment papers go in the subject's `Assessment Questions/` folder, named the same way plus the college:
-  `2025_Fall_<Subject_Name>_NCIT.pdf`.
 
-| Folder | Example file name |
-|---|---|
-| `Entrepreneurship and Professional Practice/` | `2025_Fall_Entrepreneurship_and_Professional_Practice.pdf` |
-| `Engineering Economics/` | `2025_Fall_Engineering_Economics.pdf` |
-| `Network and Cyber Security/` | `2025_Fall_Network_and_Cyber_Security.pdf` |
-| `Cloud Computing and Virtualization/` | `2025_Fall_Cloud_Computing_and_Virtualization.pdf` |
-| `Data Science and Analytics/` | `2025_Fall_Data_Science_and_Analytics.pdf` |
-| `Elective II/` | `2025_Fall_<Elective_Name>.pdf` |
+| Folder | Short form | Example file name |
+|---|---|---|
+| `Entrepreneurship and Professional Practice/` | `EPP` | `2025_Fall_EPP.pdf` |
+| `Engineering Economics/` | `EE` | `2025_Fall_EE.pdf` |
+| `Network and Cyber Security/` | `NCS` | `2025_Fall_NCS.pdf` |
+| `Cloud Computing and Virtualization/` | `CCV` | `2025_Fall_CCV.pdf` |
+| `Data Science and Analytics/` | `DSCA` | `2025_Fall_DSCA.pdf` |
+| `Elective II/` | `elective short form` | `2025_Fall_<Elective_Short>.pdf` |
 
-Electives: put the elective's own name in the file, e.g. `2025_Spring_Big_Data_Technologies.pdf`.
+Electives: use the elective's short form, e.g. `2025_Spring_BDT.pdf` for Big Data Technologies.
 
 Folders follow the before-2025 semester order. Papers from the 2025 curriculum go in the same subject's folder,
 wherever that subject is listed here.

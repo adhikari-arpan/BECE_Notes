@@ -8,30 +8,27 @@ still small, so every paper you add helps the next batch. See [CONTRIBUTING.md](
 ```text
 Semester_6/Past Question Collection/
 ├── <Subject Name>/
-│   ├── 2025_Spring_<Subject_Name>.pdf      ← end-semester exam papers
-│   └── Assessment Questions/              ← internal / assessment papers (optional)
+│   └── 2025_Spring_IPPR.pdf                 ← exam papers, named as below
 └── (files for all subjects together, e.g. a full board paper set)
 ```
 
-## File name: `Year_Fall/Spring_SubjectName`
+## File name: `Year_Spring/Fall_ShortForm`
 
 - **Year** is when the exam was held, in AD (e.g. `2025`).
-- **Fall** or **Spring** is the exam term.
-- **SubjectName** is the subject's full name with `_` for spaces.
+- **Spring** or **Fall** is the exam term.
+- **ShortForm** is the subject's short form from the table below, e.g. `2024_Spring_AG.pdf`.
 - Use one file per paper, PDF preferred. Scan it clearly (see the scanning checklist in CONTRIBUTING.md).
-- Assessment papers go in the subject's `Assessment Questions/` folder, named the same way plus the college:
-  `2025_Spring_<Subject_Name>_NCIT.pdf`.
 
-| Folder | Example file name |
-|---|---|
-| `Image Processing and Pattern Recognition/` | `2025_Spring_Image_Processing_and_Pattern_Recognition.pdf` |
-| `Machine Learning/` | `2025_Spring_Machine_Learning.pdf` |
-| `Computer Networks/` | `2025_Spring_Computer_Networks.pdf` |
-| `Simulation and Modeling/` | `2025_Spring_Simulation_and_Modeling.pdf` |
-| `Compiler Design/` | `2025_Spring_Compiler_Design.pdf` |
-| `Elective I/` | `2025_Spring_<Elective_Name>.pdf` |
+| Folder | Short form | Example file name |
+|---|---|---|
+| `Image Processing and Pattern Recognition/` | `IPPR` | `2025_Spring_IPPR.pdf` |
+| `Machine Learning/` | `ML` | `2025_Spring_ML.pdf` |
+| `Computer Networks/` | `CN` | `2025_Spring_CN.pdf` |
+| `Simulation and Modeling/` | `SM` | `2025_Spring_SM.pdf` |
+| `Compiler Design/` | `CD` | `2025_Spring_CD.pdf` |
+| `Elective I/` | `elective short form` | `2025_Spring_<Elective_Short>.pdf` |
 
-Electives: put the elective's own name in the file, e.g. `2025_Spring_Big_Data_Technologies.pdf`.
+Electives: use the elective's short form, e.g. `2025_Spring_BDT.pdf` for Big Data Technologies.
 
 Folders follow the before-2025 semester order. Papers from the 2025 curriculum go in the same subject's folder,
 wherever that subject is listed here.

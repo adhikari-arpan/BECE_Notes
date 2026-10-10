@@ -32,15 +32,15 @@ export function PastQuestionsGuide({ semester }: { semester: Semester }) {
 
       <div className="pastq-format">
         <span>File name</span>
-        <code>Year_Fall/Spring_SubjectName</code>
-        <small>e.g. <code>{folders[0]?.example ?? `2025_${term}_Subject_Name.pdf`}</code>, where the year is when the exam was held (AD)</small>
+        <code>Year_Spring/Fall_ShortForm</code>
+        <small>e.g. <code>{folders.find((f) => f.short)?.example ?? `2025_${term}_BDT.pdf`}</code>: the year the exam was held (AD), the term, then the subject’s short form below</small>
       </div>
 
       <ul className="pastq-list">
         {folders.map((f) => (
           <li key={f.folder}>
             <FolderTree size={14} />
-            <span className="pastq-name">{f.folder}/</span>
+            <span className="pastq-name">{f.folder}/ <b className="pastq-short">{f.short ?? 'elective short form'}</b></span>
             <code className="pastq-example">{f.example}</code>
             <span className={`pastq-count ${f.papers ? 'has' : ''}`}>{f.papers ? `${f.papers} ${f.papers === 1 ? 'paper' : 'papers'}` : 'Needed'}</span>
           </li>
@@ -50,8 +50,8 @@ export function PastQuestionsGuide({ semester }: { semester: Semester }) {
       <p className="pastq-note">
         <BookOpenCheck size={14} />
         <span>
-          Internal or assessment papers go in the subject’s <code>Assessment Questions/</code> folder, named the same way
-          plus the college (e.g. <code>2025_{term}_Subject_Name_NCIT.pdf</code>). A paper set covering all subjects can go
+          Put each paper directly in its subject’s folder. Electives use their own short form (e.g. <code>BDT</code> for
+          Big Data Technologies). A paper set covering all subjects can go
           directly in <code>{PAST_QUESTIONS_FOLDER}/</code>.
         </span>
       </p>
