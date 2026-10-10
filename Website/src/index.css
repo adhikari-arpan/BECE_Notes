@@ -592,7 +592,9 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
 /* Landing page stats */
 .stats-section { padding: 0 0 80px; }
 .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-.stats-grid-library { grid-template-columns: repeat(3, 1fr); }
+.stats-grid-library { grid-template-columns: repeat(4, 1fr); }
+a.stat-card-link { color: inherit; text-decoration: none; transition: border-color .18s, transform .18s; }
+a.stat-card-link:hover { border-color: #e8c873; transform: translateY(-2px); }
 .footer-stats { display: inline-flex; flex-wrap: wrap; gap: 6px; }
 .stat-card { display: flex; flex-direction: column; gap: 4px; background: var(--c-fffdf7); border: 1px solid var(--c-e3e6de); border-radius: 13px; padding: 20px 22px; }
 .stat-card svg { color: var(--c-52806c); margin-bottom: 10px; }
@@ -687,7 +689,7 @@ a.footer-author:hover { color: #f7d77a; }
   .hero-visual { margin-right: 0; transform: scale(.85); transform-origin: right center; }
   .file-body-full { grid-template-columns: 200px minmax(0, 1fr); }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .stats-grid-library { grid-template-columns: repeat(3, 1fr); }
+  .stats-grid-library { grid-template-columns: repeat(2, 1fr); }
   .content-page-section p, .content-page-section li { text-align: left; }
   .content-page-header.section-wrap, .content-page.section-wrap { width: calc(100% - 32px); }
   .about-grid { grid-template-columns: 1fr; }
@@ -1055,7 +1057,6 @@ body:has(.cookie-banner.is-shown) .tip-nudge { bottom: 96px; }
 .footer-bottom > span a:hover { color: #f0c34a; }
 @media (max-width: 560px) {
   .stats-grid-library { grid-template-columns: repeat(2, 1fr); }
-  .stats-grid-library .stat-card:last-child { grid-column: 1 / -1; }
 }
 
 /* ---------------- Visits panel (home stats): today + all time ---------------- */

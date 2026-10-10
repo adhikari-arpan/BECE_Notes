@@ -11,9 +11,10 @@ import {
   FileText,
   Layers,
   HardDrive,
+  FileStack,
   MessageSquareHeart,
 } from 'lucide-react';
-import { allFiles, formatSize, isSyllabus, plural, semesterPath, semesters } from '@/content/notes';
+import { allFiles, formatSize, isSyllabus, pastQuestionCollections, plural, semesterPath, semesters } from '@/content/notes';
 import { COUNTING_SINCE, formatCount, useSiteStats } from '@/content/visits';
 import { CountUp } from '@/components/CountUp';
 import { Logo } from '@/components/Logo';
@@ -32,6 +33,8 @@ const subjectsWithNotes = semesters.flatMap((s) => s.subjects).filter((s) => !is
 const founder = contributors[0];
 const totalSubjects = courseSemesters.flatMap((s) => s.subjects).filter((s) => s.kind === 'course').length;
 const totalBytes = allFiles.reduce((sum, f) => sum + f.size, 0);
+/** Past exam and assessment papers across every semester's Past Question Collection. */
+const questionPapers = pastQuestionCollections.reduce((sum, c) => sum + c.files.length, 0);
 
 export function HomeView() {
   const { visitors, pageViews, todayVisitors, todayPageViews } = useSiteStats();
@@ -207,6 +210,11 @@ export function HomeView() {
             <strong>{formatCount(allFiles.length)}</strong>
             <span>Files shared</span>
           </div>
+          <Link to="/past-questions" className="stat-card stat-card-link">
+            <FileStack size={18} />
+            <strong>{formatCount(questionPapers)}</strong>
+            <span>Past question papers</span>
+          </Link>
           <div className="stat-card">
             <Layers size={18} />
             <strong>{subjectsWithNotes}</strong>
