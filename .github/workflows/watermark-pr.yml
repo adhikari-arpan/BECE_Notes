@@ -1,0 +1,62 @@
+# Runs in the PUBLIC repo on every pull request: new PDFs and images are watermarked inside the pull
+# request itself (the clean versions are kept privately), so main only ever receives watermarked files.
+# Required check: "Watermark". Merge pull requests with "Squash and merge".
+#
+# Security: pull_request_target runs with secrets, so this workflow never runs code from the pull
+# request. It only reads the PR's PDF/image files, using the scripts from main.
+name: Watermark
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: watermark-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  watermark:
+    name: Watermark
+    if: github.repository == 'adhikari-arpan/BECE_Notes'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scripts from main (trusted)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: base
+      - name: The pull request's files
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.SYNC_TOKEN }}
+          path: pr
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: adhikari-arpan/BECE_Notes-originals
+          token: ${{ secrets.SYNC_TOKEN }}
+          path: originals
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: base/Website/package-lock.json
+      - run: npm ci
+        working-directory: base/Website
+      - name: Watermark new PDFs and images
+        env:
+          WATERMARK_SCRIPT: base/Website/scripts/watermark.mjs
+        run: |
+          for repo in pr originals; do
+            git -C $repo config user.name "BECE Vault Bot"
+            git -C $repo config user.email "bot@notes.arpanadhikari7.com.np"
+          done
+          git -C pr fetch -q https://github.com/adhikari-arpan/BECE_Notes.git "${{ github.event.pull_request.base.sha }}"
+          node base/.github/scripts/sync.mjs pr pr "${{ github.event.pull_request.base.sha }}" originals "${{ github.event.pull_request.number }}"
+      - name: Can't push to the pull request?
+        if: failure()
+        run: |
+          echo "::error::Couldn't add the watermark. Please tick 'Allow edits by maintainers' on your pull request, then push again."

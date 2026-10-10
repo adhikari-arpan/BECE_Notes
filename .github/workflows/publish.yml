@@ -1,0 +1,41 @@
+# Runs in the PRIVATE repo (BECE_Notes-originals): every push to main is replayed onto the public
+# repo with each new PDF and image watermarked. Author, date and message are kept for every commit.
+name: Publish to public repo
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'adhikari-arpan/BECE_Notes-originals'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: originals
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: adhikari-arpan/BECE_Notes
+          token: ${{ secrets.SYNC_TOKEN }}
+          path: public
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: originals/Website/package-lock.json
+      - run: npm ci
+        working-directory: originals/Website
+      - name: Replay commits, watermarked
+        env:
+          WATERMARK_SCRIPT: originals/Website/scripts/watermark.mjs
+        run: |
+          git -C public config user.name "BECE Vault Bot"
+          git -C public config user.email "bot@notes.arpanadhikari7.com.np"
+          node originals/.github/scripts/sync.mjs publish originals public "${{ github.event.before }}" "${{ github.event.after }}"

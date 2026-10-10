@@ -1,0 +1,45 @@
+# Runs in the PUBLIC repo: merged pull requests (and any other commit not made by the bot) are copied
+# back to the private repo, with the clean versions of their PDFs/images. Anything that reached main
+# without a watermark is stamped straight away.
+name: Sync to private repo
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'adhikari-arpan/BECE_Notes' && github.event.head_commit.committer.email != 'bot@notes.arpanadhikari7.com.np'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: public
+          fetch-depth: 0
+          token: ${{ secrets.SYNC_TOKEN }}
+      - uses: actions/checkout@v4
+        with:
+          repository: adhikari-arpan/BECE_Notes-originals
+          token: ${{ secrets.SYNC_TOKEN }}
+          path: originals
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: public/Website/package-lock.json
+      - run: npm ci
+        working-directory: public/Website
+      - name: Copy to the private repo
+        env:
+          WATERMARK_SCRIPT: public/Website/scripts/watermark.mjs
+        run: |
+          for repo in public originals; do
+            git -C $repo config user.name "BECE Vault Bot"
+            git -C $repo config user.email "bot@notes.arpanadhikari7.com.np"
+          done
+          node public/.github/scripts/sync.mjs syncback public originals "${{ github.event.before }}" "${{ github.event.after }}"
