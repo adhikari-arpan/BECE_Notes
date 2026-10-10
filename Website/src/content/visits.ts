@@ -6,8 +6,8 @@ import { useSyncExternalStore } from 'react';
  * the database rules (see Website/README.md) only allow a counter to go up by exactly 1,
  * so it can never be lowered or reset from the browser.
  *
- * - Visitors: +1 when a browser has no counted visit yet, or when 30 minutes have passed
- *   since its last counted visit — returning later, or still using the site 30 minutes on.
+ * - Visitors: +1 when a browser has no counted visit yet, or when 6 hours have passed
+ *   since its last counted visit — returning later, or still using the site 6 hours on.
  *   The timestamp lives in localStorage, so all open tabs share it and don't double count.
  * - Page visits: +1 every time a page of the site is opened (home, a semester, a subject...).
  *
@@ -27,7 +27,8 @@ const PAGE_VIEWS = `pageviews${SUFFIX}`;
 /** The day the lifetime counters started (shown as "Counted since …" on the home page). */
 export const COUNTING_SINCE = '25 September 2026';
 
-const VISIT_WINDOW_MS = 30 * 60 * 1000;
+/** A visitor counts again after 6 hours away (so one person browsing on and off in a day counts once or twice). */
+const VISIT_WINDOW_MS = 6 * 60 * 60 * 1000;
 const STORAGE_KEY = 'bece-notes:last-counted-visit';
 const CHECK_INTERVAL_MS = 60 * 1000;
 
@@ -79,7 +80,7 @@ async function requestOne(url: string, key: keyof SiteStats, action: 'hit' | 'ge
 }
 
 // The counter's own timestamp is always kept (it isn't part of the cookie choice); if storage is
-// blocked, each page load tracks its own 30-minute window instead.
+// blocked, each page load tracks its own 6-hour window instead.
 let memoryLastCounted = 0;
 
 function readLastCounted(): number {
