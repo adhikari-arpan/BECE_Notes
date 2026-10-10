@@ -1,5 +1,6 @@
 import { ArrowLeft, Coffee, FolderOpen, GraduationCap, Handshake, Mail, Shield, Sparkles, UserRound, Users } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { FounderIntro } from '@/components/FounderCard';
 import { allFiles, semesters } from '@/content/notes';
 import { openTipJar } from '@/content/tipJar';
 
@@ -82,6 +83,7 @@ export function AboutView() {
 
           <div className="content-page-section">
             <h3><UserRound size={18} /> Who's behind it</h3>
+            <FounderIntro />
             <p>
               Started and maintained by <strong>Arpan Adhikari</strong>, a Computer Engineering student at Nepal College of
               Information Technology (NCIT). A lot of effort has gone into building and organizing this collection, with the
