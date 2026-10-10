@@ -44,7 +44,7 @@ export function HomeView() {
           <div className="eyebrow"><span className="eyebrow-line" /> Pokhara University · BECE Notes</div>
           <h1>Your BECE notes,<br /><em>in one place.</em></h1>
           <p className="hero-lede">Free, semester-wise notes for Pokhara University BE Computer Engineering: every lecture note, past question, lab report and syllabus across your BECE journey. Pick a semester to explore its subjects.</p>
-          <span className="hero-badge"><BadgeCheck size={15} /> Based on the new PU syllabus</span>
+          <Link to="/syllabus" className="hero-badge" title="See the PU BE Computer Engineering syllabus"><BadgeCheck size={15} /> Based on the new PU syllabus <ArrowRight size={13} className="hero-badge-arrow" /></Link>
           <div className="hero-stats">
             <div><strong><CountUp value={courseSemesters.length} pad={2} /></strong><span>Semesters</span></div>
             <div><strong><CountUp value={totalSubjects} /></strong><span>Subjects</span></div>

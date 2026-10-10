@@ -245,6 +245,11 @@ h1 em { font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing
 .hero-lede { max-width: 410px; margin: 28px 0 34px; font-size: 16px; line-height: 1.6; color: var(--c-4c5b54); }
 .hero-badge { display: inline-flex; align-items: center; gap: 7px; margin: -8px 0 30px; padding: 7px 13px; border-radius: 99px; font: 600 12px 'DM Sans', sans-serif; color: var(--c-43655a); background: var(--c-e6eee8); }
 .hero-badge svg { color: var(--c-a27b3e); }
+a.hero-badge { text-decoration: none; transition: background .18s, color .18s, transform .18s; }
+a.hero-badge:hover { background: #fff4cf; color: #0b1f1a; transform: translateY(-1px); }
+:root[data-theme="dark"] a.hero-badge:hover { background: rgba(240,195,74,.16); color: #f0c34a; }
+.hero-badge-arrow { transition: transform .18s; }
+a.hero-badge:hover .hero-badge-arrow { transform: translateX(2px); }
 .hero-stats { display: flex; flex-wrap: wrap; gap: 18px 30px; }
 .hero-stats div { display: flex; flex-direction: column; gap: 4px; }
 .hero-stats strong { font: 600 20px 'DM Mono', monospace; color: var(--c-0b1f1a); }
