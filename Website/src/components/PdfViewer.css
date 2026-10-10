@@ -29,6 +29,10 @@
 .pdf-highlight.draft { opacity: .3; outline: 1px dashed rgba(0,0,0,.35); }
 .pdf-page .textLayer { z-index: 2; }
 .pdf-page .textLayer ::selection { background: rgba(77,171,247,.35); }
+/* Clickable links from the PDF, above the text layer (the pen layer still covers them while highlighting). */
+.pdf-link-layer { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.pdf-link-layer a { position: absolute; pointer-events: auto; cursor: pointer; border-radius: 2px; }
+.pdf-link-layer a:hover { background: rgba(240,195,74,.22); outline: 1px solid rgba(229,169,39,.5); }
 .pdf-pen-layer { position: absolute; inset: 0; z-index: 3; cursor: crosshair; touch-action: none; }
 .pdf-page-number { z-index: 4; }
 .pdf-popover { position: absolute; z-index: 30; transform: translateX(-50%); display: flex; flex-wrap: wrap; align-items: center; gap: 6px; max-width: 240px; padding: 8px 10px; background: var(--c-fffdf7); border: 1px solid var(--c-dfe4dd); border-radius: 10px; box-shadow: 0 8px 24px rgba(var(--shadow-rgb),.18); }

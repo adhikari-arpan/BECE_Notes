@@ -714,6 +714,7 @@ function PdfPage({
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+  const linkRef = useRef<HTMLDivElement>(null);
   const textDivsRef = useRef<HTMLElement[]>([]);
   const [visible, setVisible] = useState(false);
   const [textVersion, setTextVersion] = useState(0);
@@ -740,12 +741,14 @@ function PdfPage({
   useEffect(() => {
     const canvas = canvasRef.current;
     const textEl = textRef.current;
-    if (!canvas || !textEl) return;
+    const linkEl = linkRef.current;
+    if (!canvas || !textEl || !linkEl) return;
     if (!visible) {
       // Free memory for pages far off-screen.
       canvas.width = 0;
       canvas.height = 0;
       textEl.replaceChildren();
+      linkEl.replaceChildren();
       textDivsRef.current = [];
       return;
     }
@@ -787,6 +790,31 @@ function PdfPage({
           setTextVersion((v) => v + 1);
         })
         .catch(() => {});
+
+      // Web links in the PDF (e.g. the "Available on notes.arpanadhikari7.com.np" footer) become clickable,
+      // placed as percentages of the page so they stay in place at any zoom.
+      page.getAnnotations().then((annotations) => {
+        if (cancelled) return;
+        const unit = page.getViewport({ scale: 1, rotation: rot });
+        linkEl.replaceChildren(...annotations
+          .filter((a) => a.subtype === 'Link' && typeof a.url === 'string' && /^https?:/i.test(a.url))
+          .map((a) => {
+            const [x1, y1] = unit.convertToViewportPoint(a.rect[0], a.rect[1]) as number[];
+            const [x2, y2] = unit.convertToViewportPoint(a.rect[2], a.rect[3]) as number[];
+            const link = document.createElement('a');
+            link.href = a.url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.title = a.url;
+            Object.assign(link.style, {
+              left: `${(Math.min(x1, x2) / unit.width) * 100}%`,
+              top: `${(Math.min(y1, y2) / unit.height) * 100}%`,
+              width: `${(Math.abs(x2 - x1) / unit.width) * 100}%`,
+              height: `${(Math.abs(y2 - y1) / unit.height) * 100}%`,
+            });
+            return link;
+          }));
+      }).catch(() => {});
     });
     return () => {
       cancelled = true;
@@ -875,6 +903,7 @@ function PdfPage({
         )}
       </div>
       <div ref={textRef} className="textLayer" />
+      <div ref={linkRef} className="pdf-link-layer" />
       {penMode && <div className="pdf-pen-layer" onPointerDown={onPenDown} onPointerMove={onPenMove} onPointerUp={onPenUp} />}
       <span className="pdf-page-number">{pageNumber} / {doc.numPages}</span>
     </div>
