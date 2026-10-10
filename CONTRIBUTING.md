@@ -123,7 +123,8 @@ Past Question Collection/Semester_N/
   - **ShortForm** is the subject's short form, listed in the folder's `README.md` and on the website (e.g. `C`, `DSA`, `DBMS`, `TOC`).
 - 📂 **Put the paper in its subject's folder** in the semester where that subject is taught. Folders follow the
   before-2025 semester order; papers from the 2025 curriculum go in the same subject's folder.
-- 🎓 **Electives:** use the elective's short form, e.g. `2025_Spring_BDT.pdf` (Big Data Technologies) in `Elective III/`.
+- 🎓 **Electives:** use the elective's short form, e.g. `2025_Spring_BDT.pdf` (Big Data Technologies) in `Elective II/`.
+- 🚫 **Semester VIII has no past question collection** (internship, project and an elective only).
 - 📄 **PDF or image** (`.pdf`, `.jpg`, `.png`), and keep it small: a PDF under **5 MB**, an image under **1 MB**.
   - Compress large scans before adding them, and scan clearly (see the scanning checklist above).
   - **One paper per file.** A paper photographed as several images: combine them into one PDF if you can,
