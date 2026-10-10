@@ -1,14 +1,14 @@
-# Past Question Collection: Semester IV
+# Past Question Collection: Semester VII
 
-Past **Pokhara University exam papers** for Semester IV, one folder per subject. This collection is
+Past **Pokhara University exam papers** for Semester VII, one folder per subject. This collection is
 still small, so every paper you add helps the next batch. See [CONTRIBUTING.md](../../CONTRIBUTING.md) for how to send files.
 
 ## Where to put a paper
 
 ```text
-Semester_4/Past Question Collection/
+Past Question Collection/Semester_7/
 ├── <Subject Name>/
-│   └── 2025_Spring_AM.pdf                 ← exam papers, named as below
+│   └── 2025_Fall_EPP.pdf                 ← exam papers, named as below
 └── College Assessments/
     └── 2024_College_Assessments/          ← one folder per year: all-college / internal assessment papers
 ```
@@ -27,12 +27,12 @@ Semester_4/Past Question Collection/
 
 | Folder | Short form | Example file name |
 |---|---|---|
-| `Applied Mathematics/` | `AM` | `2025_Spring_AM.pdf` |
-| `Numerical Methods/` | `NM` | `2025_Spring_NM.pdf` |
-| `Advanced Programming with Java/` | `JAVA` | `2025_Spring_JAVA.pdf` |
-| `Theory of Computation/` | `TOC` | `2025_Spring_TOC.pdf` |
-| `Computer Architecture/` | `CA` | `2025_Spring_CA.pdf` |
-| `Research Fundamentals/` | `RF` | `2025_Spring_RF.pdf` |
+| `Entrepreneurship and Professional Practice/` | `EPP` | `2025_Fall_EPP.pdf` |
+| `Engineering Economics/` | `EE` | `2025_Fall_EE.pdf` |
+| `Network and Cyber Security/` | `NCS` | `2025_Fall_NCS.pdf` |
+| `Cloud Computing and Virtualization/` | `CCV` | `2025_Fall_CCV.pdf` |
+| `Data Science and Analytics/` | `DSCA` | `2025_Fall_DSCA.pdf` |
+| `Elective II/` | `elective short form` | `2025_Fall_<Elective_Short>.pdf` |
 
 Electives: use the elective's short form, e.g. `2025_Spring_BDT.pdf` for Big Data Technologies.
 

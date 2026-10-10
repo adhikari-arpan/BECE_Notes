@@ -1,14 +1,14 @@
-# Past Question Collection: Semester VII
+# Past Question Collection: Semester I
 
-Past **Pokhara University exam papers** for Semester VII, one folder per subject. This collection is
+Past **Pokhara University exam papers** for Semester I, one folder per subject. This collection is
 still small, so every paper you add helps the next batch. See [CONTRIBUTING.md](../../CONTRIBUTING.md) for how to send files.
 
 ## Where to put a paper
 
 ```text
-Semester_7/Past Question Collection/
+Past Question Collection/Semester_1/
 ├── <Subject Name>/
-│   └── 2025_Fall_EPP.pdf                 ← exam papers, named as below
+│   └── 2025_Fall_CAL1.pdf                 ← exam papers, named as below
 └── College Assessments/
     └── 2024_College_Assessments/          ← one folder per year: all-college / internal assessment papers
 ```
@@ -27,12 +27,13 @@ Semester_7/Past Question Collection/
 
 | Folder | Short form | Example file name |
 |---|---|---|
-| `Entrepreneurship and Professional Practice/` | `EPP` | `2025_Fall_EPP.pdf` |
-| `Engineering Economics/` | `EE` | `2025_Fall_EE.pdf` |
-| `Network and Cyber Security/` | `NCS` | `2025_Fall_NCS.pdf` |
-| `Cloud Computing and Virtualization/` | `CCV` | `2025_Fall_CCV.pdf` |
-| `Data Science and Analytics/` | `DSCA` | `2025_Fall_DSCA.pdf` |
-| `Elective II/` | `elective short form` | `2025_Fall_<Elective_Short>.pdf` |
+| `Calculus I/` | `CAL1` | `2025_Fall_CAL1.pdf` |
+| `Digital Logic/` | `DL` | `2025_Fall_DL.pdf` |
+| `Programming in C/` | `C` | `2025_Fall_C.pdf` |
+| `Basic Electrical Engineering/` | `BEE` | `2025_Fall_BEE.pdf` |
+| `Computer Workshop/` | `CW` | `2025_Fall_CW.pdf` |
+| `Communication Technique/` | `CT` | `2025_Fall_CT.pdf` |
+| `Electronic Devices and Circuits/` | `EDC` | `2025_Fall_EDC.pdf` |
 
 Electives: use the elective's short form, e.g. `2025_Spring_BDT.pdf` for Big Data Technologies.
 

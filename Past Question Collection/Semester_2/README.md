@@ -1,14 +1,14 @@
-# Past Question Collection: Semester VI
+# Past Question Collection: Semester II
 
-Past **Pokhara University exam papers** for Semester VI, one folder per subject. This collection is
+Past **Pokhara University exam papers** for Semester II, one folder per subject. This collection is
 still small, so every paper you add helps the next batch. See [CONTRIBUTING.md](../../CONTRIBUTING.md) for how to send files.
 
 ## Where to put a paper
 
 ```text
-Semester_6/Past Question Collection/
+Past Question Collection/Semester_2/
 ├── <Subject Name>/
-│   └── 2025_Spring_IPPR.pdf                 ← exam papers, named as below
+│   └── 2025_Spring_AG.pdf                 ← exam papers, named as below
 └── College Assessments/
     └── 2024_College_Assessments/          ← one folder per year: all-college / internal assessment papers
 ```
@@ -20,16 +20,20 @@ Semester_6/Past Question Collection/
 - **ShortForm** is the subject's short form from the table below, e.g. `2024_Spring_AG.pdf`.
 - **College assessments** (internal exams, all-college assessments) go in `College Assessments/<Year>_College_Assessments/`,
   e.g. `College Assessments/2024_College_Assessments/`. Name each file after its subject.
-- Use one file per paper, PDF preferred. Scan it clearly (see the scanning checklist in CONTRIBUTING.md).
+- **Formats:** PDF or image (`.pdf`, `.jpg`, `.png`). Keep files small: a PDF under **5 MB**, an image under **1 MB**.
+  Compress large scans first, and scan clearly (see the scanning checklist in CONTRIBUTING.md).
+- **One paper per file.** A paper photographed as several images: combine them into one PDF if you can,
+  otherwise number them, e.g. `2024_Spring_AG_1.jpg`, `2024_Spring_AG_2.jpg`.
 
 | Folder | Short form | Example file name |
 |---|---|---|
-| `Image Processing and Pattern Recognition/` | `IPPR` | `2025_Spring_IPPR.pdf` |
-| `Machine Learning/` | `ML` | `2025_Spring_ML.pdf` |
-| `Computer Networks/` | `CN` | `2025_Spring_CN.pdf` |
-| `Simulation and Modeling/` | `SM` | `2025_Spring_SM.pdf` |
-| `Compiler Design/` | `CD` | `2025_Spring_CD.pdf` |
-| `Elective I/` | `elective short form` | `2025_Spring_<Elective_Short>.pdf` |
+| `Algebra and Geometry/` | `AG` | `2025_Spring_AG.pdf` |
+| `Applied Physics/` | `AP` | `2025_Spring_AP.pdf` |
+| `Applied Chemistry/` | `AC` | `2025_Spring_AC.pdf` |
+| `Basic Engineering Drawing/` | `BED` | `2025_Spring_BED.pdf` |
+| `Object Oriented Programming in C++/` | `OOP` | `2025_Spring_OOP.pdf` |
+| `Data Structure and Algorithm/` | `DSA` | `2025_Spring_DSA.pdf` |
+| `Instrumentation/` | `INST` | `2025_Spring_INST.pdf` |
 
 Electives: use the elective's short form, e.g. `2025_Spring_BDT.pdf` for Big Data Technologies.
 

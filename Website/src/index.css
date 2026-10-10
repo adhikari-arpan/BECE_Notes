@@ -1083,3 +1083,19 @@ body:has(.cookie-banner.is-shown) .tip-nudge { bottom: 96px; }
   .visits-metrics strong { font-size: 22px; }
 }
 @media (prefers-reduced-motion: reduce) { .visits-live { animation: none; } }
+
+/* Semester page: link to that semester's past questions, below the subject cards. */
+a.semester-pastq-link { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 15px 20px; border-radius: 16px; border: 1px solid #efd98f; background: var(--c-fffdf0); color: var(--c-1d3f35); text-decoration: none; transition: transform .18s, box-shadow .18s, border-color .18s; }
+a.semester-pastq-link:hover { transform: translateY(-2px); border-color: #e8c873; box-shadow: 0 8px 18px rgba(var(--shadow-rgb),.08); }
+:root[data-theme="dark"] a.semester-pastq-link { border-color: #5c4a14; }
+.semester-pastq-icon { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; background: #fff4cf; color: #b8860b; }
+:root[data-theme="dark"] .semester-pastq-icon { background: rgba(240,195,74,.14); color: #f0c34a; }
+.semester-pastq-text { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.semester-pastq-text strong { font-size: 15px; color: var(--c-0b1f1a); }
+.semester-pastq-text span { font-size: 13px; color: var(--c-4c5b54); }
+.semester-pastq-go { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; font-weight: 700; font-size: 13px; color: #b8860b; }
+:root[data-theme="dark"] .semester-pastq-go { color: #f0c34a; }
+@media (max-width: 560px) {
+  a.semester-pastq-link { flex-wrap: wrap; }
+  .semester-pastq-go { width: 100%; padding-left: 54px; }
+}

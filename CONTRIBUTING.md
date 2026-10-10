@@ -51,12 +51,12 @@ Thank you for helping Pokhara University BE Computer Engineering students study 
 
 ## 3. Folder structure
 
-Every semester and subject follows the same layout, so students always know where to look.
+Every semester and subject follows the same layout, so students always know where to look. Past exam papers
+are kept separately, in the top-level `Past Question Collection/` folder ([see below](#past-question-papers)).
 
 ```text
 Semester_N/
 ├── _Syllabus/                     ← syllabus files of all subjects in this semester
-├── Past Question Collection/      ← past exam papers, one folder per subject (see below)
 ├── Subject Name/
 │   ├── _Syllabus/                 ← syllabus of this subject only
 │   ├── Unit 1_Unit Name/          ← one folder per unit (lesson)
@@ -103,10 +103,11 @@ Semester_N/
 ### Past question papers
 
 We're building a collection of **Pokhara University past exam papers** for every subject, and it's still small, so
-these are especially welcome. Each semester has a `Past Question Collection` folder with one folder per subject:
+these are especially welcome. They live in their own top-level folder, `Past Question Collection/`, with one folder
+per semester and one folder per subject inside it:
 
 ```text
-Semester_N/Past Question Collection/
+Past Question Collection/Semester_N/
 ├── README.md                  ← each subject's folder, short form and an example file name
 ├── Algebra and Geometry/
 │   ├── 2025_Spring_AG.pdf      ← exam papers, directly in the subject's folder
@@ -123,14 +124,17 @@ Semester_N/Past Question Collection/
 - 📂 **Put the paper in its subject's folder** in the semester where that subject is taught. Folders follow the
   before-2025 semester order; papers from the 2025 curriculum go in the same subject's folder.
 - 🎓 **Electives:** use the elective's short form, e.g. `2025_Spring_BDT.pdf` (Big Data Technologies) in `Elective III/`.
-- 📄 **One paper per file**, PDF preferred, scanned clearly (see the scanning checklist above).
+- 📄 **PDF or image** (`.pdf`, `.jpg`, `.png`), and keep it small: a PDF under **5 MB**, an image under **1 MB**.
+  - Compress large scans before adding them, and scan clearly (see the scanning checklist above).
+  - **One paper per file.** A paper photographed as several images: combine them into one PDF if you can,
+    otherwise number them, e.g. `2024_Spring_AG_1.jpg`, `2024_Spring_AG_2.jpg`.
 - 🏫 **College assessments** (internal exams, all-college assessments) go in `College Assessments/<Year>_College_Assessments/`.
   - Example: `College Assessments/2024_College_Assessments/DSA-internal-exam-all-clz.pdf`
   - Name each file after its subject. The website shows them in a College Assessments section, grouped by year.
 - 🔁 **Check first** that the same paper (year + term) isn't already there.
 
-> 💡 The website lists every subject's folder and shows which papers are still needed on each semester's
-> **Past Question Collection** page.
+> 💡 On the website, **Past Questions** (in the top bar) lists every semester; each semester's page shows its
+> papers by subject and which ones are still needed.
 
 ## 4. Commit messages
 

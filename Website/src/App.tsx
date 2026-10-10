@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { findSemester, findSubject, fileKey } from '@/content/notes';
+import { findSemester, findSubject, fileKey, pastQuestionCollections } from '@/content/notes';
 import { HomeView } from '@/components/HomeView';
 import { SemesterView } from '@/components/SemesterView';
 import { Loader } from '@/components/Loader';
@@ -16,6 +16,7 @@ import { SITE_URL } from '@/content/watermark';
 
 // Pages other than home/semester/subject load their code only when opened, keeping the first download small.
 const SubjectView = lazy(() => import('@/components/SubjectView').then((m) => ({ default: m.SubjectView })));
+const PastQuestionsPage = lazy(() => import('@/components/SubjectView').then((m) => ({ default: m.PastQuestionsPage })));
 const AboutView = lazy(() => import('@/components/AboutView').then((m) => ({ default: m.AboutView })));
 const ContributorsView = lazy(() => import('@/components/ContributorsView').then((m) => ({ default: m.ContributorsView })));
 const ContributingView = lazy(() => import('@/components/ContributingView').then((m) => ({ default: m.ContributingView })));
@@ -23,6 +24,7 @@ const NotFoundView = lazy(() => import('@/components/NotFoundView').then((m) => 
 const PrivacyView = lazy(() => import('@/components/PrivacyView').then((m) => ({ default: m.PrivacyView })));
 const CgpaView = lazy(() => import('@/components/CgpaView').then((m) => ({ default: m.CgpaView })));
 const GradingGuideView = lazy(() => import('@/components/GradingGuideView').then((m) => ({ default: m.GradingGuideView })));
+const PastQuestionsIndexView = lazy(() => import('@/components/PastQuestionsIndexView').then((m) => ({ default: m.PastQuestionsIndexView })));
 const FeedbackView = lazy(() => import('@/components/FeedbackView').then((m) => ({ default: m.FeedbackView })));
 const SyllabusView = lazy(() => import('@/components/SyllabusView').then((m) => ({ default: m.SyllabusView })));
 
@@ -38,8 +40,9 @@ let defaultDescription = '';
 /**
  * Routes:
  *   /                                 home
- *   /about, /contributors, /contributing, /privacy, /feedback, /cgpa-calculator, /pu-grading-system
+ *   /about, /contributors, /contributing, /privacy, /feedback, /past-questions, /cgpa-calculator, /pu-grading-system
  *   /syllabus, /syllabus/semester-1   the syllabus: all semesters, or one semester's courses (follows the structure switch)
+ *   /past-questions/semester-1        a semester's past papers; ?file=<path in its folder> opens one
  *   /semester-1, /electives, ...      a semester (or collection)
  *   /semester-1/programming-in-c      a subject; ?file=<path in subject> opens a specific file
  */
@@ -47,17 +50,20 @@ function App() {
   const { pathname, params } = useLocation();
   const [first, second] = pathname.split('/').filter(Boolean);
 
-  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy' || first === 'feedback' || first === 'cgpa-calculator' || first === 'pu-grading-system' || first === 'syllabus') ? first : null;
+  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy' || first === 'feedback' || first === 'past-questions' || first === 'cgpa-calculator' || first === 'pu-grading-system' || first === 'syllabus') ? first : null;
   // /syllabus/semester-N
   const syllabusSemester = first === 'syllabus' && second ? semesters2025.find((s) => `semester-${s.id}` === second) : undefined;
-  const semester = !staticPage && first && first !== 'syllabus' ? findSemester(first) : undefined;
+  // /past-questions/semester-N
+  const pastQuestions = first === 'past-questions' && second ? pastQuestionCollections.find((c) => c.semester.slug === second) : undefined;
+  const semester = !staticPage && first && first !== 'syllabus' && first !== 'past-questions' ? findSemester(first) : undefined;
   const subject = semester && second ? findSubject(semester, second) : undefined;
 
   const page = pathname === '/' ? 'home'
-    : staticPage ?? (syllabusSemester ? 'syllabus-semester' : subject ? 'subject' : semester && !second ? 'semester' : 'not-found');
+    : staticPage ?? (syllabusSemester ? 'syllabus-semester' : pastQuestions ? 'past-questions-semester' : subject ? 'subject' : semester && !second ? 'semester' : 'not-found');
 
   const requestedFile = params.get('file');
   const initialFile = subject && requestedFile ? subject.files.find((f) => fileKey(subject, f) === requestedFile) : undefined;
+  const initialPaper = pastQuestions && requestedFile ? pastQuestions.files.find((f) => f.path === `${pastQuestions.folder}/${requestedFile}`) : undefined;
 
   // Opening another page starts at the top, not mid-scroll (switching files within a subject doesn't).
   useEffect(() => {
@@ -83,14 +89,18 @@ function App() {
           ? 'Free CGPA and SGPA calculator for Pokhara University BE Computer Engineering (BECE), with every semester’s subjects, credit hours and the official PU grading scale.'
           : staticPage === 'pu-grading-system'
             ? clip(PU_GUIDE_DESCRIPTION)
+            : staticPage === 'past-questions'
+              ? 'Pokhara University BE Computer Engineering past exam papers and college assessments for all 8 semesters, sorted by subject and year.'
             : staticPage === 'feedback'
               ? 'Send feedback about BECE Vault: report mistakes or missing notes, or suggest improvements. No email needed; you can stay anonymous.'
             : staticPage === 'syllabus'
               ? 'Pokhara University BE Computer Engineering syllabus: all 8 semesters with course codes, credit hours, lecture/tutorial/practical hours and course summaries.'
+              : pastQuestions
+                ? clip(`${semFull(pastQuestions.semester)} past exam papers and college assessments, Pokhara University BE Computer Engineering, sorted by subject and year.`)
               : syllabusSemester
                 ? clip(`${syllabusSemester.label} syllabus, Pokhara University BE Computer Engineering: ${syllabusSemester.courses.map((c) => c.name).join(', ')}.`)
                 : defaultDescription;
-  }, [semester, subject, staticPage, syllabusSemester]);
+  }, [semester, subject, staticPage, syllabusSemester, pastQuestions]);
 
   // Each page's official address, so search engines index every semester/subject page on its own
   // (without ?file=…, so a subject is one page, not one per file). Missing pages are kept out of results.
@@ -103,14 +113,15 @@ function App() {
 
   // A title per page, for browser tabs, bookmarks and search results.
   useEffect(() => {
-    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University' };
+    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'past-questions': 'Past Questions — Pokhara University BE Computer Engineering', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University' };
     document.title = page === 'home' ? SITE_TITLE
       : staticPage ? `${titles[staticPage]} | BECE Vault`
       : syllabusSemester ? `${syllabusSemester.label} Syllabus — PU BE Computer Engineering | BECE Vault`
+      : pastQuestions ? `${semFull(pastQuestions.semester)} Past Questions — Pokhara University BECE | BECE Vault`
       : subject && semester ? `${subject.name} Notes — ${semShort(semester)}, Pokhara University BECE | BECE Vault`
       : semester ? `${semFull(semester)} Notes — Pokhara University BE Computer Engineering | BECE Vault`
       : 'Page not found | BECE Vault';
-  }, [page, staticPage, semester, subject, syllabusSemester]);
+  }, [page, staticPage, semester, subject, syllabusSemester, pastQuestions]);
 
   return (
     <div className={`app-shell ${page === 'subject' ? 'app-shell-fixed' : ''}`}>
@@ -126,8 +137,8 @@ function App() {
           </Link>
           <nav className="top-actions">
             {page !== 'home' && <Link to="/" className="text-button">Home</Link>}
+            {!page.startsWith('past-questions') && <Link to="/past-questions" className="text-button">Past Questions</Link>}
             {page !== 'cgpa-calculator' && <Link to="/cgpa-calculator" className="text-button">CGPA Calculator</Link>}
-            {page !== 'feedback' && <Link to="/feedback" className="text-button">Feedback</Link>}
             <ChiyaButton />
             <ThemeToggle />
           </nav>
@@ -146,6 +157,8 @@ function App() {
         {page === 'contributing' && <ContributingView />}
         {page === 'privacy' && <PrivacyView />}
         {page === 'feedback' && <FeedbackView />}
+        {page === 'past-questions' && <PastQuestionsIndexView />}
+        {page === 'past-questions-semester' && <PastQuestionsPage key={pastQuestions!.semester.id} semester={pastQuestions!.semester} requestedFile={initialPaper} />}
         {page === 'cgpa-calculator' && <CgpaView />}
         {page === 'pu-grading-system' && <GradingGuideView />}
         {page === 'syllabus' && <SyllabusView />}

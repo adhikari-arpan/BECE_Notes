@@ -1,6 +1,7 @@
 import { BookOpenCheck, FileUp, FolderTree, Github } from 'lucide-react';
 import { Link } from '@/components/Link';
-import { PAST_QUESTIONS_FOLDER, pastQuestionFolders, type Semester } from '@/content/notes';
+import { PAST_QUESTIONS_FOLDER, type Semester } from '@/content/notes';
+import type { PastQuestionSubject } from '@/content/pastQuestions';
 import './PastQuestionsGuide.css';
 
 const REPO_URL = 'https://github.com/adhikari-arpan/BECE_Notes';
@@ -8,11 +9,11 @@ const REPO_URL = 'https://github.com/adhikari-arpan/BECE_Notes';
 /**
  * How to add papers to a semester's Past Question Collection: the folder for each subject, the file
  * name format and how many papers each subject has so far. Shown on the collection's page, which
- * appears even while it's empty so students can help fill it.
+ * appears even while it's empty so students can help fill it. In the 2025 view a subject's folder
+ * can be in another semester's collection, so the list says where.
  */
-export function PastQuestionsGuide({ semester }: { semester: Semester }) {
-  const folders = pastQuestionFolders(semester);
-  const folderUrl = `${REPO_URL}/tree/main/${encodeURIComponent(`Semester_${semester.id}`)}/${encodeURIComponent(PAST_QUESTIONS_FOLDER)}`;
+export function PastQuestionsGuide({ semester, subjects: folders }: { semester: Semester; subjects: PastQuestionSubject[] }) {
+  const folderUrl = `${REPO_URL}/tree/main/${encodeURIComponent(PAST_QUESTIONS_FOLDER)}/${encodeURIComponent(`Semester_${semester.id}`)}`;
   const term = Number(semester.id) % 2 ? 'Fall' : 'Spring';
   const total = folders.reduce((a, f) => a + f.papers, 0);
 
@@ -34,13 +35,20 @@ export function PastQuestionsGuide({ semester }: { semester: Semester }) {
         <span>File name</span>
         <code>Year_Spring/Fall_ShortForm</code>
         <small>e.g. <code>{folders.find((f) => f.short)?.example ?? `2025_${term}_BDT.pdf`}</code>: the year the exam was held (AD), the term, then the subject’s short form below</small>
+        <small className="pastq-formats">
+          <strong>PDF or image</strong> (.pdf, .jpg, .png), kept small: a PDF under <strong>5 MB</strong>, an image under <strong>1 MB</strong>.
+          Several photos of one paper? Combine them into one PDF, or number them (<code>…_1.jpg</code>, <code>…_2.jpg</code>).
+        </small>
       </div>
 
       <ul className="pastq-list">
         {folders.map((f) => (
           <li key={f.folder}>
             <FolderTree size={14} />
-            <span className="pastq-name">{f.folder}/ <b className="pastq-short">{f.short ?? 'elective short form'}</b></span>
+            <span className="pastq-name">
+              {f.home !== semester && <small className="pastq-home">Semester_{f.home.id}/</small>}
+              {f.folder}/ <b className="pastq-short">{f.short ?? 'elective short form'}</b>
+            </span>
             <code className="pastq-example">{f.example}</code>
             <span className={`pastq-count ${f.papers ? 'has' : ''}`}>{f.papers ? `${f.papers} ${f.papers === 1 ? 'paper' : 'papers'}` : 'Needed'}</span>
           </li>

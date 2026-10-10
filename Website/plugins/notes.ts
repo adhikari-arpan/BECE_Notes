@@ -36,7 +36,7 @@ const VIRTUAL_ID = 'virtual:notes-manifest';
 const RESOLVED_ID = '\0' + VIRTUAL_ID;
 const URL_PREFIX = '/notes/';
 
-const ROOT_DIR_PATTERN = /^(Semester_\d+|Electives|Engineering Entrance Preparation)$/;
+const ROOT_DIR_PATTERN = /^(Semester_\d+|Electives|Engineering Entrance Preparation|Past Question Collection)$/;
 const IGNORED_NAMES = new Set(['desktop.ini', 'Thumbs.db', '.DS_Store']);
 
 const MIME_TYPES: Record<string, string> = {
@@ -180,7 +180,9 @@ function crawlableSummary(entries: ManifestEntry[]): string {
   const bySection = new Map<string, Map<string, number>>();
   for (const { path: file } of entries) {
     const [root, folder] = file.split('/');
-    const subject = file.split('/').length > 2 ? folder.replace(/^_+/, '') : 'General resources';
+    const subject = root === 'Past Question Collection'
+      ? folder.replace(/_/g, ' ')
+      : file.split('/').length > 2 ? folder.replace(/^_+/, '') : 'General resources';
     const subjects = bySection.get(root) ?? new Map<string, number>();
     subjects.set(subject, (subjects.get(subject) ?? 0) + 1);
     bySection.set(root, subjects);
@@ -192,9 +194,9 @@ function crawlableSummary(entries: ManifestEntry[]): string {
       const n = /^Semester_(\d+)$/.exec(root)?.[1];
       const title = n
         ? `Semester ${ROMAN[Number(n)] ?? n} notes: Pokhara University BE Computer Engineering`
-        : root === 'Electives' ? 'Elective subject notes' : `${root} notes`;
+        : root === 'Electives' ? 'Elective subject notes' : root === 'Past Question Collection' ? 'Past exam papers by semester' : `${root} notes`;
       const items = [...subjects.entries()].map(([name, count]) => `<li>${escapeHtml(name)} (${count} ${count === 1 ? 'file' : 'files'})</li>`).join('');
-      const href = n ? `/semester-${n}` : root === 'Electives' ? '/electives' : '';
+      const href = n ? `/semester-${n}` : root === 'Electives' ? '/electives' : root === 'Past Question Collection' ? '/past-questions' : '';
       const heading = href ? `<a href="${href}">${escapeHtml(title)}</a>` : escapeHtml(title);
       return `<section><h2>${heading}</h2><ul>${items}</ul></section>`;
     })

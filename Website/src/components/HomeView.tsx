@@ -82,7 +82,7 @@ export function HomeView() {
             // In the 2025 view, a semester's numbers come from its 2025 courses (wherever their notes are filed).
             const subjects = courses2025
               ? courses2025.map((c) => c.subject).filter((s): s is NonNullable<typeof s> => !!s)
-              : semester.subjects.filter((s) => !isSyllabus(s) && !(s.pastQuestions && !s.files.length));
+              : semester.subjects.filter((s) => !isSyllabus(s));
             const withNotes = subjects.filter((s) => s.files.length > 0).length;
             const files = subjects.reduce((sum, s) => sum + s.files.length, 0);
             const credits = courses2025

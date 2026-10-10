@@ -1,0 +1,75 @@
+/* A semester's Past Question Collection: the list of papers, and the viewer that slides in over it. */
+.pastq-page { padding-bottom: 60px; }
+.pastq-years { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+.pastq-years button { padding: 6px 13px; border-radius: 99px; border: 1px solid var(--c-dde3dc); background: var(--c-fffdf7); color: var(--c-1d3f35); font: 600 12px 'DM Mono', monospace; cursor: pointer; transition: border-color .15s, background .15s; }
+.pastq-years button:hover { border-color: #e8c873; }
+.pastq-years button.is-active { background: #fff4cf; color: #0b1f1a; border-color: #e8c873; }
+:root[data-theme="dark"] .pastq-years button.is-active { background: rgba(240, 195, 74, .16); color: #f0c34a; border-color: rgba(240, 195, 74, .5); }
+
+.pastq-section { margin-bottom: 24px; }
+.pastq-section h3 { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; font-size: 16px; color: var(--c-0b1f1a); }
+.pastq-section h3 small { margin-left: auto; font: 500 11px 'DM Mono', monospace; color: var(--c-7d8b84); }
+.pastq-year-group + .pastq-year-group { margin-top: 12px; }
+.pastq-year-group h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 7px 2px; font: 700 12.5px 'DM Mono', monospace; color: #8a6508; }
+.pastq-year-group h4 small { font-weight: 500; font-size: 10.5px; color: var(--c-7d8b84); }
+:root[data-theme="dark"] .pastq-year-group h4 { color: #f0c34a; }
+.pastq-tags:empty { display: none; }
+.pastq-papers { list-style: none; margin: 0; padding: 0; border: 1px solid var(--c-e3e6de); border-radius: 14px; overflow: hidden; background: var(--c-fffdf7); }
+.pastq-papers li + li { border-top: 1px solid var(--c-eef1ec); }
+.pastq-paper { width: 100%; display: flex; align-items: center; gap: 14px; padding: 11px 16px; border: 0; background: transparent; color: var(--c-1d3f35); text-align: left; cursor: pointer; transition: background .15s; }
+.pastq-paper:hover { background: var(--c-fffdf0); }
+.pastq-paper:focus-visible { outline: 2px solid #e5a927; outline-offset: -2px; }
+.pastq-paper.is-open { background: var(--c-fffdf0); box-shadow: inset 3px 0 0 #e5a927; }
+.pastq-paper-name { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.pastq-paper-name strong { font-size: 13.5px; color: var(--c-0b1f1a); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pastq-paper-name small { font: 500 10.5px 'DM Mono', monospace; color: var(--c-7d8b84); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pastq-paper-icon { flex-shrink: 0; color: var(--c-7d8b84); }
+
+.pastq-tags { display: flex; gap: 5px; flex-shrink: 0; align-items: center; min-width: 118px; }
+.pastq-tag { padding: 2px 8px; border-radius: 7px; text-align: center; font: 600 10.5px 'DM Mono', monospace; background: var(--c-f6f7f1); color: var(--c-5c6b64); white-space: nowrap; }
+.pastq-tag-year { background: #fff4cf; color: #8a6508; font-size: 12px; }
+.pastq-tag-spring { background: #e3f3eb; color: #1f7a55; }
+.pastq-tag-fall { background: #fbe8dc; color: #a2532a; }
+:root[data-theme="dark"] .pastq-tag-year { background: rgba(240, 195, 74, .16); color: #f0c34a; }
+:root[data-theme="dark"] .pastq-tag-spring { background: rgba(47, 143, 107, .2); color: #7fd3ad; }
+:root[data-theme="dark"] .pastq-tag-fall { background: rgba(214, 120, 70, .2); color: #f0a77c; }
+
+.pastq-none { display: grid; justify-items: center; gap: 8px; padding: 30px 16px; border: 1px dashed var(--c-dde3dc); border-radius: 16px; color: var(--c-7d8b84); text-align: center; }
+.pastq-none p { margin: 0; font-size: 13.5px; }
+.pastq-help { margin-top: 34px; padding: 24px; border-radius: 18px; border: 1px solid var(--c-e3e6de); background: var(--c-fbfcf7); }
+
+/* Viewer: slides in from the right over the list. */
+.pastq-viewer-backdrop { position: fixed; inset: 0; z-index: 60; display: flex; justify-content: flex-end; background: rgba(8, 20, 17, .45); animation: pastq-fade .2s ease-out; }
+.pastq-viewer { width: min(980px, 100%); height: 100%; display: flex; flex-direction: column; background: var(--c-fffdf7); box-shadow: -18px 0 40px rgba(0, 0, 0, .18); outline: none; animation: pastq-slide .26s cubic-bezier(.2, .8, .2, 1); }
+.pastq-viewer-backdrop.is-closing { animation: pastq-fade-out .2s ease-in forwards; }
+.pastq-viewer-backdrop.is-closing .pastq-viewer { animation: pastq-slide-out .2s ease-in forwards; }
+.pastq-viewer-head { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--c-e0e5df); }
+.pastq-viewer-title { flex: 1; min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; align-items: center; }
+.pastq-viewer-title .pastq-tags { grid-row: span 2; min-width: 0; }
+.pastq-viewer-title strong { font-size: 14px; color: var(--c-0b1f1a); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pastq-viewer-title small { font: 500 10.5px 'DM Mono', monospace; color: var(--c-7d8b84); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pastq-viewer-actions { display: flex; gap: 5px; flex-shrink: 0; }
+.pastq-viewer-actions .icon-button:disabled { opacity: .4; pointer-events: none; }
+.pastq-viewer-body { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.pastq-viewer-body .preview-pane { flex: 1; min-height: 0; }
+.pastq-viewer-body .preview-content { height: auto; flex: 1; min-height: 0; }
+@keyframes pastq-slide { from { transform: translateX(100%); } }
+@keyframes pastq-slide-out { to { transform: translateX(100%); } }
+@keyframes pastq-fade { from { opacity: 0; } }
+@keyframes pastq-fade-out { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .pastq-viewer, .pastq-viewer-backdrop, .pastq-viewer-backdrop.is-closing, .pastq-viewer-backdrop.is-closing .pastq-viewer { animation-duration: .01s; }
+}
+@media (max-width: 640px) {
+  .pastq-tags { min-width: 0; }
+  .pastq-paper { flex-wrap: wrap; gap: 6px 12px; }
+  .pastq-paper-name { flex-basis: 100%; order: 2; }
+  .pastq-help { padding: 16px; }
+  .pastq-viewer-head { flex-wrap: wrap; }
+  .pastq-viewer-title { order: 3; flex-basis: 100%; }
+  .pastq-viewer-actions { margin-left: auto; }
+}
+.pastq-filed { font: 500 10.5px 'DM Mono', monospace; padding: 2px 8px; border-radius: 99px; background: var(--c-f6f7f1); color: var(--c-7d8b84); }
+.pastq-notes-link { margin: 26px 0 0; font-size: 13px; }
+.pastq-notes-link a { display: inline-flex; align-items: center; gap: 6px; color: var(--c-1d3f35); font-weight: 600; text-decoration: none; }
+.pastq-notes-link a:hover { color: #b8860b; }

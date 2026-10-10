@@ -30,8 +30,6 @@ export interface Subject {
   description?: string;
   /** An "Elective I/II/III" slot: its notes live in the Electives collection, not in the semester. */
   electiveSlot?: boolean;
-  /** The semester's Past Question Collection (shown even while empty, to collect papers). */
-  pastQuestions?: boolean;
   icon: string;
   /** Repo folder holding this subject's notes, or null if nothing has been added yet. */
   folder: string | null;
@@ -211,36 +209,6 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
   return subjects;
 }
 
-/** Each semester's folder of past exam papers: `Semester_N/Past Question Collection/<Subject>/`. */
-export const PAST_QUESTIONS_FOLDER = 'Past Question Collection';
-
-const isReadme = (f: NoteFile) => !f.folder && /^readme\.md$/i.test(f.name);
-
-/**
- * Every semester gets a Past Question Collection subject, even before any paper is added, so students
- * can see what's missing and send it. Its README (the naming guide on GitHub) isn't listed as a file:
- * the website shows the same guide itself.
- */
-function withPastQuestions(root: string, subjects: Subject[]): Subject[] {
-  const folder = `${root}/${PAST_QUESTIONS_FOLDER}`;
-  const existing = subjects.find((s) => s.folder === folder);
-  const pastQuestions: Subject = {
-    id: `${slug(root)}--past-questions`,
-    slug: 'past-questions',
-    kind: 'resource',
-    code: 'PAST PAPERS',
-    name: PAST_QUESTIONS_FOLDER,
-    credits: null,
-    icon: '✎',
-    folder,
-    pastQuestions: true,
-    files: (existing?.files ?? []).filter((f) => !isReadme(f)),
-  };
-  const rest = subjects.filter((s) => s !== existing);
-  const courses = rest.filter((s) => s.kind === 'course').length;
-  return [...rest.slice(0, courses), pastQuestions, ...rest.slice(courses)];
-}
-
 export const semesters: Semester[] = [
   ...curriculum.map((s) => ({
     id: String(s.id),
@@ -248,12 +216,42 @@ export const semesters: Semester[] = [
     badge: String(s.id).padStart(2, '0'),
     year: s.year,
     label: s.label,
-    subjects: withPastQuestions(`Semester_${s.id}`, buildSubjects(`Semester_${s.id}`, s.courses, 'General resources')),
+    subjects: buildSubjects(`Semester_${s.id}`, s.courses, 'General resources'),
   })),
   { id: 'electives', slug: 'electives', badge: 'EL', year: 'Year III–IV', label: 'Electives', subjects: buildSubjects('Electives', electiveCourses, 'General resources') },
   { id: 'entrance', slug: 'entrance-preparation', badge: 'IOE', year: 'Before Year I', label: 'Entrance Preparation', subjects: buildSubjects('Engineering Entrance Preparation', [], 'Entrance question sets') },
   // Extra collections only show up once their folder has files.
 ].filter((s) => /^\d+$/.test(s.id) || s.subjects.some((subject) => subject.files.length > 0));
+
+/* ----------------------- Past Question Collection ----------------------- */
+
+/** Past exam papers, kept apart from the notes: `Past Question Collection/Semester_N/<Subject>/`. */
+export const PAST_QUESTIONS_FOLDER = 'Past Question Collection';
+
+export interface PastQuestionCollection {
+  semester: Semester;
+  /** Repo folder, e.g. `Past Question Collection/Semester_2`. */
+  folder: string;
+  /** Papers, with `folder` relative to the semester's folder (e.g. `Applied Physics`). */
+  files: NoteFile[];
+}
+
+/** The README in each semester's folder (the naming guide on GitHub) isn't a paper: the website shows the same guide. */
+const isReadme = (f: NoteFile) => !f.folder && /^readme\.md$/i.test(f.name);
+
+/** One collection per semester, even before any paper is added, so students can see what's missing and send it. */
+export const pastQuestionCollections: PastQuestionCollection[] = semesters
+  .filter((s) => /^\d+$/.test(s.id))
+  .map((semester) => {
+    const folder = `${PAST_QUESTIONS_FOLDER}/Semester_${semester.id}`;
+    const files = entries
+      .filter((e) => e.path.startsWith(folder + '/'))
+      .map((e) => toNoteFile(e, folder))
+      .filter((f) => !isReadme(f));
+    return { semester, folder, files };
+  });
+
+export const pastQuestionsFor = (semester: Semester) => pastQuestionCollections.find((c) => c.semester === semester);
 
 /** True for a file inside a subject's own `_Syllabus` (or `Syllabus`) folder. */
 export const isSyllabusFolder = (folder: string) => normalizeName(folder.split('/')[0]) === 'syllabus';
@@ -355,7 +353,7 @@ export interface PastQuestionFolder {
  */
 export function pastQuestionFolders(semester: Semester): PastQuestionFolder[] {
   const courses = curriculum.find((c) => String(c.id) === semester.id)?.courses ?? [];
-  const collection = semester.subjects.find((s) => s.pastQuestions);
+  const collection = pastQuestionsFor(semester);
   const term = Number(semester.id) % 2 ? 'Fall' : 'Spring';
   return courses
     .filter((c) => !/^(PRJ|INT)\b/.test(c.code))
@@ -383,6 +381,13 @@ export const fileKey = (subject: Subject, file: NoteFile) =>
 
 export const subjectPath = (semester: Semester, subject: Subject, file?: NoteFile) =>
   `/${semester.slug}/${subject.slug}${file ? `?file=${encodeURIComponent(fileKey(subject, file))}` : ''}`;
+
+/** /past-questions, or one semester's papers at /past-questions/semester-N (?file= opens a paper). */
+export const pastQuestionsPath = (semester?: Semester, file?: NoteFile) => {
+  if (!semester) return '/past-questions';
+  const key = file ? file.path.slice(`${PAST_QUESTIONS_FOLDER}/Semester_${semester.id}/`.length) : '';
+  return `/past-questions/${semester.slug}${key ? `?file=${encodeURIComponent(key)}` : ''}`;
+};
 
 export function findSemester(slugPart: string) {
   return semesters.find((s) => s.slug === slugPart.toLowerCase());

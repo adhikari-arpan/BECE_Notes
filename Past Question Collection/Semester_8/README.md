@@ -6,7 +6,7 @@ still small, so every paper you add helps the next batch. See [CONTRIBUTING.md](
 ## Where to put a paper
 
 ```text
-Semester_8/Past Question Collection/
+Past Question Collection/Semester_8/
 ├── <Subject Name>/
 │   └── 2025_Spring_NET.pdf                 ← exam papers, named as below
 └── College Assessments/

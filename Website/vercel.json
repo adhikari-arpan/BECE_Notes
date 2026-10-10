@@ -12,6 +12,11 @@
       ],
       "destination": "https://notes.arpanadhikari7.com.np/:path*",
       "permanent": true
+    },
+    {
+      "source": "/semester-:n/past-questions",
+      "destination": "/past-questions/semester-:n",
+      "permanent": true
     }
   ],
   "rewrites": [

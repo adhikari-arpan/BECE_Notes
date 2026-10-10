@@ -30,6 +30,7 @@ interface Course2025 { code: string; name: string; credits: number; hours: [numb
 interface Semester2025 { id: number; year: string; label: string; courses: Course2025[] }
 interface AppData {
   semesters: Semester[];
+  pastQuestionCollections: { semester: Semester; folder: string; files: NoteFile[] }[];
   semesters2025: Semester2025[];
   GRADES: readonly { letter: string; point: number; min: number; remark: string }[];
   PU_FAQS: { q: string; a: string }[];
@@ -50,7 +51,7 @@ async function loadNotes(root: string, repoRoot: string): Promise<AppData> {
   const result = await esbuild.build({
     stdin: {
       contents: [
-        "export { semesters } from './content/notes';",
+        "export { semesters, pastQuestionCollections } from './content/notes';",
         "export { semesters2025 } from './content/curriculum2025';",
         "export { GRADES } from './content/grades';",
         "export { PU_FAQS, PU_GUIDE_TITLE, PU_GUIDE_DESCRIPTION, PU_GUIDE_PATH } from './content/puGuide';",
@@ -187,11 +188,34 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
     }
   }
 
+  // Past questions: one page per semester, listing its papers by folder.
+  for (const { semester: sem, files } of data.pastQuestionCollections) {
+    const route = `/past-questions/${sem.slug}`;
+    const desc = clip(`${semFull(sem)} past exam papers and college assessments, Pokhara University BE Computer Engineering, sorted by subject and year.`);
+    const byFolder = new Map<string, string[]>();
+    for (const f of files) {
+      const top = f.folder.split('/')[0] || 'All subjects';
+      byFolder.set(top, [...(byFolder.get(top) ?? []), f.name]);
+    }
+    const list = [...byFolder].map(([folder, names]) => `<h2>${esc(folder.replace(/_+/g, ' '))}</h2><ul>${names.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`).join('');
+    pages.push({
+      route,
+      title: `${semFull(sem)} Past Questions — Pokhara University BECE | ${opts.siteName}`,
+      description: desc,
+      index: files.length > 0,
+      lastmod: newest(files),
+      body: `<main><h1>${esc(semFull(sem))} past questions — Pokhara University BE Computer Engineering</h1><p>${esc(desc)}</p>`
+        + `${list || '<p>No papers yet: this collection is being built.</p>'}<p><a href="/past-questions">All semesters</a> · <a href="/${sem.slug}">${esc(sem.label)} notes</a></p>${nav}</main>`,
+      jsonLd: [breadcrumbs(opts, [['Past Questions', '/past-questions'], [sem.label, route]])],
+    });
+  }
+
   const statics: [string, string, string][] = [
     ['/about', 'About', `About ${opts.siteName}: a free, semester-wise library of study notes for the Bachelor of Engineering in Computer Engineering (BECE) program under Pokhara University, Nepal, started by Arpan Adhikari (NCIT).`],
     ['/contributors', 'Contributors', `The people who build and maintain ${opts.siteName}, the free notes library for Pokhara University Computer Engineering students.`],
     ['/contributing', 'Contribute', `How to contribute notes, question papers and lab reports to ${opts.siteName}. Contributors with 10+ relevant files are listed on the site.`],
     ['/cgpa-calculator', 'CGPA Calculator — Pokhara University BECE', `Free CGPA and SGPA calculator for Pokhara University BE Computer Engineering (BECE): every semester's subjects and credit hours with the official PU grading scale (A = 4.0 … F = 0.0).`],
+    ['/past-questions', 'Past Questions — Pokhara University BE Computer Engineering', `Pokhara University BE Computer Engineering past exam papers and college assessments for all 8 semesters, sorted by subject and year, on ${opts.siteName}.`],
     ['/feedback', 'Website Feedback', `Send feedback about ${opts.siteName}: report mistakes or missing notes, or suggest improvements. No email needed; you can stay anonymous.`],
     ['/privacy', 'Privacy Policy', `Privacy policy of ${opts.siteName}: what information is collected, cookies, analytics and advertising.`],
   ];

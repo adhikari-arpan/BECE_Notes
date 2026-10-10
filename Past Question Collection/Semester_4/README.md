@@ -1,14 +1,14 @@
-# Past Question Collection: Semester II
+# Past Question Collection: Semester IV
 
-Past **Pokhara University exam papers** for Semester II, one folder per subject. This collection is
+Past **Pokhara University exam papers** for Semester IV, one folder per subject. This collection is
 still small, so every paper you add helps the next batch. See [CONTRIBUTING.md](../../CONTRIBUTING.md) for how to send files.
 
 ## Where to put a paper
 
 ```text
-Semester_2/Past Question Collection/
+Past Question Collection/Semester_4/
 ├── <Subject Name>/
-│   └── 2025_Spring_AG.pdf                 ← exam papers, named as below
+│   └── 2025_Spring_AM.pdf                 ← exam papers, named as below
 └── College Assessments/
     └── 2024_College_Assessments/          ← one folder per year: all-college / internal assessment papers
 ```
@@ -27,13 +27,12 @@ Semester_2/Past Question Collection/
 
 | Folder | Short form | Example file name |
 |---|---|---|
-| `Algebra and Geometry/` | `AG` | `2025_Spring_AG.pdf` |
-| `Applied Physics/` | `AP` | `2025_Spring_AP.pdf` |
-| `Applied Chemistry/` | `AC` | `2025_Spring_AC.pdf` |
-| `Basic Engineering Drawing/` | `BED` | `2025_Spring_BED.pdf` |
-| `Object Oriented Programming in C++/` | `OOP` | `2025_Spring_OOP.pdf` |
-| `Data Structure and Algorithm/` | `DSA` | `2025_Spring_DSA.pdf` |
-| `Instrumentation/` | `INST` | `2025_Spring_INST.pdf` |
+| `Applied Mathematics/` | `AM` | `2025_Spring_AM.pdf` |
+| `Numerical Methods/` | `NM` | `2025_Spring_NM.pdf` |
+| `Advanced Programming with Java/` | `JAVA` | `2025_Spring_JAVA.pdf` |
+| `Theory of Computation/` | `TOC` | `2025_Spring_TOC.pdf` |
+| `Computer Architecture/` | `CA` | `2025_Spring_CA.pdf` |
+| `Research Fundamentals/` | `RF` | `2025_Spring_RF.pdf` |
 
 Electives: use the elective's short form, e.g. `2025_Spring_BDT.pdf` for Big Data Technologies.
 

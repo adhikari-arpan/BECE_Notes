@@ -1,6 +1,4 @@
 /* The "help collect past papers" guide on each semester's Past Question Collection page. */
-.pastq-empty { padding: 26px 22px 34px; overflow-y: auto; }
-.pastq-pane { height: 100%; overflow-y: auto; padding: 22px; box-sizing: border-box; }
 .pastq-guide { max-width: 720px; margin: 0 auto; display: grid; gap: 16px; }
 .pastq-head { display: flex; gap: 14px; align-items: flex-start; }
 .pastq-icon { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 13px; background: #fff4cf; color: #b8860b; }
@@ -36,3 +34,6 @@ a.pastq-secondary:hover { border-color: #e8c873; }
 }
 .pastq-short { margin-left: 4px; font: 600 10.5px 'DM Mono', monospace; padding: 1px 6px; border-radius: 6px; background: #fff4cf; color: #8a6508; }
 :root[data-theme="dark"] .pastq-short { background: rgba(240, 195, 74, .16); color: #f0c34a; }
+.pastq-home { font: 500 10.5px 'DM Mono', monospace; color: var(--c-7d8b84); margin-right: 2px; }
+.pastq-format .pastq-formats { padding-top: 6px; border-top: 1px dashed #efd98f; line-height: 1.6; }
+:root[data-theme="dark"] .pastq-format .pastq-formats { border-top-color: #5c4a14; }

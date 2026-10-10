@@ -1,7 +1,8 @@
-import { ArrowLeft, ArrowRight, FileText } from 'lucide-react';
-import { findSyllabus, isSyllabus, plural, subjectPath, type Semester, type Subject } from '@/content/notes';
+import { ArrowLeft, ArrowRight, FileStack, FileText } from 'lucide-react';
+import { findSyllabus, pastQuestionsPath, isSyllabus, plural, subjectPath, type Semester, type Subject } from '@/content/notes';
 import { semesters2025 } from '@/content/curriculum2025';
 import { useStructure } from '@/content/structure';
+import { pastQuestionCount } from '@/content/pastQuestions';
 import { Link } from '@/components/Link';
 import { StructureToggle } from '@/components/StructureToggle';
 
@@ -146,26 +147,36 @@ export function SemesterView({ semester }: SemesterViewProps) {
             <Link
               key={subject.id}
               to={subjectPath(noteSemester, subject)}
-              className={`subject-card ${subject.files.length === 0 && !subject.pastQuestions ? 'subject-card-empty' : ''} ${subject.kind === 'resource' ? 'subject-card-resource' : ''} ${subject.pastQuestions ? 'subject-card-pastq' : ''}`}
+              className={`subject-card ${subject.files.length === 0 ? 'subject-card-empty' : ''} ${subject.kind === 'resource' ? 'subject-card-resource' : ''}`}
             >
               <span className="subject-card-glyph" data-glyph={subject.icon} aria-hidden="true" />
               <span className="subject-card-top">
                 <span className="subject-card-icon">{subject.icon}</span>
-                <span className="subject-card-code">{subject.pastQuestions ? 'Past papers' : subject.kind === 'resource' ? 'Resources' : subject.code}</span>
+                <span className="subject-card-code">{subject.kind === 'resource' ? 'Resources' : subject.code}</span>
               </span>
               <strong className="subject-card-name">{subject.name}</strong>
               {subject.description && <span className="subject-card-desc">{subject.description}</span>}
-              {subject.pastQuestions && <span className="subject-card-desc">Pokhara University exam papers for every subject. Have one? Help us collect them.</span>}
               <span className="subject-card-foot">
                 <span className="subject-card-meta">
                   {subject.credits !== null && <span>{plural(subject.credits, 'credit')}</span>}
-                  <span>{subject.files.length > 0 ? plural(subject.files.length, 'file') : subject.pastQuestions ? 'Help collect papers' : 'No notes yet'}</span>
+                  <span>{subject.files.length > 0 ? plural(subject.files.length, 'file') : 'No notes yet'}</span>
                 </span>
                 <span className="subject-card-go"><ArrowRight size={15} /></span>
               </span>
             </Link>
           ))}
         </div>
+
+        {isCourseSemester && (
+          <Link to={pastQuestionsPath(semester)} className="semester-pastq-link">
+            <span className="semester-pastq-icon"><FileStack size={20} /></span>
+            <span className="semester-pastq-text">
+              <strong>Past questions for {semester.label}</strong>
+              <span>{pastQuestionCount(semester, structure) ? `${plural(pastQuestionCount(semester, structure), 'paper')} by subject and year` : 'Exam papers by subject and year. Help us collect them.'}</span>
+            </span>
+            <span className="semester-pastq-go">Click here for past questions <ArrowRight size={15} /></span>
+          </Link>
+        )}
       </section>
     </>
   );
