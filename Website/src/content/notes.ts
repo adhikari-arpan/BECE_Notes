@@ -240,8 +240,11 @@ export interface PastQuestionCollection {
 const isReadme = (f: NoteFile) => !f.folder && /^readme\.md$/i.test(f.name);
 
 /** One collection per semester, even before any paper is added, so students can see what's missing and send it. */
+/** Semesters without written exams (Semester VIII: internship, project and an elective) have no collection. */
+const NO_PAST_QUESTIONS = new Set(['8']);
+
 export const pastQuestionCollections: PastQuestionCollection[] = semesters
-  .filter((s) => /^\d+$/.test(s.id))
+  .filter((s) => /^\d+$/.test(s.id) && !NO_PAST_QUESTIONS.has(s.id))
   .map((semester) => {
     const folder = `${PAST_QUESTIONS_FOLDER}/Semester_${semester.id}`;
     const files = entries

@@ -30,7 +30,7 @@ export function PastQuestionsIndexView() {
             <span className="section-kicker">Pokhara University · BE Computer Engineering</span>
             <h2>Past Questions</h2>
           </div>
-          <span className="subject-count-pill">8 semesters · {plural(totalPapers, 'paper')}</span>
+          <span className="subject-count-pill">{cards.length} semesters · {plural(totalPapers, 'paper')}</span>
         </div>
         <p className="pqi-lead">
           Past Pokhara University exam papers and college assessments for every semester, sorted by subject and year.
