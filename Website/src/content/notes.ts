@@ -30,6 +30,8 @@ export interface Subject {
   description?: string;
   /** An "Elective I/II/III" slot: its notes live in the Electives collection, not in the semester. */
   electiveSlot?: boolean;
+  /** The semester's Past Question Collection (shown even while empty, to collect papers). */
+  pastQuestions?: boolean;
   icon: string;
   /** Repo folder holding this subject's notes, or null if nothing has been added yet. */
   folder: string | null;
@@ -209,6 +211,36 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
   return subjects;
 }
 
+/** Each semester's folder of past exam papers: `Semester_N/Past Question Collection/<Subject>/`. */
+export const PAST_QUESTIONS_FOLDER = 'Past Question Collection';
+
+const isReadme = (f: NoteFile) => !f.folder && /^readme\.md$/i.test(f.name);
+
+/**
+ * Every semester gets a Past Question Collection subject, even before any paper is added, so students
+ * can see what's missing and send it. Its README (the naming guide on GitHub) isn't listed as a file:
+ * the website shows the same guide itself.
+ */
+function withPastQuestions(root: string, subjects: Subject[]): Subject[] {
+  const folder = `${root}/${PAST_QUESTIONS_FOLDER}`;
+  const existing = subjects.find((s) => s.folder === folder);
+  const pastQuestions: Subject = {
+    id: `${slug(root)}--past-questions`,
+    slug: 'past-questions',
+    kind: 'resource',
+    code: 'PAST PAPERS',
+    name: PAST_QUESTIONS_FOLDER,
+    credits: null,
+    icon: '✎',
+    folder,
+    pastQuestions: true,
+    files: (existing?.files ?? []).filter((f) => !isReadme(f)),
+  };
+  const rest = subjects.filter((s) => s !== existing);
+  const courses = rest.filter((s) => s.kind === 'course').length;
+  return [...rest.slice(0, courses), pastQuestions, ...rest.slice(courses)];
+}
+
 export const semesters: Semester[] = [
   ...curriculum.map((s) => ({
     id: String(s.id),
@@ -216,7 +248,7 @@ export const semesters: Semester[] = [
     badge: String(s.id).padStart(2, '0'),
     year: s.year,
     label: s.label,
-    subjects: buildSubjects(`Semester_${s.id}`, s.courses, 'General resources'),
+    subjects: withPastQuestions(`Semester_${s.id}`, buildSubjects(`Semester_${s.id}`, s.courses, 'General resources')),
   })),
   { id: 'electives', slug: 'electives', badge: 'EL', year: 'Year III–IV', label: 'Electives', subjects: buildSubjects('Electives', electiveCourses, 'General resources') },
   { id: 'entrance', slug: 'entrance-preparation', badge: 'IOE', year: 'Before Year I', label: 'Entrance Preparation', subjects: buildSubjects('Engineering Entrance Preparation', [], 'Entrance question sets') },
@@ -259,6 +291,37 @@ export function findSyllabus(semesterSyllabus: Subject | undefined, subject: Sub
   if (fromSemester && semesterSyllabus) return { subject: semesterSyllabus, file: fromSemester };
   const own = subject.files.find((f) => isSyllabusFolder(f.folder));
   return own ? { subject, file: own } : undefined;
+}
+
+/** One subject's folder in a semester's Past Question Collection, with an example file name. */
+export interface PastQuestionFolder {
+  name: string;
+  folder: string;
+  example: string;
+  papers: number;
+}
+
+/**
+ * The subject folders of a semester's Past Question Collection (exam subjects only: no project or
+ * internship) and how many papers each has. File names follow `Year_Fall/Spring_SubjectName`.
+ */
+export function pastQuestionFolders(semester: Semester): PastQuestionFolder[] {
+  const courses = curriculum.find((c) => String(c.id) === semester.id)?.courses ?? [];
+  const collection = semester.subjects.find((s) => s.pastQuestions);
+  const term = Number(semester.id) % 2 ? 'Fall' : 'Spring';
+  return courses
+    .filter((c) => !/^(PRJ|INT)\b/.test(c.code))
+    .map((c) => {
+      const folder = c.name.replace(/&/g, 'and');
+      const elective = /^ELEC\b/.test(c.code);
+      const key = normalizeName(folder);
+      return {
+        name: c.name,
+        folder,
+        example: `2025_${term}_${elective ? '<Elective_Name>' : folder.replace(/\+/g, 'p').replace(/\s+/g, '_')}.pdf`,
+        papers: collection?.files.filter((f) => f.folder && normalizeName(f.folder.split('/')[0]) === key).length ?? 0,
+      };
+    });
 }
 
 /* ----------------------------- URLs ----------------------------- */

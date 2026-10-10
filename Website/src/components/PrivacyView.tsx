@@ -1,4 +1,4 @@
-import { ArrowLeft, BarChart3, Cookie, Database, ExternalLink, FileLock2, HardDrive, Mail, Megaphone, RefreshCw, ShieldCheck, Users } from 'lucide-react';
+import { ArrowLeft, BarChart3, Cookie, Database, ExternalLink, FileLock2, HardDrive, Mail, Megaphone, MessageSquareHeart, RefreshCw, ShieldCheck, Users } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { openCookieSettings } from '@/content/consent';
 
@@ -159,6 +159,15 @@ export function PrivacyView() {
             <p>
               When you download or print a PDF or image, a small “Downloaded from notes.arpanadhikari7.com.np” line is added
               to it. This happens entirely inside your browser; the file is not sent to us.
+            </p>
+          </div>
+
+          <div className="content-page-section">
+            <h3><MessageSquareHeart size={18} /> Feedback form</h3>
+            <p>
+              If you use the <Link to="/feedback">feedback form</Link>, the topic, your message and the name you type (or
+              “Anonymous” if you leave it blank) are sent through <a href="https://formspree.io" target="_blank" rel="noreferrer">Formspree</a> and
+              delivered to us by email. No email address is asked for. Please don’t include personal details you don’t want to share.
             </p>
           </div>
 

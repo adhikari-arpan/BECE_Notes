@@ -23,6 +23,7 @@ const NotFoundView = lazy(() => import('@/components/NotFoundView').then((m) => 
 const PrivacyView = lazy(() => import('@/components/PrivacyView').then((m) => ({ default: m.PrivacyView })));
 const CgpaView = lazy(() => import('@/components/CgpaView').then((m) => ({ default: m.CgpaView })));
 const GradingGuideView = lazy(() => import('@/components/GradingGuideView').then((m) => ({ default: m.GradingGuideView })));
+const FeedbackView = lazy(() => import('@/components/FeedbackView').then((m) => ({ default: m.FeedbackView })));
 const SyllabusView = lazy(() => import('@/components/SyllabusView').then((m) => ({ default: m.SyllabusView })));
 
 /** "Semester 1 (I)" / "Semester 1": people search with digits, the curriculum uses Roman numerals. */
@@ -37,7 +38,7 @@ let defaultDescription = '';
 /**
  * Routes:
  *   /                                 home
- *   /about, /contributors, /contributing, /privacy, /cgpa-calculator, /pu-grading-system
+ *   /about, /contributors, /contributing, /privacy, /feedback, /cgpa-calculator, /pu-grading-system
  *   /syllabus, /syllabus/semester-1   the syllabus: all semesters, or one semester's courses (follows the structure switch)
  *   /semester-1, /electives, ...      a semester (or collection)
  *   /semester-1/programming-in-c      a subject; ?file=<path in subject> opens a specific file
@@ -46,7 +47,7 @@ function App() {
   const { pathname, params } = useLocation();
   const [first, second] = pathname.split('/').filter(Boolean);
 
-  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy' || first === 'cgpa-calculator' || first === 'pu-grading-system' || first === 'syllabus') ? first : null;
+  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy' || first === 'feedback' || first === 'cgpa-calculator' || first === 'pu-grading-system' || first === 'syllabus') ? first : null;
   // /syllabus/semester-N
   const syllabusSemester = first === 'syllabus' && second ? semesters2025.find((s) => `semester-${s.id}` === second) : undefined;
   const semester = !staticPage && first && first !== 'syllabus' ? findSemester(first) : undefined;
@@ -82,6 +83,8 @@ function App() {
           ? 'Free CGPA and SGPA calculator for Pokhara University BE Computer Engineering (BECE), with every semester’s subjects, credit hours and the official PU grading scale.'
           : staticPage === 'pu-grading-system'
             ? clip(PU_GUIDE_DESCRIPTION)
+            : staticPage === 'feedback'
+              ? 'Send feedback about BECE Vault: report mistakes or missing notes, or suggest improvements. No email needed; you can stay anonymous.'
             : staticPage === 'syllabus'
               ? 'Pokhara University BE Computer Engineering syllabus: all 8 semesters with course codes, credit hours, lecture/tutorial/practical hours and course summaries.'
               : syllabusSemester
@@ -100,7 +103,7 @@ function App() {
 
   // A title per page, for browser tabs, bookmarks and search results.
   useEffect(() => {
-    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University' };
+    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University' };
     document.title = page === 'home' ? SITE_TITLE
       : staticPage ? `${titles[staticPage]} | BECE Vault`
       : syllabusSemester ? `${syllabusSemester.label} Syllabus — PU BE Computer Engineering | BECE Vault`
@@ -124,6 +127,7 @@ function App() {
           <nav className="top-actions">
             {page !== 'home' && <Link to="/" className="text-button">Home</Link>}
             {page !== 'cgpa-calculator' && <Link to="/cgpa-calculator" className="text-button">CGPA Calculator</Link>}
+            {page !== 'feedback' && <Link to="/feedback" className="text-button">Feedback</Link>}
             <ChiyaButton />
             <ThemeToggle />
           </nav>
@@ -141,6 +145,7 @@ function App() {
         {page === 'contributors' && <ContributorsView />}
         {page === 'contributing' && <ContributingView />}
         {page === 'privacy' && <PrivacyView />}
+        {page === 'feedback' && <FeedbackView />}
         {page === 'cgpa-calculator' && <CgpaView />}
         {page === 'pu-grading-system' && <GradingGuideView />}
         {page === 'syllabus' && <SyllabusView />}

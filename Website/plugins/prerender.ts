@@ -192,6 +192,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
     ['/contributors', 'Contributors', `The people who build and maintain ${opts.siteName}, the free notes library for Pokhara University Computer Engineering students.`],
     ['/contributing', 'Contribute', `How to contribute notes, question papers and lab reports to ${opts.siteName}. Contributors with 10+ relevant files are listed on the site.`],
     ['/cgpa-calculator', 'CGPA Calculator — Pokhara University BECE', `Free CGPA and SGPA calculator for Pokhara University BE Computer Engineering (BECE): every semester's subjects and credit hours with the official PU grading scale (A = 4.0 … F = 0.0).`],
+    ['/feedback', 'Website Feedback', `Send feedback about ${opts.siteName}: report mistakes or missing notes, or suggest improvements. No email needed; you can stay anonymous.`],
     ['/privacy', 'Privacy Policy', `Privacy policy of ${opts.siteName}: what information is collected, cookies, analytics and advertising.`],
   ];
   for (const [route, name, desc] of statics) {

@@ -760,6 +760,21 @@ a.footer-author:hover { color: #f7d77a; }
 .chiya-cup .chiya-steam path:nth-child(3) { animation-delay: .8s; }
 @keyframes chiya-steam { 0% { opacity: 0; transform: translateY(4px); } 40% { opacity: .8; } 100% { opacity: 0; transform: translateY(-6px); } }
 .chiya-banner-section { padding: 0 0 80px; }
+/* Home: link to the feedback form, above the chiya banner. */
+.feedback-strip-section { padding: 0 0 18px; }
+a.feedback-strip { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-radius: 16px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); color: var(--c-1d3f35); text-decoration: none; transition: border-color .18s, transform .18s, box-shadow .18s; }
+a.feedback-strip:hover { border-color: #e8c873; transform: translateY(-2px); box-shadow: 0 8px 18px rgba(var(--shadow-rgb),.08); }
+.feedback-strip-icon { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; background: #fff4cf; color: #b8860b; }
+:root[data-theme="dark"] .feedback-strip-icon { background: rgba(240,195,74,.14); color: #f0c34a; }
+.feedback-strip-text { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.feedback-strip-text strong { font-size: 15px; color: var(--c-0b1f1a); }
+.feedback-strip-text span { font-size: 13px; color: var(--c-4c5b54); }
+.feedback-strip-cta { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; font-weight: 700; font-size: 13px; color: #b8860b; }
+:root[data-theme="dark"] .feedback-strip-cta { color: #f0c34a; }
+@media (max-width: 560px) {
+  a.feedback-strip { flex-wrap: wrap; }
+  .feedback-strip-cta { width: 100%; padding-left: 54px; }
+}
 .chiya-banner { display: flex; align-items: center; gap: 22px; padding: 26px 28px; border-radius: 18px; border: 1px solid #efd98f; background: radial-gradient(120% 140% at 0% 0%, #fff4cf 0%, var(--c-fffdf0) 45%, var(--c-fbf8ec) 100%); }
 .chiya-banner-text { flex: 1; min-width: 0; }
 .chiya-banner-text h3 { margin: 4px 0 6px; font: 600 24px/1.2 'Playfair Display', serif; color: var(--c-0b1f1a); }

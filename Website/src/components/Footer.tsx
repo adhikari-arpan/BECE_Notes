@@ -1,4 +1,4 @@
-import { BookOpen, Calculator, GraduationCap, ScrollText, CircleHelp, Coffee, Cookie, Eye, Github, Heart, Home, Mail, MousePointerClick, ShieldCheck, Users } from 'lucide-react';
+import { BookOpen, Calculator, GraduationCap, ScrollText, CircleHelp, Coffee, Cookie, Eye, Github, Heart, Home, Mail, MessageSquareHeart, MousePointerClick, ShieldCheck, Users } from 'lucide-react';
 import { formatCount, useSiteStats } from '@/content/visits';
 import { Logo } from '@/components/Logo';
 import { openTipJar } from '@/content/tipJar';
@@ -56,6 +56,7 @@ export function Footer() {
 
           <nav className="footer-col" aria-label="Site">
             <h4>Site</h4>
+            <Link to="/feedback"><MessageSquareHeart size={15} /> Feedback</Link>
             <Link to="/privacy"><ShieldCheck size={15} /> Privacy Policy</Link>
             <button onClick={openCookieSettings}><Cookie size={15} /> Cookie settings</button>
             <a href={REPO_URL} target="_blank" rel="noreferrer"><Github size={15} /> GitHub</a>

@@ -1,0 +1,36 @@
+/* The "help collect past papers" guide on each semester's Past Question Collection page. */
+.pastq-empty { padding: 26px 22px 34px; overflow-y: auto; }
+.pastq-pane { height: 100%; overflow-y: auto; padding: 22px; box-sizing: border-box; }
+.pastq-guide { max-width: 720px; margin: 0 auto; display: grid; gap: 16px; }
+.pastq-head { display: flex; gap: 14px; align-items: flex-start; }
+.pastq-icon { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 13px; background: #fff4cf; color: #b8860b; }
+:root[data-theme="dark"] .pastq-icon { background: rgba(240, 195, 74, .14); color: #f0c34a; }
+.pastq-head h3 { margin: 0 0 4px; font: 600 20px/1.25 'Playfair Display', serif; color: var(--c-0b1f1a); }
+.pastq-head p { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--c-4c5b54); }
+.pastq-guide code { font: 500 11.5px 'DM Mono', monospace; padding: 1px 6px; border-radius: 6px; background: var(--c-f6f7f1); color: var(--c-1d3f35); overflow-wrap: anywhere; }
+.pastq-format { display: grid; gap: 6px; padding: 14px 16px; border-radius: 14px; border: 1px solid #efd98f; background: var(--c-fffdf0); }
+.pastq-format > span { font: 600 10.5px 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #b8860b; }
+.pastq-format > code { justify-self: start; font-size: 15px; font-weight: 600; padding: 4px 10px; }
+.pastq-format small { font-size: 12px; color: var(--c-5c6b64); }
+:root[data-theme="dark"] .pastq-format { border-color: #5c4a14; }
+.pastq-list { list-style: none; margin: 0; padding: 0; display: grid; border: 1px solid var(--c-e3e6de); border-radius: 14px; overflow: hidden; }
+.pastq-list li { display: grid; grid-template-columns: 16px minmax(0, 1fr) minmax(0, 1.3fr) auto; gap: 10px; align-items: center; padding: 9px 14px; font-size: 13px; color: var(--c-1d3f35); }
+.pastq-list li + li { border-top: 1px solid var(--c-eef1ec); }
+.pastq-list li > svg { color: var(--c-7d8b84); }
+.pastq-name { font-weight: 600; overflow-wrap: anywhere; }
+.pastq-list .pastq-example { justify-self: start; font-size: 10.5px; color: var(--c-5c6b64); }
+.pastq-count { font: 600 10.5px 'DM Mono', monospace; padding: 3px 9px; border-radius: 99px; background: var(--c-f6f7f1); color: var(--c-7d8b84); white-space: nowrap; }
+.pastq-count.has { background: #e3f3eb; color: #1f7a55; }
+:root[data-theme="dark"] .pastq-count.has { background: rgba(47, 143, 107, .2); color: #7fd3ad; }
+.pastq-note { display: flex; gap: 8px; align-items: flex-start; margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--c-5c6b64); }
+.pastq-note > svg { flex-shrink: 0; margin-top: 3px; color: #e5a927; }
+.pastq-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+a.pastq-primary, a.pastq-secondary { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 99px; font: 700 12.5px 'DM Sans', sans-serif; text-decoration: none; }
+a.pastq-primary { background: linear-gradient(135deg, #f0c34a, #e5a927); color: #0b1f1a; }
+a.pastq-primary:hover { background: linear-gradient(135deg, #f5cd5c, #eab332); }
+a.pastq-secondary { border: 1px solid var(--c-dde3dc); background: var(--c-f6f7f1); color: var(--c-1d3f35); }
+a.pastq-secondary:hover { border-color: #e8c873; }
+@media (max-width: 640px) {
+  .pastq-list li { grid-template-columns: 16px minmax(0, 1fr) auto; }
+  .pastq-list .pastq-example { grid-column: 2 / -1; grid-row: 2; }
+}

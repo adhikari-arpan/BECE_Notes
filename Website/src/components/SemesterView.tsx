@@ -146,19 +146,20 @@ export function SemesterView({ semester }: SemesterViewProps) {
             <Link
               key={subject.id}
               to={subjectPath(noteSemester, subject)}
-              className={`subject-card ${subject.files.length === 0 ? 'subject-card-empty' : ''} ${subject.kind === 'resource' ? 'subject-card-resource' : ''}`}
+              className={`subject-card ${subject.files.length === 0 && !subject.pastQuestions ? 'subject-card-empty' : ''} ${subject.kind === 'resource' ? 'subject-card-resource' : ''} ${subject.pastQuestions ? 'subject-card-pastq' : ''}`}
             >
               <span className="subject-card-glyph" data-glyph={subject.icon} aria-hidden="true" />
               <span className="subject-card-top">
                 <span className="subject-card-icon">{subject.icon}</span>
-                <span className="subject-card-code">{subject.kind === 'resource' ? 'Resources' : subject.code}</span>
+                <span className="subject-card-code">{subject.pastQuestions ? 'Past papers' : subject.kind === 'resource' ? 'Resources' : subject.code}</span>
               </span>
               <strong className="subject-card-name">{subject.name}</strong>
               {subject.description && <span className="subject-card-desc">{subject.description}</span>}
+              {subject.pastQuestions && <span className="subject-card-desc">Pokhara University exam papers for every subject. Have one? Help us collect them.</span>}
               <span className="subject-card-foot">
                 <span className="subject-card-meta">
                   {subject.credits !== null && <span>{plural(subject.credits, 'credit')}</span>}
-                  <span>{subject.files.length > 0 ? plural(subject.files.length, 'file') : 'No notes yet'}</span>
+                  <span>{subject.files.length > 0 ? plural(subject.files.length, 'file') : subject.pastQuestions ? 'Help collect papers' : 'No notes yet'}</span>
                 </span>
                 <span className="subject-card-go"><ArrowRight size={15} /></span>
               </span>

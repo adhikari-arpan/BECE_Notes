@@ -11,6 +11,7 @@ import {
   FileText,
   Layers,
   HardDrive,
+  MessageSquareHeart,
 } from 'lucide-react';
 import { allFiles, formatSize, isSyllabus, plural, semesterPath, semesters } from '@/content/notes';
 import { COUNTING_SINCE, formatCount, useSiteStats } from '@/content/visits';
@@ -81,7 +82,7 @@ export function HomeView() {
             // In the 2025 view, a semester's numbers come from its 2025 courses (wherever their notes are filed).
             const subjects = courses2025
               ? courses2025.map((c) => c.subject).filter((s): s is NonNullable<typeof s> => !!s)
-              : semester.subjects.filter((s) => !isSyllabus(s));
+              : semester.subjects.filter((s) => !isSyllabus(s) && !(s.pastQuestions && !s.files.length));
             const withNotes = subjects.filter((s) => s.files.length > 0).length;
             const files = subjects.reduce((sum, s) => sum + s.files.length, 0);
             const credits = courses2025
@@ -231,6 +232,17 @@ export function HomeView() {
             </details>
           ))}
         </div>
+      </section>
+
+      <section className="feedback-strip-section section-wrap">
+        <Link to="/feedback" className="feedback-strip">
+          <span className="feedback-strip-icon"><MessageSquareHeart size={20} /></span>
+          <span className="feedback-strip-text">
+            <strong>Spotted a mistake or have an idea?</strong>
+            <span>Tell us what to fix or add. It takes a minute, no email needed.</span>
+          </span>
+          <span className="feedback-strip-cta">Give feedback <ArrowRight size={15} /></span>
+        </Link>
       </section>
 
       <section className="chiya-banner-section section-wrap">

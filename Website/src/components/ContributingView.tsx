@@ -48,6 +48,14 @@ export function ContributingView() {
     return { html: doc.body.innerHTML, toc: items };
   }, []);
 
+  // A link to a section (e.g. /contributing#past-question-papers) opens there, after the page's scroll to top.
+  useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id) return;
+    const timer = setTimeout(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }), 0);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Highlight the section currently being read.
   const [active, setActive] = useState(toc[0]?.id ?? '');
   useEffect(() => {

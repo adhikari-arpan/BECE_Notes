@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
+import { PastQuestionsGuide } from '@/components/PastQuestionsGuide';
 import { navigate } from '@/content/router';
 import { Loader } from '@/components/Loader';
 import { DownloadButton } from '@/components/DownloadButton';
@@ -242,6 +243,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                   <FilePreview key={activeFile.id} file={activeFile} />
                 ) : (
                   <div className="preview-pane">
+                    {subject.pastQuestions ? <div className="pastq-pane"><PastQuestionsGuide semester={semester} /></div> : (
                     <div className="pick-file">
                       <div className="pick-file-icon"><MousePointerClick size={30} /></div>
                       <h3>Pick a file to start reading</h3>
@@ -251,9 +253,12 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                       </p>
                       <span className="pick-file-hint"><ArrowLeft size={14} /> {plural(subject.files.length, 'file')} in {subject.name}</span>
                     </div>
+                    )}
                   </div>
                 )}
               </div>
+            ) : subject.pastQuestions ? (
+              <div className="pastq-empty"><PastQuestionsGuide semester={semester} /></div>
             ) : (
               <div className="unsupported-preview subject-box-empty">
                 <div className="large-file-icon"><FolderOpen size={28} /></div>
