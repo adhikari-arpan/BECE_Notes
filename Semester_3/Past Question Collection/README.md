@@ -9,7 +9,8 @@ still small, so every paper you add helps the next batch. See [CONTRIBUTING.md](
 Semester_3/Past Question Collection/
 ├── <Subject Name>/
 │   └── 2025_Fall_CAL2.pdf                 ← exam papers, named as below
-└── (files for all subjects together, e.g. a full board paper set)
+└── College Assessments/
+    └── 2024_College_Assessments/          ← one folder per year: all-college / internal assessment papers
 ```
 
 ## File name: `Year_Spring/Fall_ShortForm`
@@ -17,6 +18,8 @@ Semester_3/Past Question Collection/
 - **Year** is when the exam was held, in AD (e.g. `2025`).
 - **Spring** or **Fall** is the exam term.
 - **ShortForm** is the subject's short form from the table below, e.g. `2024_Spring_AG.pdf`.
+- **College assessments** (internal exams, all-college assessments) go in `College Assessments/<Year>_College_Assessments/`,
+  e.g. `College Assessments/2024_College_Assessments/`. Name each file after its subject.
 - Use one file per paper, PDF preferred. Scan it clearly (see the scanning checklist in CONTRIBUTING.md).
 
 | Folder | Short form | Example file name |

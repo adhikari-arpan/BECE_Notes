@@ -51,8 +51,8 @@ export function PastQuestionsGuide({ semester }: { semester: Semester }) {
         <BookOpenCheck size={14} />
         <span>
           Put each paper directly in its subject’s folder. Electives use their own short form (e.g. <code>BDT</code> for
-          Big Data Technologies). A paper set covering all subjects can go
-          directly in <code>{PAST_QUESTIONS_FOLDER}/</code>.
+          Big Data Technologies). College assessments go in <code>College Assessments/2024_College_Assessments/</code>, one
+          folder per year, with each file named after its subject.
         </span>
       </p>
 

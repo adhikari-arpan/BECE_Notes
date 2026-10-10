@@ -111,7 +111,8 @@ Semester_N/Past Question Collection/
 ├── Algebra and Geometry/
 │   ├── 2025_Spring_AG.pdf      ← exam papers, directly in the subject's folder
 │   └── 2024_Spring_AG.pdf
-└── (a paper set covering all subjects can go here directly)
+└── College Assessments/
+    └── 2024_College_Assessments/  ← one folder per year: internal / all-college assessment papers
 ```
 
 - 📝 **File name: `Year_Spring/Fall_ShortForm`**
@@ -123,6 +124,9 @@ Semester_N/Past Question Collection/
   before-2025 semester order; papers from the 2025 curriculum go in the same subject's folder.
 - 🎓 **Electives:** use the elective's short form, e.g. `2025_Spring_BDT.pdf` (Big Data Technologies) in `Elective III/`.
 - 📄 **One paper per file**, PDF preferred, scanned clearly (see the scanning checklist above).
+- 🏫 **College assessments** (internal exams, all-college assessments) go in `College Assessments/<Year>_College_Assessments/`.
+  - Example: `College Assessments/2024_College_Assessments/DSA-internal-exam-all-clz.pdf`
+  - Name each file after its subject. The website shows them in a College Assessments section, grouped by year.
 - 🔁 **Check first** that the same paper (year + term) isn't already there.
 
 > 💡 The website lists every subject's folder and shows which papers are still needed on each semester's
