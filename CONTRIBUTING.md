@@ -56,13 +56,14 @@ Every semester and subject follows the same layout, so students always know wher
 ```text
 Semester_N/
 ├── _Syllabus/                     ← syllabus files of all subjects in this semester
+├── Past Question Collection/      ← past exam papers, one folder per subject (see below)
 ├── Subject Name/
 │   ├── _Syllabus/                 ← syllabus of this subject only
 │   ├── Unit 1_Unit Name/          ← one folder per unit (lesson)
 │   ├── Unit 2_Unit Name/
 │   ├── ...
 │   ├── Extra Notes/               ← detailed explanations, solutions to important questions
-│   ├── Question Collection/       ← past and assessment questions for this subject
+│   ├── Question Collection/       ← question banks and practice questions for this subject
 │   ├── NCIT Lab Works/            ← college-specific material, named after the college
 │   ├── NCIT Assignments/
 │   ├── (other relevant folders)
@@ -94,10 +95,42 @@ Semester_N/
 
 - Use **clear, descriptive names**:
   - `Unit 2_Process Scheduling.pdf`
-  - `Question Collection 2081 Fall.pdf`
+  - `2024_Fall_Programming_in_C.pdf` (past papers, see below)
   - `Lab 3_Linked List.pdf`
 - Use **spaces or underscores**, not special characters like `#`, `%`, `?` or `&`.
 - **Don't put your name in every file name.** Credit goes in the pull request and on the Contributors page.
+
+### Past question papers
+
+We're building a collection of **Pokhara University past exam papers** for every subject, and it's still small, so
+these are especially welcome. Each semester has a `Past Question Collection` folder with one folder per subject:
+
+```text
+Semester_N/Past Question Collection/
+├── README.md                              ← the folder names and an example file name for each subject
+├── Programming in C/
+│   ├── 2025_Fall_Programming_in_C.pdf      ← end-semester exam papers
+│   ├── 2024_Fall_Programming_in_C.pdf
+│   └── Assessment Questions/              ← internal / assessment papers (optional)
+│       └── 2025_Fall_Programming_in_C_NCIT.pdf
+└── (a paper set covering all subjects can go here directly)
+```
+
+- 📝 **File name: `Year_Fall/Spring_SubjectName`**
+  - Example: `2024_Spring_Data_Structure_and_Algorithm.pdf`
+  - **Year** is when the exam was held, in AD.
+  - **Fall** or **Spring** is the exam term.
+  - **SubjectName** is the full subject name with `_` instead of spaces (`and` instead of `&`).
+- 📂 **Put the paper in its subject's folder** in the semester where that subject is taught. Folders follow the
+  before-2025 semester order; papers from the 2025 curriculum go in the same subject's folder.
+- 🏫 **Assessment papers** go in the subject's `Assessment Questions/` folder, named the same way **plus the college**.
+  - Example: `2025_Fall_Programming_in_C_NCIT.pdf`
+- 🎓 **Electives:** use the elective's own name, e.g. `2025_Spring_Big_Data_Technologies.pdf` in `Elective III/`.
+- 📄 **One paper per file**, PDF preferred, scanned clearly (see the scanning checklist above).
+- 🔁 **Check first** that the same paper (year + term) isn't already there.
+
+> 💡 The website lists every subject's folder and shows which papers are still needed on each semester's
+> **Past Question Collection** page.
 
 ## 4. Commit messages
 
