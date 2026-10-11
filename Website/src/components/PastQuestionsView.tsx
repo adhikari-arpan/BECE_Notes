@@ -44,10 +44,14 @@ const termOf = (f: NoteFile) => (/spring/i.test(f.name) ? 'Spring' : /fall/i.tes
 const isAssessment = (f: NoteFile) => /assessment|internal|term[-\s]?test/i.test(`${f.folder}/${f.name}`);
 const baseName = (f: NoteFile) => f.name.replace(/\.[^.]+$/, '');
 
-/** "2024_Spring_AG.pdf" → "Spring 2024 exam"; anything else → its name, tidied. */
+/**
+ * "2024_Spring_AG.pdf" → "Spring 2024 exam"; anything after the short form is kept, so
+ * "2024_Spring_TOC_Old.pdf" → "Spring 2024 exam (Old)" and "…_AG_2.jpg" → "Spring 2024 exam (2)".
+ * Anything else → its name, tidied.
+ */
 function titleOf(f: NoteFile) {
-  const m = /^(\d{4})_(Spring|Fall)_/i.exec(f.name);
-  if (m) return `${m[2][0].toUpperCase()}${m[2].slice(1).toLowerCase()} ${m[1]} exam`;
+  const m = /^(\d{4})_(Spring|Fall)_[^_.]+(?:_([^.]+))?\./i.exec(f.name);
+  if (m) return `${m[2][0].toUpperCase()}${m[2].slice(1).toLowerCase()} ${m[1]} exam${m[3] ? ` (${m[3].replace(/_+/g, ' ')})` : ''}`;
   return baseName(f).replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
