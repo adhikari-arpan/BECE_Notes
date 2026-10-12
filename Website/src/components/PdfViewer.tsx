@@ -254,18 +254,38 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
     setZoom('custom', next);
   }, [zoom, setZoom]);
 
-  // Ctrl/Cmd + mouse wheel zooms the document instead of the page.
+  // Ctrl/Cmd + mouse wheel (and touchpad pinch, which the browser reports the same way) zooms the document.
+  // Like Edge/Chrome, the change is proportional to how far the wheel or fingers move: a touchpad's many
+  // tiny events glide smoothly, and one mouse-wheel notch is about 10%, instead of a full step per event.
+  const zoomRef = useRef(zoom);
+  zoomRef.current = zoom;
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
+    let target = zoomRef.current;
+    let frame = 0;
     const onWheel = (e: WheelEvent) => {
       if (!e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
-      stepZoom(e.deltaY < 0 ? 1 : -1);
+      if (!frame) target = zoomRef.current;
+      const pixels = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 400 : 1);
+      // ~100 px (one mouse notch) ≈ ±10%; capped so one event never jumps more than ~25%.
+      const factor = Math.min(1.25, Math.max(0.8, Math.exp(-pixels * 0.001)));
+      target = Math.min(5, Math.max(0.25, target * factor));
+      // Apply at most once per frame, so a burst of pinch events becomes one smooth update.
+      if (!frame) {
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          setZoom('custom', Math.round(target * 100) / 100);
+        });
+      }
     };
     el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
-  }, [stepZoom, doc]);
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      cancelAnimationFrame(frame);
+    };
+  }, [setZoom, doc]);
 
   const onScroll = () => {
     setPopover(null);
