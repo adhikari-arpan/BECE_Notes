@@ -48,7 +48,7 @@ export function PokharaUniversityView() {
       <section className="content-page section-wrap">
         <div className="content-page-body">
           <div className="content-page-section">
-            <p className="content-page-lead">
+            <p className="content-page-lead pu-lead">
               Pokhara University (PU, also written PoU) is a public university in Nepal, headquartered in Pokhara, Kaski.
               Founded in 1997, it runs its own schools and affiliates colleges across the country, including the colleges
               that teach the Bachelor of Engineering in Computer Engineering (BECE) covered by BECE Vault.

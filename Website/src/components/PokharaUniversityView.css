@@ -1,6 +1,7 @@
 /* /pokhara-university only. */
 .pu-hero { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
 .pu-hero-logo { width: auto; height: 74px; padding: 8px 14px; border-radius: 14px; background: #fff; box-shadow: 0 2px 10px rgba(var(--shadow-rgb), .08); }
+.content-page-section .content-page-lead.pu-lead { text-align: justify !important; hyphens: auto; -webkit-hyphens: auto; }
 .pu-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0 0; }
 .pu-facts > div { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); }
 .pu-facts dt { font: 600 10px 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #b8860b; margin-bottom: 4px; }
