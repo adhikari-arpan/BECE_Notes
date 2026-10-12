@@ -1,0 +1,28 @@
+/* /pokhara-university only. */
+.pu-hero { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.pu-hero-logo { width: auto; height: 74px; padding: 8px 14px; border-radius: 14px; background: #fff; box-shadow: 0 2px 10px rgba(var(--shadow-rgb), .08); }
+.pu-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0 0; }
+.pu-facts > div { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); }
+.pu-facts dt { font: 600 10px 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #b8860b; margin-bottom: 4px; }
+:root[data-theme="dark"] .pu-facts dt { color: #f0c34a; }
+.pu-facts dd { margin: 0; font-size: 13.5px; color: var(--c-0b1f1a); }
+.pu-facts a { display: inline-flex; align-items: center; gap: 4px; }
+.pu-faculties { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.content-page-section .pu-faculties li { display: grid; gap: 2px; padding: 10px 14px; border-left: 3px solid #f0c34a; background: var(--c-fffdf0); border-radius: 0 10px 10px 0; text-align: left; }
+.pu-faculties strong { font-size: 14px; color: var(--c-0b1f1a); }
+.pu-faculties span { font-size: 13px; color: var(--c-4c5b54); }
+.pu-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+a.pu-link { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); color: var(--c-1d3f35); text-decoration: none; transition: border-color .15s, transform .15s; }
+a.pu-link:hover { border-color: #e8c873; transform: translateY(-2px); }
+a.pu-link > svg:first-child { flex-shrink: 0; color: #b8860b; }
+:root[data-theme="dark"] a.pu-link > svg:first-child { color: #f0c34a; }
+a.pu-link > span { flex: 1; min-width: 0; display: grid; gap: 1px; }
+a.pu-link strong { font-size: 13.5px; color: var(--c-0b1f1a); }
+a.pu-link small { font-size: 12px; color: var(--c-5c6b64); }
+.pu-link-go { flex-shrink: 0; color: var(--c-7d8b84); }
+.pu-source { display: flex; gap: 8px; align-items: flex-start; margin: 10px 0 60px; font-size: 12px; line-height: 1.6; color: var(--c-7d8b84); }
+.pu-source > svg { flex-shrink: 0; margin-top: 3px; }
+@media (max-width: 640px) {
+  .pu-facts, .pu-links { grid-template-columns: minmax(0, 1fr); }
+  .pu-hero-logo { height: 56px; }
+}

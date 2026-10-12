@@ -25,6 +25,7 @@ const PrivacyView = lazy(() => import('@/components/PrivacyView').then((m) => ({
 const CgpaView = lazy(() => import('@/components/CgpaView').then((m) => ({ default: m.CgpaView })));
 const GradingGuideView = lazy(() => import('@/components/GradingGuideView').then((m) => ({ default: m.GradingGuideView })));
 const PastQuestionsIndexView = lazy(() => import('@/components/PastQuestionsIndexView').then((m) => ({ default: m.PastQuestionsIndexView })));
+const PokharaUniversityView = lazy(() => import('@/components/PokharaUniversityView').then((m) => ({ default: m.PokharaUniversityView })));
 const FeedbackView = lazy(() => import('@/components/FeedbackView').then((m) => ({ default: m.FeedbackView })));
 const SyllabusView = lazy(() => import('@/components/SyllabusView').then((m) => ({ default: m.SyllabusView })));
 
@@ -40,7 +41,7 @@ let defaultDescription = '';
 /**
  * Routes:
  *   /                                 home
- *   /about, /contributors, /contributing, /privacy, /feedback, /past-questions, /cgpa-calculator, /pu-grading-system
+ *   /about, /contributors, /contributing, /privacy, /feedback, /past-questions, /pokhara-university, /cgpa-calculator, /pu-grading-system
  *   /syllabus, /syllabus/semester-1   the syllabus: all semesters, or one semester's courses (follows the structure switch)
  *   /past-questions/semester-1        a semester's past papers; ?file=<path in its folder> opens one
  *   /semester-1, /electives, ...      a semester (or collection)
@@ -50,7 +51,7 @@ function App() {
   const { pathname, params } = useLocation();
   const [first, second] = pathname.split('/').filter(Boolean);
 
-  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy' || first === 'feedback' || first === 'past-questions' || first === 'cgpa-calculator' || first === 'pu-grading-system' || first === 'syllabus') ? first : null;
+  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy' || first === 'feedback' || first === 'past-questions' || first === 'pokhara-university' || first === 'cgpa-calculator' || first === 'pu-grading-system' || first === 'syllabus') ? first : null;
   // /syllabus/semester-N
   const syllabusSemester = first === 'syllabus' && second ? semesters2025.find((s) => `semester-${s.id}` === second) : undefined;
   // /past-questions/semester-N
@@ -89,6 +90,8 @@ function App() {
           ? 'Free CGPA and SGPA calculator for Pokhara University BE Computer Engineering (BECE), with every semester’s subjects, credit hours and the official PU grading scale.'
           : staticPage === 'pu-grading-system'
             ? clip(PU_GUIDE_DESCRIPTION)
+            : staticPage === 'pokhara-university'
+              ? 'About Pokhara University (PU), Nepal: established 1997, its faculties, schools and affiliated colleges, with links to the BECE syllabus and PU grading guide.'
             : staticPage === 'past-questions'
               ? 'Pokhara University BE Computer Engineering past exam papers and college assessments for all 8 semesters, sorted by subject and year.'
             : staticPage === 'feedback'
@@ -113,7 +116,7 @@ function App() {
 
   // A title per page, for browser tabs, bookmarks and search results.
   useEffect(() => {
-    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'past-questions': 'Past Questions — Pokhara University BE Computer Engineering', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University' };
+    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'past-questions': 'Past Questions — Pokhara University BE Computer Engineering', 'pokhara-university': 'Pokhara University (PU) — About', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University' };
     document.title = page === 'home' ? SITE_TITLE
       : staticPage ? `${titles[staticPage]} | BECE Vault`
       : syllabusSemester ? `${syllabusSemester.label} Syllabus — PU BE Computer Engineering | BECE Vault`
@@ -158,6 +161,7 @@ function App() {
         {page === 'privacy' && <PrivacyView />}
         {page === 'feedback' && <FeedbackView />}
         {page === 'past-questions' && <PastQuestionsIndexView />}
+        {page === 'pokhara-university' && <PokharaUniversityView />}
         {page === 'past-questions-semester' && <PastQuestionsPage key={pastQuestions!.semester.id} semester={pastQuestions!.semester} requestedFile={initialPaper} />}
         {page === 'cgpa-calculator' && <CgpaView />}
         {page === 'pu-grading-system' && <GradingGuideView />}

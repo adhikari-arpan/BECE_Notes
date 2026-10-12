@@ -215,6 +215,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
     ['/contributors', 'Contributors', `The people who build and maintain ${opts.siteName}, the free notes library for Pokhara University Computer Engineering students.`],
     ['/contributing', 'Contribute', `How to contribute notes, question papers and lab reports to ${opts.siteName}. Contributors with 10+ relevant files are listed on the site.`],
     ['/cgpa-calculator', 'CGPA Calculator — Pokhara University BECE', `Free CGPA and SGPA calculator for Pokhara University BE Computer Engineering (BECE): every semester's subjects and credit hours with the official PU grading scale (A = 4.0 … F = 0.0).`],
+    ['/pokhara-university', 'Pokhara University (PU) — About', `About Pokhara University (PU), Nepal: established 1997, faculties, schools and affiliated colleges, with BE Computer Engineering syllabus and grading guides on ${opts.siteName}.`],
     ['/past-questions', 'Past Questions — Pokhara University BE Computer Engineering', `Pokhara University BE Computer Engineering past exam papers and college assessments for all 8 semesters, sorted by subject and year, on ${opts.siteName}.`],
     ['/feedback', 'Website Feedback', `Send feedback about ${opts.siteName}: report mistakes or missing notes, or suggest improvements. No email needed; you can stay anonymous.`],
     ['/privacy', 'Privacy Policy', `Privacy policy of ${opts.siteName}: what information is collected, cookies, analytics and advertising.`],
@@ -401,7 +402,7 @@ function homeShell(): string {
     + `<a href="/" class="brand-lockup"><div class="brand-mark">${logo}</div><div><span class="brand-name">BECE Vault</span><span class="brand-divider">/</span><span class="brand-context">Notes library</span></div></a>`
     + '<nav class="top-actions"><a href="/past-questions" class="text-button">Past Questions</a><a href="/cgpa-calculator" class="text-button">CGPA Calculator</a></nav></div></header><main>'
     + '<section class="hero section-wrap"><div class="hero-copy">'
-    + '<div class="eyebrow"><span class="eyebrow-line"></span> Pokhara University · BECE Notes</div>'
+    + '<div class="eyebrow"><span class="eyebrow-line"></span> <a href="/pokhara-university" class="eyebrow-link">Pokhara University</a> · BECE</div>'
     + '<h1>Your BECE notes,<br><em>in one place.</em></h1>'
     + '<p class="hero-lede">Free, semester-wise notes for Pokhara University BE Computer Engineering: every lecture note, past question, lab report and syllabus across your BECE journey. Pick a semester to explore its subjects.</p>'
     + `<a href="/syllabus" class="hero-badge">${badge} Based on the new PU syllabus</a>`
