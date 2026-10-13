@@ -283,8 +283,7 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
   }, [zoom, setZoom]);
 
   // Ctrl/Cmd + mouse wheel (and touchpad pinch, which the browser reports the same way) zooms the document.
-  // Like Edge/Chrome, the change is proportional to how far the wheel or fingers move: a touchpad's many
-  // tiny events glide smoothly, and one mouse-wheel notch is about 10%, instead of a full step per event.
+  // Like Edge/Chrome: a pinch follows how far the fingers move, and one mouse-wheel notch is about 10%.
   const zoomRef = useRef(zoom);
   zoomRef.current = zoom;
   useEffect(() => {
@@ -297,8 +296,11 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
       e.preventDefault();
       if (!frame) target = zoomRef.current;
       const pixels = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 400 : 1);
-      // ~100 px (one mouse notch) ≈ ±10%; capped so one event never jumps more than ~25%.
-      const factor = Math.min(1.25, Math.max(0.8, Math.exp(-pixels * 0.001)));
+      // Mouse wheel (big, notched deltas): ±10% per notch, like the browser's own zoom.
+      // Touchpad pinch (many small deltas): follows the fingers, the way pdf.js / Chrome do (exp(-delta / 100)).
+      const factor = Math.abs(pixels) >= 50
+        ? (pixels < 0 ? 1.1 : 1 / 1.1)
+        : Math.min(1.15, Math.max(1 / 1.15, Math.exp(-pixels / 100)));
       target = Math.min(5, Math.max(0.25, target * factor));
       // Apply at most once per frame, so a burst of pinch events becomes one smooth update.
       if (!frame) {
