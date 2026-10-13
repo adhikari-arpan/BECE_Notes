@@ -26,6 +26,7 @@ import { semesters2025 } from '@/content/curriculum2025';
 import { SITE_FAQS } from '@/content/siteFaq';
 import { useStructure } from '@/content/structure';
 import { StructureToggle } from '@/components/StructureToggle';
+import { SubjectSearch } from '@/components/SubjectSearch';
 
 const courseSemesters = semesters.filter((s) => /^\d+$/.test(s.id));
 const subjectsWithNotes = semesters.flatMap((s) => s.subjects).filter((s) => !isSyllabus(s) && s.files.length > 0).length;
@@ -83,6 +84,7 @@ export function HomeView() {
               : 'Joined in 2025 or later? Switch to see your semesters.'}
           </span>
         </div>
+        <SubjectSearch structure={structure}>
         <div className="semester-cards">
           {semesters.map((semester) => {
             const courses2025 = structure === '2025' ? semesters2025.find((s) => String(s.id) === semester.id)?.courses : undefined;
@@ -121,6 +123,7 @@ export function HomeView() {
             );
           })}
         </div>
+        </SubjectSearch>
       </section>
 
       <section className="about-section section-wrap">
