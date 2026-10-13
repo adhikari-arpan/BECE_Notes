@@ -3,8 +3,8 @@ import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Download, ExternalLin
 import { Link } from '@/components/Link';
 import { DownloadButton } from '@/components/DownloadButton';
 import { PastQuestionsGuide } from '@/components/PastQuestionsGuide';
-import { navigate } from '@/content/router';
-import { formatSize, pastQuestionsFor, pastQuestionsPath, plural, semesterPath, type NoteFile, type Semester } from '@/content/notes';
+import { navigate, useLocation } from '@/content/router';
+import { formatSize, normalizeName, pastQuestionsFor, pastQuestionsPath, plural, semesterPath, type NoteFile, type Semester } from '@/content/notes';
 import { pastQuestionSubjects } from '@/content/pastQuestions';
 import { STRUCTURE_LABELS, useStructure } from '@/content/structure';
 import './PastQuestionsView.css';
@@ -113,8 +113,10 @@ export function PastQuestionsView({ semester, requestedFile, renderPreview }: Pr
   const allPapers = sections.flatMap((s) => s.papers);
   // One subject at a time (or all of them): the one picked, else the one holding the paper in the link, else the first.
   const [picked, setPicked] = useState<string | null>(null);
+  const wanted = useLocation().params.get('subject'); // from subject search on /past-questions
   const subjectKey = picked && (picked === ALL || sections.some((s) => s.key === picked)) ? picked
-    : sections.find((s) => requestedFile && s.papers.includes(requestedFile))?.key ?? sections[0]?.key ?? ALL;
+    : sections.find((s) => requestedFile && s.papers.includes(requestedFile))?.key
+      ?? sections.find((s) => wanted && normalizeName(s.title) === normalizeName(wanted))?.key ?? sections[0]?.key ?? ALL;
   const inSubject = subjectKey === ALL ? sections : sections.filter((s) => s.key === subjectKey);
   const years = [...new Set(inSubject.flatMap((s) => s.papers).map(yearOf).filter((y): y is string => !!y))].sort((a, b) => Number(b) - Number(a));
   const activeYear = year && years.includes(year) ? year : null;

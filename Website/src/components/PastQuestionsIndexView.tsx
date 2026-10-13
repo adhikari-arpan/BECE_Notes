@@ -1,7 +1,8 @@
-import { ArrowLeft, ArrowRight, FileStack, FileUp } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, ArrowRight, FileStack, FileUp, Search, X } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { StructureToggle } from '@/components/StructureToggle';
-import { pastQuestionCollections, pastQuestionsPath, plural } from '@/content/notes';
+import { normalizeName, pastQuestionCollections, pastQuestionsPath, plural } from '@/content/notes';
 import { pastQuestionSubjects } from '@/content/pastQuestions';
 import { useStructure } from '@/content/structure';
 import './PastQuestionsIndexView.css';
@@ -20,6 +21,18 @@ export function PastQuestionsIndexView() {
       return { semester, papers, covered: subjects.filter((s) => s.files.length).length, total: subjects.length };
     });
   const totalPapers = cards.reduce((a, c) => a + c.papers, 0);
+
+  // Search by subject: name, folder or short form ("dsa", "data struct", "AI"), across every semester.
+  const [query, setQuery] = useState('');
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const results = words.length ? pastQuestionCollections.flatMap(({ semester }) =>
+    pastQuestionSubjects(semester, structure)
+      .filter((s) => {
+        const hay = `${s.name} ${s.folder} ${s.short ?? ''}`.toLowerCase();
+        const compact = normalizeName(hay);
+        return words.every((w) => hay.includes(w) || compact.includes(normalizeName(w)));
+      })
+      .map((s) => ({ ...s, semester }))) : [];
 
   return (
     <>
@@ -40,7 +53,26 @@ export function PastQuestionsIndexView() {
       </section>
 
       <section className="section-wrap pqi-page">
-        <div className="pqi-grid">
+        <label className="pqi-search">
+          <Search size={18} />
+          <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by subject, e.g. DSA, Calculus, Machine Learning" aria-label="Search past questions by subject" />
+          {query && <button type="button" onClick={() => setQuery('')} aria-label="Clear search"><X size={16} /></button>}
+        </label>
+
+        {words.length > 0 && (
+          <div className="pqi-results" aria-live="polite">
+            {results.length ? results.map((r) => (
+              <Link key={`${r.semester.id}:${r.folder}`} to={`${pastQuestionsPath(r.semester)}?subject=${encodeURIComponent(r.folder)}`} className={`pqi-result ${r.files.length ? '' : 'is-empty'}`}>
+                <span className="pqi-result-name"><strong>{r.name}</strong>{r.short && <b>{r.short}</b>}</span>
+                <span className="pqi-result-sem">{r.semester.label}{r.home !== r.semester ? ` · filed in ${r.home.label}` : ''}</span>
+                <span className="pqi-result-count">{r.files.length ? plural(r.files.length, 'paper') : 'No papers yet'}</span>
+                <ArrowRight size={15} />
+              </Link>
+            )) : <p className="pqi-noresult">No subject matches “{query}”. Try a shorter word or a short form like “DSA”.</p>}
+          </div>
+        )}
+
+        <div className="pqi-grid" style={words.length ? { display: 'none' } : undefined}>
           {cards.map(({ semester, papers, covered, total }) => (
             <Link key={semester.id} to={pastQuestionsPath(semester)} className={`pqi-card ${papers ? '' : 'is-empty'}`}>
               <span className="pqi-card-top">
