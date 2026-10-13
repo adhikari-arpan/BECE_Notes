@@ -14,7 +14,7 @@ import {
   FileStack,
   MessageSquareHeart,
 } from 'lucide-react';
-import { allFiles, formatSize, isSyllabus, pastQuestionCollections, plural, semesterPath, semesters } from '@/content/notes';
+import { allFiles, isSyllabus, pastQuestionCollections, plural, semesterPath, semesters } from '@/content/notes';
 import { COUNTING_SINCE, formatCount, useSiteStats } from '@/content/visits';
 import { CountUp } from '@/components/CountUp';
 import { Logo } from '@/components/Logo';
@@ -35,6 +35,10 @@ const totalSubjects = courseSemesters.flatMap((s) => s.subjects).filter((s) => s
 const totalBytes = allFiles.reduce((sum, f) => sum + f.size, 0);
 /** Past exam and assessment papers across every semester's Past Question Collection. */
 const questionPapers = pastQuestionCollections.reduce((sum, c) => sum + c.files.length, 0);
+/** Total size split into a number that can count up and its unit, matching formatSize (e.g. 3.1 + " GB"). */
+const [sizeValue, sizeUnit, sizeDecimals] = totalBytes >= 1024 ** 3
+  ? [Math.round((totalBytes / 1024 ** 3) * 10) / 10, ' GB', 1]
+  : [Math.round((totalBytes / 1024 ** 2) * 10) / 10, ' MB', 1];
 
 export function HomeView() {
   const { visitors, pageViews, todayVisitors, todayPageViews } = useSiteStats();
@@ -207,22 +211,22 @@ export function HomeView() {
         <div className="stats-grid stats-grid-library">
           <div className="stat-card">
             <FileText size={18} />
-            <strong>{formatCount(allFiles.length)}</strong>
-            <span>Files shared</span>
+            <strong><CountUp value={allFiles.length} durationMs={1100} whenVisible /></strong>
+            <span>Note files</span>
           </div>
           <Link to="/past-questions" className="stat-card stat-card-link">
             <FileStack size={18} />
-            <strong>{formatCount(questionPapers)}</strong>
+            <strong><CountUp value={questionPapers} durationMs={1100} whenVisible /></strong>
             <span>Past question papers</span>
           </Link>
           <div className="stat-card">
             <Layers size={18} />
-            <strong>{subjectsWithNotes}</strong>
+            <strong><CountUp value={subjectsWithNotes} durationMs={1100} whenVisible /></strong>
             <span>Subjects with notes</span>
           </div>
           <div className="stat-card">
             <HardDrive size={18} />
-            <strong>{formatSize(totalBytes)}</strong>
+            <strong><CountUp value={sizeValue} decimals={sizeDecimals} suffix={sizeUnit} durationMs={1100} whenVisible /></strong>
             <span>Of study material</span>
           </div>
         </div>
