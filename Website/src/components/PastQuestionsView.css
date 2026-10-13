@@ -73,3 +73,24 @@
 .pastq-notes-link { margin: 26px 0 0; font-size: 13px; }
 .pastq-notes-link a { display: inline-flex; align-items: center; gap: 6px; color: var(--c-1d3f35); font-weight: 600; text-decoration: none; }
 .pastq-notes-link a:hover { color: #b8860b; }
+
+/* Subject list on the left (sticky), the chosen subject's papers on the right. */
+.pastq-layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 28px; align-items: start; }
+.pastq-subjects { position: sticky; top: 84px; display: grid; gap: 6px; max-height: calc(100vh - 110px); overflow-y: auto; padding: 2px; }
+.pastq-subjects button { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); color: var(--c-1d3f35); text-align: left; cursor: pointer; transition: border-color .15s, background .15s; }
+.pastq-subjects button:hover { border-color: #e8c873; }
+.pastq-subjects button:focus-visible { outline: 2px solid #e5a927; outline-offset: 2px; }
+.pastq-subjects button.is-active { background: #fff4cf; border-color: #e8c873; color: #0b1f1a; }
+:root[data-theme="dark"] .pastq-subjects button.is-active { background: rgba(240, 195, 74, .14); border-color: rgba(240, 195, 74, .5); color: #f0c34a; }
+.pastq-subject-name { font-size: 13.5px; font-weight: 600; line-height: 1.3; }
+.pastq-subject-meta { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; font: 600 11px 'DM Mono', monospace; color: var(--c-7d8b84); }
+.pastq-subject-meta b { padding: 1px 6px; border-radius: 6px; background: var(--c-f6f7f1); color: #8a6508; font-weight: 600; }
+.pastq-subject-all { border-style: dashed !important; }
+.pastq-main { min-width: 0; }
+.pastq-main .pastq-years { position: sticky; top: 72px; z-index: 5; padding: 8px 0; margin-bottom: 14px; background: var(--c-f7f7f2); }
+@media (max-width: 900px) {
+  .pastq-layout { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .pastq-subjects { position: static; display: flex; overflow-x: auto; max-height: none; padding-bottom: 6px; scrollbar-width: thin; }
+  .pastq-subjects button { width: auto; flex-shrink: 0; }
+  .pastq-subject-name { white-space: nowrap; }
+}

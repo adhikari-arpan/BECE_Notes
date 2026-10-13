@@ -42,6 +42,8 @@ function yearGroups(papers: NoteFile[]) {
 const yearOf = (f: NoteFile) => /(?:^|[^0-9])((?:19|20)\d{2})(?![0-9])/.exec(`${f.folder}/${f.name}`)?.[1] ?? null;
 const termOf = (f: NoteFile) => (/spring/i.test(f.name) ? 'Spring' : /fall/i.test(f.name) ? 'Fall' : null);
 const isAssessment = (f: NoteFile) => /assessment|internal|term[-\s]?test/i.test(`${f.folder}/${f.name}`);
+/** The "All subjects" choice in the subject list. */
+const ALL = '__every';
 const baseName = (f: NoteFile) => f.name.replace(/\.[^.]+$/, '');
 
 /**
@@ -60,8 +62,8 @@ const newestFirst = (a: NoteFile, b: NoteFile) =>
   Number(yearOf(b) ?? 0) - Number(yearOf(a) ?? 0) || (termOf(b) === 'Fall' ? 1 : 0) - (termOf(a) === 'Fall' ? 1 : 0) || a.name.localeCompare(b.name, undefined, { numeric: true });
 
 /**
- * A semester's Past Question Collection: every paper on one page, grouped by subject (in curriculum
- * order), with year and term tags and a year filter. Opening a paper slides a viewer in from the right;
+ * A semester's Past Question Collection: pick a subject (in curriculum order) and its papers are listed,
+ * newest first, with year and term tags and a year filter. Opening a paper slides a viewer in from the right;
  * closing it returns to the list. Folders like `2024_College_Assessments` come last. Follows the
  * curriculum switch: in the 2025 view it lists that semester's 2025 subjects, wherever their papers are filed.
  */
@@ -109,8 +111,15 @@ export function PastQuestionsView({ semester, requestedFile, renderPreview }: Pr
   }, [subjects, semester, structure, collectionFiles]);
 
   const allPapers = sections.flatMap((s) => s.papers);
-  const years = [...new Set(allPapers.map(yearOf).filter((y): y is string => !!y))].sort((a, b) => Number(b) - Number(a));
-  const shown = sections.map((s) => ({ ...s, papers: year ? s.papers.filter((f) => yearOf(f) === year) : s.papers })).filter((s) => s.papers.length);
+  // One subject at a time (or all of them): the one picked, else the one holding the paper in the link, else the first.
+  const [picked, setPicked] = useState<string | null>(null);
+  const subjectKey = picked && (picked === ALL || sections.some((s) => s.key === picked)) ? picked
+    : sections.find((s) => requestedFile && s.papers.includes(requestedFile))?.key ?? sections[0]?.key ?? ALL;
+  const inSubject = subjectKey === ALL ? sections : sections.filter((s) => s.key === subjectKey);
+  const years = [...new Set(inSubject.flatMap((s) => s.papers).map(yearOf).filter((y): y is string => !!y))].sort((a, b) => Number(b) - Number(a));
+  const activeYear = year && years.includes(year) ? year : null;
+  const shown = inSubject.map((s) => ({ ...s, papers: activeYear ? s.papers.filter((f) => yearOf(f) === activeYear) : s.papers })).filter((s) => s.papers.length);
+  const pick = (key: string) => { setPicked(key); setYear(null); };
   const order = shown.flatMap((s) => (s.byYear ? yearGroups(s.papers).flatMap(([, papers]) => papers) : s.papers));
 
   const paperRow = (f: NoteFile, inYearGroup: boolean) => {
@@ -163,36 +172,55 @@ export function PastQuestionsView({ semester, requestedFile, renderPreview }: Pr
       </section>
 
       <section className="section-wrap pastq-page">
-        {years.length > 1 && (
-          <div className="pastq-years" role="group" aria-label="Filter by year">
-            <button className={!year ? 'is-active' : ''} onClick={() => setYear(null)} aria-pressed={!year}>All years</button>
-            {years.map((y) => (
-              <button key={y} className={year === y ? 'is-active' : ''} onClick={() => setYear(year === y ? null : y)} aria-pressed={year === y}>{y}</button>
+        {sections.length ? (
+        <div className="pastq-layout">
+          {/* Subjects: pick one and only its papers are listed. */}
+          <nav className="pastq-subjects" aria-label="Subjects">
+            {sections.map((s) => (
+              <button key={s.key} className={subjectKey === s.key ? 'is-active' : ''} aria-pressed={subjectKey === s.key} onClick={() => pick(s.key)}>
+                <span className="pastq-subject-name">{s.title}</span>
+                <span className="pastq-subject-meta">{s.short && <b>{s.short}</b>}{s.papers.length}</span>
+              </button>
+            ))}
+            {sections.length > 1 && (
+              <button className={`pastq-subject-all ${subjectKey === ALL ? 'is-active' : ''}`} aria-pressed={subjectKey === ALL} onClick={() => pick(ALL)}>
+                <span className="pastq-subject-name">All subjects</span>
+                <span className="pastq-subject-meta">{allPapers.length}</span>
+              </button>
+            )}
+          </nav>
+
+          <div className="pastq-main">
+            {years.length > 1 && (
+              <div className="pastq-years" role="group" aria-label="Filter by year">
+                <button className={!activeYear ? 'is-active' : ''} onClick={() => setYear(null)} aria-pressed={!activeYear}>All years</button>
+                {years.map((y) => (
+                  <button key={y} className={activeYear === y ? 'is-active' : ''} onClick={() => setYear(activeYear === y ? null : y)} aria-pressed={activeYear === y}>{y}</button>
+                ))}
+              </div>
+            )}
+            {shown.map((s) => (
+              <div key={s.key} className="pastq-section">
+                <h3>
+                  {s.title}
+                  {s.short && <span className="pastq-short">{s.short}</span>}
+                  {s.filedIn && <span className="pastq-filed">filed in {s.filedIn}</span>}
+                  <small>{plural(s.papers.length, 'paper')}</small>
+                </h3>
+                {s.byYear ? (
+                  yearGroups(s.papers).map(([y, papers]) => (
+                    <div key={y} className="pastq-year-group">
+                      <h4>{y}<small>{plural(papers.length, 'paper')}</small></h4>
+                      <ul className="pastq-papers">{papers.map((f) => paperRow(f, true))}</ul>
+                    </div>
+                  ))
+                ) : (
+                  <ul className="pastq-papers">{s.papers.map((f) => paperRow(f, false))}</ul>
+                )}
+              </div>
             ))}
           </div>
-        )}
-
-        {shown.length ? (
-          shown.map((s) => (
-            <div key={s.key} className="pastq-section">
-              <h3>
-                {s.title}
-                {s.short && <span className="pastq-short">{s.short}</span>}
-                {s.filedIn && <span className="pastq-filed">filed in {s.filedIn}</span>}
-                <small>{plural(s.papers.length, 'paper')}</small>
-              </h3>
-              {s.byYear ? (
-                yearGroups(s.papers).map(([y, papers]) => (
-                  <div key={y} className="pastq-year-group">
-                    <h4>{y}<small>{plural(papers.length, 'paper')}</small></h4>
-                    <ul className="pastq-papers">{papers.map((f) => paperRow(f, true))}</ul>
-                  </div>
-                ))
-              ) : (
-                <ul className="pastq-papers">{s.papers.map((f) => paperRow(f, false))}</ul>
-              )}
-            </div>
-          ))
+        </div>
         ) : (
           <div className="pastq-none">
             <FolderOpen size={26} />
