@@ -15,16 +15,23 @@ jobs:
     if: github.repository == 'adhikari-arpan/BECE_Notes-originals'
     runs-on: ubuntu-latest
     steps:
+      # Partial + sparse checkouts: only .github/ and Website/ on disk; file contents are fetched when needed.
       - uses: actions/checkout@v4
         with:
           path: originals
           fetch-depth: 0
+          filter: blob:none
+          sparse-checkout: |
+            .github
+            Website
       - uses: actions/checkout@v4
         with:
           repository: adhikari-arpan/BECE_Notes
           token: ${{ secrets.SYNC_TOKEN }}
           path: public
           fetch-depth: 1
+          filter: blob:none
+          sparse-checkout: .github
       - uses: actions/setup-node@v4
         with:
           node-version: 20

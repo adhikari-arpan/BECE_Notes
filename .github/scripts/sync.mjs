@@ -14,6 +14,10 @@
  *
  * Every replayed commit keeps its author, date and message; only the committer is the bot. Commits made
  * by the bot are skipped by the other direction, so nothing loops.
+ *
+ * The repos are several GB, so the workflows use partial, sparse checkouts (only .github/ and Website/
+ * on disk, file contents fetched on demand). Changed files are written, staged with `--sparse` and
+ * committed one commit at a time, then cleared from disk again, so a run never needs the whole library.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -28,19 +32,21 @@ const git = (cwd, args, opts = {}) =>
   execFileSync('git', ['-c', 'core.quotePath=false', ...args], { cwd, encoding: 'utf8', maxBuffer: 1 << 28, ...opts });
 const gitBuf = (cwd, args) => execFileSync('git', args, { cwd, maxBuffer: 1 << 30 });
 
-/** Watermarks the given files in place (skips ones already stamped). */
+/** Watermarks the given files in place (skips ones already stamped). A file that can't be stamped
+ * (damaged, encrypted, or an LFS pointer) is reported but doesn't stop the sync. */
 function stamp(files) {
-  if (!files.length) return;
-  execFileSync('node', [WATERMARK, ...files], { stdio: 'inherit' });
+  for (let i = 0; i < files.length; i += 40) {
+    try { execFileSync('node', [WATERMARK, ...files.slice(i, i + 40)], { stdio: 'inherit' }); }
+    catch { console.warn('::warning::Some files could not be watermarked (see FAILED lines above).'); }
+  }
 }
 function unstamped(files) {
-  if (!files.length) return [];
-  try {
-    execFileSync('node', [WATERMARK, '--check', ...files], { encoding: 'utf8' });
-    return [];
-  } catch (err) {
-    return String(err.stdout).split('\n').filter((l) => l.startsWith('unstamped  ')).map((l) => l.slice(11).trim());
+  const out = [];
+  for (let i = 0; i < files.length; i += 40) {
+    try { execFileSync('node', [WATERMARK, '--check', ...files.slice(i, i + 40)], { encoding: 'utf8' }); }
+    catch (err) { out.push(...String(err.stdout).split('\n').filter((l) => l.startsWith('unstamped  ')).map((l) => l.slice(11).trim())); }
   }
+  return out;
 }
 
 /** Commits in before..after (oldest first) not made by the bot, with their metadata. */
@@ -73,23 +79,41 @@ function writeFrom(srcRepo, sha, file, destRepo, destFile = file) {
   return dest;
 }
 
+const exists = (repo, rev, file) => { try { git(repo, ['cat-file', '-e', `${rev}:${file}`]); return true; } catch { return false; } };
+
+/** Stages files written into (or removed from) a sparse checkout. */
+function stage(repo, { changed = [], removed = [] }) {
+  for (let i = 0; i < changed.length; i += 200) git(repo, ['add', '--sparse', '-f', '--', ...changed.slice(i, i + 200)]);
+  for (let i = 0; i < removed.length; i += 200) git(repo, ['rm', '--sparse', '-q', '--cached', '--ignore-unmatch', '--', ...removed.slice(i, i + 200)]);
+}
+
+/** Clears files outside the sparse checkout from disk again after a commit, keeping the runner's disk free. */
+function tidy(repo) {
+  try { git(repo, ['sparse-checkout', 'reapply']); } catch { /* not a sparse checkout */ }
+}
+
 function commitAs(repo, c, extraMessage = '') {
-  git(repo, ['add', '-A']);
   git(repo, ['commit', '--allow-empty', '-q', '-m', c.message + extraMessage], {
     env: { ...process.env, GIT_AUTHOR_NAME: c.an, GIT_AUTHOR_EMAIL: c.ae, GIT_AUTHOR_DATE: c.ad,
       GIT_COMMITTER_NAME: BOT.name, GIT_COMMITTER_EMAIL: BOT.email },
   });
+  tidy(repo);
 }
 
-/** Applies one commit's changes from `src` into `dest`; `media(path)` decides what to do with PDFs/images. */
+const BOT_ENV = () => ({ ...process.env, GIT_AUTHOR_NAME: BOT.name, GIT_AUTHOR_EMAIL: BOT.email, GIT_COMMITTER_NAME: BOT.name, GIT_COMMITTER_EMAIL: BOT.email });
+
+/** Applies one commit's changes from `src` into `dest` (written and staged); `onMedia` handles PDFs/images. */
 function applyCommit(src, dest, c, onMedia) {
+  const changed = [], removed = [];
   for (const [status, a, b] of changes(src, c.sha)) {
-    if (status === 'D') { fs.rmSync(path.join(dest, a), { force: true }); continue; }
-    if (status === 'R') fs.rmSync(path.join(dest, a), { force: true });
+    if (status === 'D') { fs.rmSync(path.join(dest, a), { force: true }); removed.push(a); continue; }
+    if (status === 'R') { fs.rmSync(path.join(dest, a), { force: true }); removed.push(a); }
     const file = status === 'R' || status === 'C' ? b : a;
     const written = writeFrom(src, c.sha, file, dest);
+    changed.push(file);
     if (MEDIA.test(file)) onMedia(file, written);
   }
+  return { changed, removed };
 }
 
 /* ------------------------------------------------------------------ */
@@ -98,8 +122,9 @@ function publish(originals, pub, before, after) {
   const commits = commitsToReplay(originals, before, after);
   for (const c of commits) {
     const media = [];
-    applyCommit(originals, pub, c, (_, written) => media.push(written));
+    const touched = applyCommit(originals, pub, c, (_, written) => media.push(written));
     stamp(media);
+    stage(pub, touched);
     commitAs(pub, c);
     console.log(`published ${c.sha.slice(0, 8)} ${c.message.split('\n')[0]}`);
   }
@@ -108,6 +133,7 @@ function publish(originals, pub, before, after) {
 
 function pr(prRepo, baseSha, originals, number) {
   const files = git(prRepo, ['diff', '--name-only', '--diff-filter=AMR', '-z', `${baseSha}...HEAD`]).split('\0').filter((f) => MEDIA.test(f));
+  for (const f of files) writeFrom(prRepo, 'HEAD', f, prRepo); // bring the PR's files onto disk (sparse checkout)
   // `unstamped` returns the paths exactly as passed.
   const todo = new Set(unstamped(files.map((f) => path.join(prRepo, f))));
   const pending = files.filter((f) => todo.has(path.join(prRepo, f)));
@@ -122,15 +148,13 @@ function pr(prRepo, baseSha, originals, number) {
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(path.join(prRepo, f), dest);
   }
-  git(originals, ['add', '-A']);
-  git(originals, ['commit', '-q', '--allow-empty', '-m', `Originals from pull request #${number}`],
-    { env: { ...process.env, GIT_AUTHOR_NAME: BOT.name, GIT_AUTHOR_EMAIL: BOT.email, GIT_COMMITTER_NAME: BOT.name, GIT_COMMITTER_EMAIL: BOT.email } });
+  stage(originals, { changed: pending });
+  git(originals, ['commit', '-q', '--allow-empty', '-m', `Originals from pull request #${number}`], { env: BOT_ENV() });
   git(originals, ['push', '-f', 'origin', `${branch}:${branch}`]);
 
   stamp(pending.map((f) => path.join(prRepo, f)));
-  git(prRepo, ['add', '-A']);
-  git(prRepo, ['commit', '-q', '-m', 'Add BECE Vault watermark'],
-    { env: { ...process.env, GIT_AUTHOR_NAME: BOT.name, GIT_AUTHOR_EMAIL: BOT.email, GIT_COMMITTER_NAME: BOT.name, GIT_COMMITTER_EMAIL: BOT.email } });
+  stage(prRepo, { changed: pending });
+  git(prRepo, ['commit', '-q', '-m', 'Add BECE Vault watermark'], { env: BOT_ENV() });
   git(prRepo, ['push', 'origin', 'HEAD']);
   console.log(`Watermarked ${pending.length} file(s); the check will run again on the new commit.`);
 }
@@ -138,33 +162,34 @@ function pr(prRepo, baseSha, originals, number) {
 function syncback(pub, originals, before, after) {
   const commits = commitsToReplay(pub, before, after);
   const branches = git(originals, ['ls-remote', '--heads', 'origin', 'incoming/*']).split('\n').filter(Boolean).map((l) => l.split('\trefs/heads/')[1]);
-  let stampedAfter = [];
+  const stampedAfter = [];
   for (const c of commits) {
     // A squash merge's message ends with "(#12)": its clean originals are on incoming/pr-12.
     const prNumber = /\(#(\d+)\)\s*$/m.exec(c.message.split('\n')[0])?.[1];
     const branch = prNumber && branches.includes(`incoming/pr-${prNumber}`) ? `incoming/pr-${prNumber}` : null;
     if (branch) git(originals, ['fetch', '-q', 'origin', `${branch}:${branch}`]);
-    const unstampedHere = [];
-    applyCommit(pub, originals, c, (file, written) => {
+    const touched = applyCommit(pub, originals, c, (file, written) => {
       if (branch) {
         try { fs.writeFileSync(written, gitBuf(originals, ['show', `${branch}:${file}`])); return; } catch { /* not saved: keep public copy */ }
       }
-      unstampedHere.push(file);
+      stampedAfter.push(file); // checked against public main below
     });
+    stage(originals, touched);
     commitAs(originals, c);
-    stampedAfter.push(...unstamped(unstampedHere.map((f) => path.join(pub, f))));
     if (branch) git(originals, ['push', 'origin', '--delete', branch]);
     console.log(`synced ${c.sha.slice(0, 8)} ${c.message.split('\n')[0]}`);
   }
   if (commits.length) git(originals, ['push', 'origin', 'HEAD:main']);
 
   // Safety net: anything that reached public main without a watermark (e.g. edited on GitHub) is stamped now.
-  stampedAfter = [...new Set(stampedAfter)];
-  if (stampedAfter.length) {
-    stamp(stampedAfter);
-    git(pub, ['add', '-A']);
-    git(pub, ['commit', '-q', '-m', 'Add BECE Vault watermark'],
-      { env: { ...process.env, GIT_AUTHOR_NAME: BOT.name, GIT_AUTHOR_EMAIL: BOT.email, GIT_COMMITTER_NAME: BOT.name, GIT_COMMITTER_EMAIL: BOT.email } });
+  const candidates = [...new Set(stampedAfter)].filter((f) => exists(pub, 'HEAD', f));
+  candidates.forEach((f) => writeFrom(pub, 'HEAD', f, pub));
+  const todo = new Set(unstamped(candidates.map((f) => path.join(pub, f))));
+  const pending = candidates.filter((f) => todo.has(path.join(pub, f)));
+  if (pending.length) {
+    stamp(pending.map((f) => path.join(pub, f)));
+    stage(pub, { changed: pending });
+    git(pub, ['commit', '-q', '-m', 'Add BECE Vault watermark'], { env: BOT_ENV() });
     git(pub, ['push', 'origin', 'HEAD:main']);
   }
 }

@@ -25,6 +25,10 @@ jobs:
         with:
           ref: main
           path: base
+          filter: blob:none
+          sparse-checkout: |
+            .github
+            Website
       - name: The pull request's files
         uses: actions/checkout@v4
         with:
@@ -33,12 +37,16 @@ jobs:
           token: ${{ secrets.SYNC_TOKEN }}
           path: pr
           fetch-depth: 0
+          filter: blob:none
+          sparse-checkout: .github
       - uses: actions/checkout@v4
         with:
           repository: adhikari-arpan/BECE_Notes-originals
           token: ${{ secrets.SYNC_TOKEN }}
           path: originals
           fetch-depth: 1
+          filter: blob:none
+          sparse-checkout: .github
       - uses: actions/setup-node@v4
         with:
           node-version: 20
