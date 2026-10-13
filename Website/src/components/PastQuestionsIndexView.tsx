@@ -36,20 +36,21 @@ export function PastQuestionsIndexView() {
 
   return (
     <>
-      <section className="semester-page-header section-wrap">
+      <section className="semester-page-header section-wrap pqi-header">
         <Link to="/" className="back-button"><ArrowLeft size={16} /> Back to home</Link>
-        <div className="semester-page-title">
+        <div className="pqi-hero">
           <div>
             <span className="section-kicker">Pokhara University · BE Computer Engineering</span>
-            <h2>Past Questions</h2>
+            <h1 className="pqi-title">Past <em>Questions</em></h1>
           </div>
-          <span className="subject-count-pill">{cards.length} semesters · {plural(totalPapers, 'paper')}</span>
         </div>
         <p className="pqi-lead">
-          Past Pokhara University exam papers and college assessments for every semester, sorted by subject and year.
-          Pick your semester to start practising.
+          PU exam papers and college assessments for every semester, sorted by subject and year.
         </p>
-        <div className="structure-bar"><StructureToggle /></div>
+        <div className="structure-bar">
+          <StructureToggle />
+          <span className="subject-count-pill">{cards.length} semesters · {plural(totalPapers, 'paper')}</span>
+        </div>
       </section>
 
       <section className="section-wrap pqi-page">
