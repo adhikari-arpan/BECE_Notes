@@ -45,6 +45,11 @@
 .pdf-notice svg { color: #f0c34a; flex-shrink: 0; margin-top: 2px; }
 .pdf-notice p { margin: 0; font-size: 12px; line-height: 1.5; }
 .pdf-notice .pdf-tool { color: #c8d8cf; width: 24px; height: 24px; }
+.pdf-resume { align-items: center; animation: pdf-resume-in .25s ease-out; }
+.pdf-resume p strong { color: #f0c34a; }
+.pdf-resume-start { flex-shrink: 0; padding: 5px 10px; border: 0; border-radius: 99px; background: #f0c34a; color: #0b1f1a; font: 700 11px 'DM Sans', sans-serif; cursor: pointer; }
+.pdf-resume-start:hover { background: #f5cd5c; }
+@keyframes pdf-resume-in { from { opacity: 0; transform: translateY(8px); } }
 .pdf-page-number { position: absolute; right: 8px; bottom: 8px; font: 500 9px 'DM Mono', monospace; color: var(--c-5c6b64); background: var(--label-bg); padding: 3px 6px; border-radius: 5px; }
 @media (max-width: 680px) {
   .pdf-toolbar { padding: 5px 8px; gap: 4px; }

@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react';
 
 /**
  * Cookie consent for the site's saving features. Until a visitor accepts, nothing they do is saved
- * on the device: features that remember things (theme, sidebar width, CGPA grades, PDF highlights,
+ * on the device: features that remember things (theme, sidebar width, CGPA grades, PDF highlights, PDF reading position,
  * the tip reminder) keep them in memory for this visit only. Accepting saves what was used so far;
  * declining also erases anything those features saved before.
  *

@@ -6,7 +6,7 @@ import { closeCookieBanner, setConsent, useConsent } from '@/content/consent';
 /**
  * The cookie consent bar: a long pill floating at the bottom of the screen on a first visit
  * (and when reopened from "Cookie settings" in the footer). The choice covers saving things on the
- * device (theme, sidebar, CGPA grades, PDF highlights); anonymous site statistics always run.
+ * device (theme, sidebar, CGPA grades, PDF highlights, reading position); anonymous site statistics always run.
  */
 export function CookieBanner() {
   const { consent, bannerOpen } = useConsent();
@@ -25,7 +25,7 @@ export function CookieBanner() {
     <div className={`cookie-banner ${shown ? 'is-shown' : ''}`} role="region" aria-label="Cookie consent">
       <span className="cookie-banner-icon" aria-hidden="true"><Cookie size={19} /></span>
       <p>
-        <strong>Allow cookies?</strong> They let the site remember your theme, CGPA grades and PDF highlights on this
+        <strong>Allow cookies?</strong> They let the site remember your theme, CGPA grades, PDF highlights and where you stopped reading on this
         device. Without them, these work only until you close the site. View more in our{' '}
         <Link to="/privacy">Privacy Policy</Link>.
         {consent && <span className="cookie-banner-current"> · Currently {consent === 'accepted' ? 'accepted' : 'declined'}</span>}

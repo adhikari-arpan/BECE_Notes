@@ -7,6 +7,7 @@ import {
   ChevronDown,
   ChevronUp,
   Copy,
+  BookmarkCheck,
   Highlighter,
   Info,
   Maximize,
@@ -61,6 +62,8 @@ interface PdfHighlight {
 }
 
 const HIGHLIGHT_KEY = (fileKey: string) => `bece-notes:highlights:${fileKey}`;
+/** The page a reader last reached in this file, so the next visit can pick up there. */
+const LAST_PAGE_KEY = (fileKey: string) => `bece-notes:last-page:${fileKey}`;
 const STORAGE_NOTICE_KEY = 'bece-notes:highlight-notice-seen';
 const STORAGE_NOTICE = 'Highlights are saved only in this browser\'s storage (cache) on this device. Clearing browser data, using private mode, or switching browser/device will lose them.';
 const NO_CONSENT_NOTICE = 'Cookies are off, so highlights last only until you close or reload the site. Accept cookies (from the cookie bar, or Cookie settings in the site footer) to keep them in this browser.';
@@ -137,6 +140,9 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
   const [penColor, setPenColor] = useState<HighlightColor>('yellow');
   const [popover, setPopover] = useState<Popover | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  /** Set when the file reopened at the page the reader last reached (shown as a brief message). */
+  const [resumedAt, setResumedAt] = useState<number | null>(null);
+  const restoredRef = useRef(false);
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -191,6 +197,28 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
   }, [url, onError]);
 
   useEffect(() => saveHighlights(fileKey, highlights), [fileKey, highlights]);
+
+  // Reading position: reopen at the page reached last time, then keep it up to date while reading.
+  useEffect(() => {
+    if (!doc || restoredRef.current || !viewport.width) return;
+    const saved = Number(deviceStore.get(LAST_PAGE_KEY(fileKey)));
+    if (!(saved > 1 && saved <= doc.numPages)) { restoredRef.current = true; return; }
+    // Wait for the pages to be laid out at their final size before jumping; only then start saving again.
+    let inner = 0;
+    const frame = requestAnimationFrame(() => { inner = requestAnimationFrame(() => { restoredRef.current = true; goToPage(saved); setResumedAt(saved); }); });
+    return () => { cancelAnimationFrame(frame); cancelAnimationFrame(inner); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doc, viewport.width, fileKey]);
+  useEffect(() => {
+    if (!doc || !restoredRef.current) return;
+    if (currentPage > 1) deviceStore.set(LAST_PAGE_KEY(fileKey), String(currentPage));
+    else deviceStore.remove(LAST_PAGE_KEY(fileKey));
+  }, [doc, currentPage, fileKey]);
+  useEffect(() => {
+    if (resumedAt === null) return;
+    const timer = setTimeout(() => setResumedAt(null), 6000);
+    return () => clearTimeout(timer);
+  }, [resumedAt]);
 
   // Track the scroll area's size for fit-width / fit-page.
   useEffect(() => {
@@ -694,6 +722,15 @@ export default function PdfViewer({ url, fileName, fileKey, onError }: PdfViewer
             </>
           ) : null}
           <div className="pdf-popover-note"><Info size={11} /> Highlights are saved in this browser only</div>
+        </div>
+      )}
+
+      {resumedAt !== null && !notice && (
+        <div className="pdf-notice pdf-resume" role="status">
+          <BookmarkCheck size={16} />
+          <p>Welcome back! Picked up where you left off: <strong>page {resumedAt}</strong> of {doc.numPages}.</p>
+          <button className="pdf-resume-start" onClick={() => { goToPage(1); setResumedAt(null); }}>Start over</button>
+          <button className="pdf-tool" onClick={() => setResumedAt(null)} aria-label="Dismiss"><X size={15} /></button>
         </div>
       )}
 

@@ -3,7 +3,7 @@ import { Link } from '@/components/Link';
 import { openCookieSettings } from '@/content/consent';
 
 const CONTACT_EMAIL = 'adhikariarpan2063@gmail.com';
-const EFFECTIVE_DATE = 'September 30, 2026';
+const EFFECTIVE_DATE = 'October 13, 2026';
 
 export function PrivacyView() {
   return (
@@ -54,6 +54,7 @@ export function PrivacyView() {
             <ul>
               <li><ShieldCheck size={16} /> Your light/dark theme choice and file-list width</li>
               <li><ShieldCheck size={16} /> Highlights you make on PDFs (kept only in this browser)</li>
+              <li><ShieldCheck size={16} /> The page you last reached in each PDF, so it reopens where you left off (kept only in this browser)</li>
               <li><ShieldCheck size={16} /> Grades and SGPAs you enter in the CGPA calculator (kept only in this browser)</li>
             </ul>
           </div>
@@ -124,7 +125,7 @@ export function PrivacyView() {
             <h3><Cookie size={18} /> Cookies</h3>
             <p>
               On your first visit, a bar at the bottom of the screen asks whether you allow cookies. This choice covers the
-              features that remember things on your device: your theme, file-list width, CGPA grades and PDF highlights.
+              features that remember things on your device: your theme, file-list width, CGPA grades, PDF highlights and your reading position in PDFs.
               Until you press <strong>Accept</strong>, they work only for the current visit and nothing is saved.{' '}
               <strong>Decline</strong> keeps it that way and erases anything these features saved before. Site statistics
               (Google Analytics, Vercel Analytics and the visit counters) are always collected and are not affected by this
