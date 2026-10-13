@@ -1161,3 +1161,6 @@ a.pqi-result.is-empty .pqi-result-count { color: #b8860b; }
   .pqi-result-sem, .pqi-result-count { grid-column: 1; }
 }
 .home-search { margin: 4px 0 20px; }
+
+/* CountUp's number wrapper: looks exactly like its parent (stat cards style every inner <span> as a label). */
+.count-up.count-up { all: unset; }

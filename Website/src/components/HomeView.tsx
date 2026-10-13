@@ -15,7 +15,7 @@ import {
   MessageSquareHeart,
 } from 'lucide-react';
 import { allFiles, isSyllabus, pastQuestionCollections, plural, semesterPath, semesters } from '@/content/notes';
-import { COUNTING_SINCE, formatCount, useSiteStats } from '@/content/visits';
+import { COUNTING_SINCE, useSiteStats } from '@/content/visits';
 import { CountUp } from '@/components/CountUp';
 import { Logo } from '@/components/Logo';
 import { ChiyaCup, ChiyaUses } from '@/components/TipJar';
@@ -194,8 +194,8 @@ export function HomeView() {
           <div className="visits-group visits-group-today">
             <span className="visits-label"><span className="visits-label-title"><span className="visits-live" aria-hidden="true" /> Today</span><small>Nepal time</small></span>
             <div className="visits-metrics">
-              <div><strong>{formatCount(todayVisitors)}</strong><span><Eye size={13} /> Visitors</span></div>
-              <div><strong>{formatCount(todayPageViews)}</strong><span><MousePointerClick size={13} /> Page visits</span></div>
+              <div><strong><CountUp value={todayVisitors} durationMs={1100} whenVisible /></strong><span><Eye size={13} /> Visitors</span></div>
+              <div><strong><CountUp value={todayPageViews} durationMs={1100} whenVisible /></strong><span><MousePointerClick size={13} /> Page visits</span></div>
             </div>
           </div>
           <div className="visits-group">
@@ -206,8 +206,8 @@ export function HomeView() {
               </span>
             </span>
             <div className="visits-metrics">
-              <div><strong>{formatCount(visitors)}</strong><span><Eye size={13} /> Visitors</span></div>
-              <div><strong>{formatCount(pageViews)}</strong><span><MousePointerClick size={13} /> Page visits</span></div>
+              <div><strong><CountUp value={visitors} durationMs={1100} whenVisible /></strong><span><Eye size={13} /> Visitors</span></div>
+              <div><strong><CountUp value={pageViews} durationMs={1100} whenVisible /></strong><span><MousePointerClick size={13} /> Page visits</span></div>
             </div>
           </div>
         </div>

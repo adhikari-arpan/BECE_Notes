@@ -53,7 +53,7 @@ export function CountUp({ value, pad = 0, decimals = 0, suffix = '', durationMs 
     return () => cancelAnimationFrame(frame);
   }, [value, durationMs, visible, decimals]);
 
-  if (value === null) return <span ref={el}>—</span>;
+  if (value === null) return <span ref={el} className="count-up">—</span>;
   const text = shown.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-  return <span ref={el}>{pad ? text.padStart(pad, '0') : text}{suffix}</span>;
+  return <span ref={el} className="count-up">{pad ? text.padStart(pad, '0') : text}{suffix}</span>;
 }
