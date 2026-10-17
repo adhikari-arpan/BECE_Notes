@@ -13,6 +13,7 @@ import {
 } from '@/content/cgpaCustom';
 import { saveBlob } from '@/content/watermark';
 import { deviceStore, openCookieSettings, useConsent } from '@/content/consent';
+import './PastQuestionsIndexView.css';
 import './CgpaView.css';
 
 /** Grades are kept separately per curriculum (course codes differ between orders), and for Custom. */
@@ -155,16 +156,12 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
 
   return (
     <>
-      <section className="semester-page-header section-wrap">
-        <Link to="/" className="back-button">
-          <ArrowLeft size={16} /> Back to home
-        </Link>
-        <div className="semester-page-title">
-          <div>
-            <span className="section-kicker">Tools · Pokhara University BECE</span>
-            <h2>CGPA Calculator</h2>
-          </div>
-          <span className="subject-count-pill">{sems.length} semesters · {programCredits} credits</span>
+      <section className="semester-page-header section-wrap pqi-header">
+        <div className="pqi-hero">
+          <Link to="/" className="pqi-home" aria-label="Home" data-tip="Home"><ArrowLeft size={20} /></Link>
+          <h1 className="pqi-title">CGPA <em>Calculator</em></h1>
+          <span className="pqi-kicker">Pokhara University · BE Computer Engineering</span>
+          <p className="pqi-lead">Your SGPA and CGPA on PU's grading scale, across {sems.length} semesters and {programCredits} credits.</p>
         </div>
         <div className="structure-bar">
           <ModeToggle mode={mode} onMode={onMode} />
