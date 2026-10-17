@@ -168,28 +168,6 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
         </div>
         <div className="structure-bar">
           <ModeToggle mode={mode} onMode={onMode} />
-          <label className="cgpa-batch">
-            Batch
-            <select
-              value={batch ? String(batch) : ''}
-              onChange={(e) => {
-                const value = e.target.value;
-                setBatchText(value);
-                // The batch decides the subject order: 2025 and later → 2025 onwards, earlier → before 2025.
-                // Custom stays custom. Saved first, because switching order reopens the calculator.
-                deviceStore.set(BATCH_KEY, value);
-                const year = parseBatch(value);
-                if (year && !isCustom) {
-                  const order = year >= 2025 ? '2025' : 'pre2025';
-                  if (order !== mode) onMode(order);
-                }
-              }}
-              aria-label="Your batch year, to show each semester's term (Fall / Spring)"
-            >
-              <option value="">Select batch</option>
-              {BATCH_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
-            </select>
-          </label>
           {isCustom && <span className="structure-note-inline">Add your own subjects, credits and grades.</span>}
         </div>
         <div className="cgpa-intro">
@@ -285,6 +263,31 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
         </aside>
 
         <div className="cgpa-semesters">
+          {/* The batch year: sets each semester's term (Fall / Spring) and the subject order. */}
+          <div className="cgpa-batch-row">
+            <label className="cgpa-batch">
+              Batch
+              <select
+                value={batch ? String(batch) : ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setBatchText(value);
+                  // The batch decides the subject order: 2025 and later → 2025 onwards, earlier → before 2025.
+                  // Custom stays custom. Saved first, because switching order reopens the calculator.
+                  deviceStore.set(BATCH_KEY, value);
+                  const year = parseBatch(value);
+                  if (year && !isCustom) {
+                    const order = year >= 2025 ? '2025' : 'pre2025';
+                    if (order !== mode) onMode(order);
+                  }
+                }}
+                aria-label="Your batch year, to show each semester's term (Fall / Spring)"
+              >
+                <option value="">Select batch</option>
+                {BATCH_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </label>
+          </div>
           {sems.map((sem, i) => {
             const entry = entries[sem.id] ?? emptyEntry();
             const result = results[i];
