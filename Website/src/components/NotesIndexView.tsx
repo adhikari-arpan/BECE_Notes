@@ -1,5 +1,6 @@
-import { ArrowLeft, ArrowRight, FileStack, Upload } from 'lucide-react';
+import { ArrowRight, FileStack, Upload } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { PageHero } from '@/components/PageHero';
 import { StructureToggle } from '@/components/StructureToggle';
 import { SubjectSearch } from '@/components/SubjectSearch';
 import { SemesterCards } from '@/components/SemesterCards';
@@ -15,12 +16,11 @@ export function NotesIndexView() {
   return (
     <>
       <section className="semester-page-header section-wrap pqi-header">
-        <div className="pqi-hero">
-          <Link to="/" className="pqi-home" aria-label="Home" data-tip="Home"><ArrowLeft size={20} /></Link>
-          <h1 className="pqi-title">Semester-Wise <em>Notes</em></h1>
-          <span className="pqi-kicker">Pokhara University · BE Computer Engineering</span>
-          <p className="pqi-lead">Lecture notes, handwritten notes, lab works and syllabus for every semester, sorted by subject.</p>
-        </div>
+        <PageHero
+          title={<>Semester-Wise <em>Notes</em></>}
+          kicker="Pokhara University · BE Computer Engineering"
+          lead="Lecture notes, handwritten notes, lab works and syllabus for every semester, sorted by subject."
+        />
         <div className="structure-bar"><StructureToggle /></div>
       </section>
 

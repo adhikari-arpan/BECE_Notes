@@ -1,5 +1,6 @@
-import { ArrowLeft, ArrowRight, BookOpen, Building2, Calculator, ExternalLink, FileStack, GraduationCap, Landmark, Layers, MapPin, ScrollText, Target } from 'lucide-react';
+import { ArrowRight, BookOpen, Building2, Calculator, ExternalLink, FileStack, GraduationCap, Landmark, Layers, MapPin, ScrollText, Target } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { PageHero } from '@/components/PageHero';
 import { PU_GUIDE_PATH } from '@/content/puGuide';
 import './PokharaUniversityView.css';
 
@@ -34,15 +35,13 @@ const SITE_LINKS: { to: string; icon: typeof BookOpen; title: string; text: stri
 export function PokharaUniversityView() {
   return (
     <>
-      <section className="semester-page-header content-page-header section-wrap">
-        <Link to="/" className="back-button"><ArrowLeft size={16} /> Back to home</Link>
-        <div className="pu-hero">
-          <img src={`${import.meta.env.BASE_URL}images/pokhara-university-logo.png`} alt="Pokhara University logo" width={900} height={350} className="pu-hero-logo" />
-          <div>
-            <span className="section-kicker">About the university</span>
-            <h2>Pokhara University</h2>
-          </div>
-        </div>
+      <section className="semester-page-header content-page-header section-wrap pqi-header">
+        <PageHero
+          logo={<img src={`${import.meta.env.BASE_URL}images/pokhara-university-logo.png`} alt="Pokhara University logo" width={900} height={350} className="pu-hero-logo" />}
+          title={<>Pokhara <em>University</em></>}
+          kicker="About the university"
+          lead="The university behind BE Computer Engineering: its history, faculties and useful links."
+        />
       </section>
 
       <section className="content-page section-wrap">

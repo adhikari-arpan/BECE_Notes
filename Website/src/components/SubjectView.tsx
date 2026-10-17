@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
+import { BackArrow } from '@/components/PageHero';
 import { PastQuestionsView } from '@/components/PastQuestionsView';
 import { navigate } from '@/content/router';
 import { Loader } from '@/components/Loader';
@@ -169,9 +170,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
   return (
     <>
       <section className="subject-page">
-        <Link to={semesterPath(homeSemester)} className="back-button">
-          <ArrowLeft size={16} /> Back to {homeSemester.label}
-        </Link>
+        <BackArrow to={semesterPath(homeSemester)} label={homeSemester.label} inline />
 
         <div className="subject-box">
           <div className="subject-box-head">

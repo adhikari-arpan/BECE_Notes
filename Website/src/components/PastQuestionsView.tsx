@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Download, ExternalLink, FileText, FolderOpen, X } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Download, ExternalLink, FileText, FolderOpen, X } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { PageHero } from '@/components/PageHero';
 import { DownloadButton } from '@/components/DownloadButton';
 import { PastQuestionsGuide } from '@/components/PastQuestionsGuide';
 import { navigate, useLocation } from '@/content/router';
@@ -162,15 +163,14 @@ export function PastQuestionsView({ semester, requestedFile, renderPreview }: Pr
 
   return (
     <>
-      <section className="semester-page-header section-wrap">
-        <Link to={pastQuestionsPath()} className="back-button"><ArrowLeft size={16} /> All semesters</Link>
-        <div className="semester-page-title">
-          <div>
-            <span className="section-kicker">{semester.label} · {STRUCTURE_LABELS[structure]} · Pokhara University exam papers</span>
-            <h2>{semester.label} Past Questions</h2>
-          </div>
-          <span className="subject-count-pill">{plural(allPapers.length, 'paper')}</span>
-        </div>
+      <section className="semester-page-header section-wrap pqi-header">
+        <PageHero
+          back={pastQuestionsPath()}
+          backLabel="All semesters"
+          title={<>{semester.label} <em>Past Questions</em></>}
+          kicker={`Pokhara University exam papers · ${STRUCTURE_LABELS[structure]}`}
+          lead={`${plural(allPapers.length, 'paper')}, sorted by subject and year. Pick a subject to see its papers.`}
+        />
       </section>
 
       <section className="section-wrap pastq-page">

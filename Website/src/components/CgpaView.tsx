@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Award, Calculator, CheckCircle2, Download, ExternalLink, FileUp, GraduationCap, HardDrive, Info, Loader2, Plus, RotateCcw, Trash2, TriangleAlert, X } from 'lucide-react';
+import { Award, Calculator, CheckCircle2, Download, ExternalLink, FileUp, GraduationCap, HardDrive, Info, Loader2, Plus, RotateCcw, Trash2, TriangleAlert, X } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { PageHero } from '@/components/PageHero';
 import { CgpaUploadDialog } from '@/components/CgpaUploadDialog';
 import { ElectiveInput } from '@/components/ElectiveInput';
 import { electiveNames } from '@/content/notes';
@@ -13,7 +14,6 @@ import {
 } from '@/content/cgpaCustom';
 import { saveBlob } from '@/content/watermark';
 import { deviceStore, openCookieSettings, useConsent } from '@/content/consent';
-import './PastQuestionsIndexView.css';
 import './CgpaView.css';
 
 /** Grades are kept separately per curriculum (course codes differ between orders), and for Custom. */
@@ -157,12 +157,11 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
   return (
     <>
       <section className="semester-page-header section-wrap pqi-header">
-        <div className="pqi-hero">
-          <Link to="/" className="pqi-home" aria-label="Home" data-tip="Home"><ArrowLeft size={20} /></Link>
-          <h1 className="pqi-title">CGPA <em>Calculator</em></h1>
-          <span className="pqi-kicker">Pokhara University · BE Computer Engineering</span>
-          <p className="pqi-lead">Your SGPA and CGPA on PU's grading scale, across {sems.length} semesters and {programCredits} credits.</p>
-        </div>
+        <PageHero
+          title={<>CGPA <em>Calculator</em></>}
+          kicker="Pokhara University · BE Computer Engineering"
+          lead={`Your SGPA and CGPA on PU's grading scale, across ${sems.length} semesters and ${programCredits} credits.`}
+        />
         <div className="structure-bar">
           <ModeToggle mode={mode} onMode={onMode} />
           {isCustom && <span className="structure-note-inline">Add your own subjects, credits and grades.</span>}

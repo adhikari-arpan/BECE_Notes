@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, BookOpen, Download, FileText, GraduationCap, Layers, Loader2 } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { PageHero } from '@/components/PageHero';
 import { StructureToggle } from '@/components/StructureToggle';
 import { subjectPath } from '@/content/notes';
 import { syllabusCode, syllabusLink, syllabusPath, syllabusSemesters } from '@/content/curriculum2025';
@@ -50,19 +51,12 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
   if (!semester) {
     return (
       <>
-        <section className="semester-page-header section-wrap">
-          <Link to="/" className="back-button"><ArrowLeft size={16} /> Back to home</Link>
-          <div className="semester-page-title">
-            <div>
-              <span className="section-kicker">Pokhara University · BE Computer Engineering</span>
-              <h2>Syllabus &amp; course structure</h2>
-            </div>
-            <span className="subject-count-pill">8 semesters · {totalCredits} credits</span>
-          </div>
-          <p className="syllabus-lead">
-            Pokhara University’s BE Computer Engineering syllabus: every semester’s courses, course codes, credit hours and
-            weekly lecture, tutorial and practical hours, with links to notes and detailed syllabus files.
-          </p>
+        <section className="semester-page-header section-wrap pqi-header">
+          <PageHero
+            title={<>Syllabus &amp; <em>Course Structure</em></>}
+            kicker="Pokhara University · BE Computer Engineering"
+            lead={`Every semester’s courses, codes, credit hours and weekly lecture, tutorial and practical hours: 8 semesters, ${totalCredits} credits.`}
+          />
           <div className="structure-bar"><StructureToggle /><DownloadSyllabus structure={structure} /></div>
         </section>
 
@@ -107,19 +101,14 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
 
   return (
     <>
-      <section className="semester-page-header section-wrap">
-        <Link to={syllabusPath()} className="back-button"><ArrowLeft size={16} /> All semesters</Link>
-        <div className="semester-page-title">
-          <div>
-            <span className="section-kicker">Syllabus · {semester.year} · {STRUCTURE_LABELS[structure]}</span>
-            <h2>{semester.label} syllabus</h2>
-          </div>
-          <span className="subject-count-pill">{semester.courses.length} courses · {credits} credits</span>
-        </div>
-        <p className="syllabus-lead">
-          Pokhara University BE Computer Engineering, {semester.label}: course codes, credit hours and weekly lecture (L),
-          tutorial (T) and practical (P) hours, with a summary of what each course covers.
-        </p>
+      <section className="semester-page-header section-wrap pqi-header">
+        <PageHero
+          back={syllabusPath()}
+          backLabel="Full syllabus"
+          title={<>{semester.label} <em>Syllabus</em></>}
+          kicker={`Syllabus · ${semester.year} · ${STRUCTURE_LABELS[structure]}`}
+          lead={`${semester.courses.length} courses · ${credits} credits: codes, credit hours, weekly L/T/P hours and what each course covers.`}
+        />
         <div className="structure-bar"><StructureToggle /><DownloadSyllabus structure={structure} semesterId={semester.id} /></div>
       </section>
 

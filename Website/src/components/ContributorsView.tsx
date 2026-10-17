@@ -1,5 +1,6 @@
-import { ArrowLeft, BookOpen, FileStack } from 'lucide-react';
+import { BookOpen, FileStack } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { PageHero } from '@/components/PageHero';
 import { FounderCard } from '@/components/FounderCard';
 import { FOUNDER, filesAdded, noteContributors, pastQuestionContributors, type Contributor } from '@/content/contributors';
 
@@ -48,16 +49,12 @@ function ContributorList({ title, icon, people, count, word, empty }: {
 export function ContributorsView() {
   return (
     <>
-      <section className="semester-page-header section-wrap">
-        <Link to="/" className="back-button">
-          <ArrowLeft size={16} /> Back to home
-        </Link>
-        <div className="semester-page-title">
-          <div>
-            <span className="section-kicker">The people behind it</span>
-            <h2>Contributors</h2>
-          </div>
-        </div>
+      <section className="semester-page-header section-wrap pqi-header">
+        <PageHero
+          title={<>Our <em>Contributors</em></>}
+          kicker="The people behind it"
+          lead="Students who shared their notes and past papers so the next batch can study from them."
+        />
       </section>
 
       <section className="contributors-section section-wrap">

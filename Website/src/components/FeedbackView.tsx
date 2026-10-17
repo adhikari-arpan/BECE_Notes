@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
-import { ArrowLeft, CheckCircle2, Loader2, MessageSquareHeart, Send, TriangleAlert } from 'lucide-react';
+import { CheckCircle2, Loader2, MessageSquareHeart, Send, TriangleAlert } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { PageHero } from '@/components/PageHero';
 import './FeedbackView.css';
 
 const FORMSPREE_URL = 'https://formspree.io/f/moejdgdg';
@@ -81,14 +82,12 @@ export function FeedbackView() {
 
   return (
     <>
-      <section className="semester-page-header content-page-header section-wrap">
-        <Link to="/" className="back-button"><ArrowLeft size={16} /> Back to home</Link>
-        <div className="semester-page-title">
-          <div>
-            <span className="section-kicker">Help us improve</span>
-            <h2>Website feedback</h2>
-          </div>
-        </div>
+      <section className="semester-page-header content-page-header section-wrap pqi-header">
+        <PageHero
+          title={<>Website <em>Feedback</em></>}
+          kicker="Help us improve"
+          lead="Tell us what works and what doesn’t. Leave your name or stay anonymous."
+        />
       </section>
 
       <section className="section-wrap feedback-wrap">

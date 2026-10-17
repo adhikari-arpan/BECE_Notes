@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, FileStack, FileUp, Search, X } from 'lucide-react';
+import { ArrowRight, FileUp, Search, X } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { PageHero } from '@/components/PageHero';
 import { StructureToggle } from '@/components/StructureToggle';
 import { normalizeName, pastQuestionCollections, pastQuestionsPath, plural } from '@/content/notes';
 import { pastQuestionSubjects } from '@/content/pastQuestions';
@@ -18,9 +19,8 @@ export function PastQuestionsIndexView() {
       const subjects = pastQuestionSubjects(semester, structure);
       // In the earlier order the collection's own files also include its College Assessments.
       const papers = structure === 'pre2025' ? files.length : subjects.reduce((a, s) => a + s.files.length, 0);
-      return { semester, papers, covered: subjects.filter((s) => s.files.length).length, total: subjects.length };
+      return { semester, papers, subjects };
     });
-  const totalPapers = cards.reduce((a, c) => a + c.papers, 0);
 
   // Search by subject: name, folder or short form ("dsa", "data struct", "AI"), across every semester.
   const [query, setQuery] = useState('');
@@ -37,20 +37,12 @@ export function PastQuestionsIndexView() {
   return (
     <>
       <section className="semester-page-header section-wrap pqi-header">
-        <Link to="/" className="back-button"><ArrowLeft size={16} /> Back to home</Link>
-        <div className="pqi-hero">
-          <div>
-            <span className="section-kicker">Pokhara University · BE Computer Engineering</span>
-            <h1 className="pqi-title">Past <em>Questions</em></h1>
-          </div>
-        </div>
-        <p className="pqi-lead">
-          PU exam papers and college assessments for every semester, sorted by subject and year.
-        </p>
-        <div className="structure-bar">
-          <StructureToggle />
-          <span className="subject-count-pill">{cards.length} semesters · {plural(totalPapers, 'paper')}</span>
-        </div>
+        <PageHero
+          title={<>Past <em>Questions</em></>}
+          kicker="Pokhara University · BE Computer Engineering"
+          lead="PU exam papers and college assessments for every semester, sorted by subject and year."
+        />
+        <div className="structure-bar"><StructureToggle /></div>
       </section>
 
       <section className="section-wrap pqi-page">
@@ -73,21 +65,25 @@ export function PastQuestionsIndexView() {
           </div>
         )}
 
-        <div className="pqi-grid" style={words.length ? { display: 'none' } : undefined}>
-          {cards.map(({ semester, papers, covered, total }) => (
-            <Link key={semester.id} to={pastQuestionsPath(semester)} className={`pqi-card ${papers ? '' : 'is-empty'}`}>
-              <span className="pqi-card-top">
-                <span className="semester-card-badge">{semester.badge}</span>
-                <span className="pqi-icon"><FileStack size={18} /></span>
-              </span>
-              <strong>{semester.label}</strong>
-              <span className="pqi-year">{semester.year}</span>
-              <span className="pqi-foot">
-                <span>{papers ? plural(papers, 'paper') : 'Help collect papers'}{total ? ` · ${covered}/${total} subjects` : ''}</span>
-                <ArrowRight size={15} />
-              </span>
-            </Link>
-          ))}
+        <div className="semester-cards pqi-grid" style={words.length ? { display: 'none' } : undefined}>
+          {cards.map(({ semester, papers, subjects }) => {
+            const covered = subjects.filter((x) => x.files.length).length;
+            return (
+              <Link key={semester.id} to={pastQuestionsPath(semester)} className={`semester-card ${papers ? '' : 'semester-card-empty'}`}>
+                <span className="semester-card-glyph" data-glyph={semester.badge} aria-hidden="true" />
+                <span className="semester-card-top">
+                  <span className="semester-card-badge">{semester.badge}</span>
+                  <span className="semester-card-year">{semester.year}</span>
+                </span>
+                <strong className="semester-card-name">{semester.label}</strong>
+                <span className="semester-card-progress">{papers ? `${covered}/${subjects.length} subjects with papers` : 'Help collect papers'}</span>
+                <span className="semester-card-foot">
+                  <span className="semester-card-meta">{papers > 0 && <span>{plural(papers, 'paper')}</span>}</span>
+                  <span className="semester-card-go"><ArrowRight size={15} /></span>
+                </span>
+              </Link>
+            );
+          })}
         </div>
 
         <div className="pqi-cta">

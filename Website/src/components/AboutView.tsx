@@ -1,5 +1,5 @@
-import { ArrowLeft, Coffee, FolderOpen, GraduationCap, Handshake, Mail, Shield, Sparkles, UserRound, Users } from 'lucide-react';
-import { Link } from '@/components/Link';
+import { Coffee, FolderOpen, GraduationCap, Handshake, Mail, Shield, Sparkles, UserRound, Users } from 'lucide-react';
+import { PageHero } from '@/components/PageHero';
 import { FounderIntro } from '@/components/FounderCard';
 import { allFiles, semesters } from '@/content/notes';
 import { openTipJar } from '@/content/tipJar';
@@ -15,16 +15,12 @@ const coverage = semestersWithNotes.length
 export function AboutView() {
   return (
     <>
-      <section className="semester-page-header content-page-header section-wrap">
-        <Link to="/" className="back-button">
-          <ArrowLeft size={16} /> Back to home
-        </Link>
-        <div className="semester-page-title">
-          <div>
-            <span className="section-kicker">The story</span>
-            <h2>About this collection</h2>
-          </div>
-        </div>
+      <section className="semester-page-header content-page-header section-wrap pqi-header">
+        <PageHero
+          title={<>About this <em>collection</em></>}
+          kicker="The story"
+          lead="Why BECE Vault exists, who keeps it going, and how the notes get here."
+        />
       </section>
 
       <section className="content-page section-wrap">

@@ -1,9 +1,10 @@
-import { ArrowLeft, ArrowRight, FileStack, FileText } from 'lucide-react';
+import { ArrowRight, FileStack, FileText } from 'lucide-react';
 import { findSyllabus, pastQuestionsFor, pastQuestionsPath, isSyllabus, plural, subjectPath, type Semester, type Subject } from '@/content/notes';
 import { semesters2025 } from '@/content/curriculum2025';
 import { useStructure } from '@/content/structure';
 import { pastQuestionCount } from '@/content/pastQuestions';
 import { Link } from '@/components/Link';
+import { AccentLast, PageHero } from '@/components/PageHero';
 import { StructureToggle } from '@/components/StructureToggle';
 
 interface SemesterViewProps {
@@ -51,17 +52,14 @@ export function SemesterView({ semester }: SemesterViewProps) {
 
   return (
     <>
-      <section className="semester-page-header section-wrap">
-        <Link to="/" className="back-button">
-          <ArrowLeft size={16} /> Back to home
-        </Link>
-        <div className="semester-page-title">
-          <div>
-            <span className="section-kicker">{semester.year}</span>
-            <h2>{semester.label}</h2>
-          </div>
-          <span className="subject-count-pill">{plural(rows.length, 'subject')}{totalCredits ? ` · ${totalCredits} credits` : ''}</span>
-        </div>
+      <section className="semester-page-header section-wrap pqi-header">
+        <PageHero
+          back="/notes"
+          backLabel="All semesters"
+          title={<AccentLast text={semester.label} />}
+          kicker={`${semester.year} · Notes`}
+          lead={`${plural(rows.length, 'subject')}${totalCredits ? ` · ${totalCredits} credits` : ''}, with notes, lab works and syllabus.`}
+        />
         {isCourseSemester && (
           <div className="structure-bar">
             <StructureToggle />

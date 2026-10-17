@@ -1,5 +1,6 @@
-import { ArrowLeft, BarChart3, Cookie, Database, ExternalLink, FileLock2, HardDrive, Mail, Megaphone, MessageSquareHeart, RefreshCw, ShieldCheck, Users } from 'lucide-react';
+import { BarChart3, Cookie, Database, ExternalLink, FileLock2, HardDrive, Mail, Megaphone, MessageSquareHeart, RefreshCw, ShieldCheck, Users } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { PageHero } from '@/components/PageHero';
 import { openCookieSettings } from '@/content/consent';
 
 const CONTACT_EMAIL = 'adhikariarpan2063@gmail.com';
@@ -8,16 +9,12 @@ const EFFECTIVE_DATE = 'October 13, 2026';
 export function PrivacyView() {
   return (
     <>
-      <section className="semester-page-header content-page-header section-wrap">
-        <Link to="/" className="back-button">
-          <ArrowLeft size={16} /> Back to home
-        </Link>
-        <div className="semester-page-title">
-          <div>
-            <span className="section-kicker">Legal</span>
-            <h2>Privacy Policy</h2>
-          </div>
-        </div>
+      <section className="semester-page-header content-page-header section-wrap pqi-header">
+        <PageHero
+          title={<>Privacy <em>Policy</em></>}
+          kicker="Legal"
+          lead="What BECE Vault stores, why, and how you stay in control."
+        />
       </section>
 
       <section className="content-page section-wrap">

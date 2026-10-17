@@ -1,0 +1,26 @@
+/* Page heading shared by every page: back arrow, centred title with a gold accent, kicker and lead. */
+.pqi-header { padding: 26px 0 14px; }
+.pqi-hero { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 0 64px; }
+a.pqi-home { position: absolute; left: 0; top: 6px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--c-dde3dc); background: var(--c-fffdf7); color: var(--c-0b1f1a); text-decoration: none; transition: border-color .15s, background .15s, transform .15s; }
+a.pqi-home:hover { border-color: #e8c873; background: #fff4cf; transform: translateX(-2px); }
+:root[data-theme="dark"] a.pqi-home:hover { background: rgba(240,195,74,.16); color: #f0c34a; }
+a.pqi-home::after { content: attr(data-tip); position: absolute; left: 50%; top: calc(100% + 8px); transform: translateX(-50%) translateY(-4px); padding: 4px 10px; border-radius: 8px; background: #0b1f1a; color: #f8f4e9; font: 600 12px 'DM Sans', sans-serif; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .15s, transform .15s; }
+a.pqi-home:hover::after, a.pqi-home:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+.pqi-title { margin: 0; font: 600 52px/1.05 'Playfair Display', serif; letter-spacing: -.02em; color: var(--c-0b1f1a); }
+.pqi-kicker { font: 500 11px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--c-5c6b64); }
+.pqi-hero .pqi-lead { max-width: none; margin: 8px 0 0; font: 400 15px/1.5 'DM Sans', sans-serif; color: var(--c-4c5b54); white-space: nowrap; }
+.pqi-title em { font-style: italic; letter-spacing: -.02em; color: #b8860b; }
+:root[data-theme="dark"] .pqi-title em { color: #f0c34a; }
+.pqi-header .structure-bar { margin-top: 18px; }
+.pqi-lead { max-width: 760px; margin: 12px 0 0; font-size: 14px; line-height: 1.65; color: var(--c-4c5b54); }
+/* One line across the page on wide screens; on narrower ones it wraps into balanced lines. */
+@media (max-width: 900px) { .pqi-hero .pqi-lead { white-space: normal; text-wrap: balance; } }
+a.pqi-home.pqi-home-inline { position: relative; left: auto; top: auto; margin-bottom: 14px; }
+.pqi-title-row { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; }
+.contributing-header .contribute-actions { justify-content: center; }
+@media (max-width: 560px) {
+  .pqi-title { font-size: 38px; }
+  .pqi-hero { padding: 0 48px; }
+  a.pqi-home { width: 38px; height: 38px; top: 2px; }
+  .pqi-hero .pqi-lead { font-size: 13.5px; white-space: normal; }
+}

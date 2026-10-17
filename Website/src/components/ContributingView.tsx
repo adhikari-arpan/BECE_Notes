@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { marked } from 'marked';
-import { ArrowLeft, Award, BookOpen, Code2, FileStack, FolderUp, GitCommitHorizontal, GitFork, Github, GitPullRequest, ListTree } from 'lucide-react';
-import { Link } from '@/components/Link';
+import { Award, BookOpen, Code2, FileStack, FolderUp, GitCommitHorizontal, GitFork, Github, GitPullRequest, ListTree } from 'lucide-react';
+import { PageHero } from '@/components/PageHero';
 // The guide is written once, in the repository's CONTRIBUTING.md, and shown here as-is.
 import guide from '../../../CONTRIBUTING.md?raw';
 import './MarkdownViewer.css';
@@ -112,20 +112,12 @@ export function ContributingView() {
 
   return (
     <>
-      <section className="semester-page-header section-wrap contributing-header">
-        <Link to="/" className="back-button">
-          <ArrowLeft size={16} /> Back to home
-        </Link>
-        <div className="semester-page-title">
-          <div>
-            <span className="section-kicker">Get involved</span>
-            <h2>Contributing Guidelines</h2>
-          </div>
-        </div>
-        <p className="cg-lead">
-          Notes, past papers or a website fix: every contribution helps the next batch. Here’s the short version; the
-          full guide is below.
-        </p>
+      <section className="semester-page-header section-wrap contributing-header pqi-header">
+        <PageHero
+          title={<>Contributing <em>Guidelines</em></>}
+          kicker="Get involved"
+          lead="Notes, past papers or a website fix: every contribution helps the next batch. Here’s the short version; the full guide is below."
+        />
         <div className="contribute-actions">
           <a className="cta-button" href={REPO_URL} target="_blank" rel="noreferrer"><Github size={16} /> Open on GitHub</a>
           <a className="contribute-secondary" href={`${REPO_URL}/fork`} target="_blank" rel="noreferrer"><GitPullRequest size={16} /> Fork &amp; start a pull request</a>

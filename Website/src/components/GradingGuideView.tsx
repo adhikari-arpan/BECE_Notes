@@ -1,5 +1,6 @@
-import { ArrowLeft, Award, BookOpenCheck, Calculator, CalendarClock, ClipboardCheck, ExternalLink, GraduationCap, HelpCircle, Hourglass, Repeat, Scale, Sigma, Users } from 'lucide-react';
+import { Award, BookOpenCheck, Calculator, CalendarClock, ClipboardCheck, ExternalLink, GraduationCap, HelpCircle, Hourglass, Repeat, Scale, Sigma, Users } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { PageHero } from '@/components/PageHero';
 import { GRADES, gradeRange } from '@/content/grades';
 import { PU_FAQS, PU_GUIDE_PATH, PU_GUIDE_SOURCE, PU_GUIDE_TITLE } from '@/content/puGuide';
 import { CiteThis } from '@/components/CiteThis';
@@ -27,16 +28,12 @@ const simpleAverage = CGPA_EXAMPLE.reduce((s, r) => s + r.sgpa, 0) / CGPA_EXAMPL
 export function GradingGuideView() {
   return (
     <>
-      <section className="semester-page-header content-page-header section-wrap">
-        <Link to="/" className="back-button">
-          <ArrowLeft size={16} /> Back to home
-        </Link>
-        <div className="semester-page-title">
-          <div>
-            <span className="section-kicker">Student guide · Pokhara University</span>
-            <h2>PU Grading System, SGPA &amp; CGPA</h2>
-          </div>
-        </div>
+      <section className="semester-page-header content-page-header section-wrap pqi-header">
+        <PageHero
+          title={<>PU Grading <em>System</em></>}
+          kicker="Student guide · Pokhara University"
+          lead="How marks become grades, and grades become SGPA and CGPA."
+        />
       </section>
 
       <section className="content-page section-wrap">
