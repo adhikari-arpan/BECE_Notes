@@ -82,7 +82,7 @@ export function TipJar() {
   const [bodyHeight, setBodyHeight] = useState<number>();
   const total = cups * CUP_PRICE;
 
-  // Follow the content's height (steps, payment tabs, the bank details box), so CSS can animate it.
+  // Follow the content's height (steps, payment tabs), so CSS can animate it.
   useLayoutEffect(() => {
     const el = bodyRef.current;
     if (!open || !el) return;
@@ -209,13 +209,13 @@ export function TipJar() {
                 <button className="tip-primary" onClick={() => setStep('pay')}>
                   Send {cups} {cups === 1 ? 'chiya' : 'chiyas'} · {formatRs(total)} <ArrowRight size={17} />
                 </button>
-                <p className="tip-footnote">Pay with eSewa, Khalti or bank transfer. This site never sees your payment details.</p>
+                <p className="tip-footnote">Pay with eSewa or Khalti. This site never sees your payment details.</p>
               </>
             )}
 
             {step === 'pay' && (
               <>
-                <h2 id="tip-title" className="tip-pay-title">Send <span>{formatRs(total)}</span> of chiya via {method.label === 'Bank transfer' ? 'bank transfer' : method.label}</h2>
+                <h2 id="tip-title" className="tip-pay-title">Send <span>{formatRs(total)}</span> of chiya via {method.label}</h2>
 
                 <div className="tip-methods" role="tablist" aria-label="Payment method">
                   {PAYMENT_METHODS.map((m) => (
@@ -234,32 +234,15 @@ export function TipJar() {
                 <div className="tip-pay" role="tabpanel">
                   <div className="tip-qr">
                     <img key={method.id} src={method.qr} alt={`${method.label} QR code for ${PAYEE_NAME}`} width={220} height={220} />
-                    <span>{PAYEE_NAME} · {method.id === 'bank' ? 'Global IME Bank' : method.label}</span>
+                    <span>{PAYEE_NAME} · {method.label}</span>
                   </div>
                   <ol className="tip-steps">
-                    {method.id === 'bank' ? (
-                      <>
-                        <li><strong>Open {method.app}</strong> and choose <em>Scan</em> or <em>Fund transfer</em>.</li>
-                        <li><strong>Scan this QR</strong>, or enter the account details below.</li>
-                        <li>Send <strong>{formatRs(total)}</strong>. Add “Chiya for BECE Vault” as remarks if you like.</li>
-                      </>
-                    ) : (
-                      <>
-                        <li><strong>Open {method.app}</strong> and tap <em>Scan</em>.</li>
-                        <li><strong>Scan this QR</strong> — on a phone, tap <em>Save QR</em> and scan it from your gallery.</li>
-                        <li>Enter <strong>{formatRs(total)}</strong> and confirm. Add “Chiya for BECE Vault” as remarks if you like.</li>
-                      </>
-                    )}
+                    <li><strong>Open {method.app}</strong> and tap <em>Scan</em>.</li>
+                    <li><strong>Scan this QR</strong> — on a phone, tap <em>Save QR</em> and scan it from your gallery.</li>
+                    <li>Enter <strong>{formatRs(total)}</strong> and confirm. Add “Chiya for BECE Vault” as remarks if you like.</li>
                   </ol>
                 </div>
 
-                {method.details.length > 1 && (
-                  <dl className="tip-account">
-                    {method.details.map((d) => (
-                      <div key={d.label}><dt>{d.label}</dt><dd>{d.value}</dd></div>
-                    ))}
-                  </dl>
-                )}
 
                 <div className="tip-pay-actions">
                   <a className="tip-secondary" href={method.qr} download={method.qrFile}><Download size={15} /> Save QR</a>

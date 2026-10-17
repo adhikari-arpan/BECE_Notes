@@ -874,10 +874,6 @@ body.tip-jar-open { overflow: hidden; }
 .tip-method-bank { --brand: #1e4da1; }
 :root[data-theme="dark"] .tip-method-khalti { --brand: #b58ae0; }
 :root[data-theme="dark"] .tip-method-bank { --brand: #7aa2ec; }
-.tip-account { display: grid; gap: 6px; margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--c-f6f7f1); border: 1px solid var(--c-e3e6de); }
-.tip-account > div { display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; }
-.tip-account dt { color: var(--c-5c6b64); }
-.tip-account dd { margin: 0; font-weight: 700; color: var(--c-0b1f1a); text-align: right; font-variant-numeric: tabular-nums; }
 .tip-pay { display: flex; gap: 18px; align-items: center; }
 .tip-qr { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px; border-radius: 16px; background: #fff; border: 1px solid var(--c-e3e6de); box-shadow: 0 6px 18px rgba(var(--shadow-rgb),.08); }
 .tip-qr img { display: block; width: 190px; height: 190px; image-rendering: pixelated; }

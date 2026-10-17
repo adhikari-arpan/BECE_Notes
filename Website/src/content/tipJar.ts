@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react';
 import { sessionStore } from '@/content/consent';
 
 /**
- * "Buy me a Chiya" tip jar. Tips are paid directly through eSewa, Khalti or a bank transfer by
+ * "Buy me a Chiya" tip jar. Tips are paid directly through eSewa or Khalti by
  * scanning a QR (or copying the details); the site only helps pick an amount and never handles
  * money. Any component can open the tip jar.
  */
@@ -12,13 +12,13 @@ export const CUP_PRESETS = [1, 2, 3, 5];
 export const MAX_CUPS = 99;
 export const PAYEE_NAME = 'Arpan Adhikari';
 
-export type PaymentMethodId = 'esewa' | 'khalti' | 'bank';
+export type PaymentMethodId = 'esewa' | 'khalti';
 
 export interface PaymentMethod {
   id: PaymentMethodId;
   /** Tab label, e.g. "eSewa". */
   label: string;
-  /** How the step list refers to the app, e.g. "eSewa" or "your bank app". */
+  /** How the step list refers to the app, e.g. "eSewa" or "Khalti". */
   app: string;
   qr: string;
   qrFile: string;
@@ -44,18 +44,6 @@ export const PAYMENT_METHODS: PaymentMethod[] = [
     qr: asset('images/payments/khalti-qr.png'),
     qrFile: 'khalti-qr-arpan-adhikari.png',
     details: [{ label: 'Khalti ID', value: '9864389333', copy: true }],
-  },
-  {
-    id: 'bank',
-    label: 'Bank transfer',
-    app: 'your mobile banking app',
-    qr: asset('images/payments/bank-qr.png'),
-    qrFile: 'global-ime-bank-qr-arpan-adhikari.png',
-    details: [
-      { label: 'Bank', value: 'Global IME Bank Limited' },
-      { label: 'Account name', value: 'Arpan Adhikari' },
-      { label: 'Account number', value: '37707010011413', copy: true },
-    ],
   },
 ];
 
