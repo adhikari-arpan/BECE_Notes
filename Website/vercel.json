@@ -17,6 +17,11 @@
       "source": "/semester-:n/past-questions",
       "destination": "/past-questions/semester-:n",
       "permanent": true
+    },
+    {
+      "source": "/electives/net-development",
+      "destination": "/electives/net-technologies",
+      "permanent": true
     }
   ],
   "rewrites": [

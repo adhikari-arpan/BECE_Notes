@@ -120,7 +120,7 @@ export const subjectDescriptions: Record<string, string> = {
     'Teaching computers to work with human language: text preprocessing, text representation, language models, text classification, word embeddings, and transformer models.',
   'Cybersecurity':
     'Protecting systems and data: security principles, threats and vulnerabilities, cryptography, network and web security, and security management.',
-  '.NET Development':
+  '.NET Technologies':
     'Building applications on the .NET platform: C#, object-oriented programming, ASP.NET web applications, data access, and application development.',
   'Generative AI':
     'Modern generative AI: neural networks and deep learning foundations, large language models, prompting, and building applications with generative models.',

@@ -74,7 +74,7 @@ const electiveCourses: CourseInfo[] = [
   course('CMP 438', 'Big Data Technologies', 3, 'BD', 'Big Data'),
   course('CMP 459', 'Natural Language Processing', 3, 'NLP', 'Natural Language Processing'),
   course('ELECTIVE', 'Cybersecurity', 3, '⌁', 'Cybersecurity'),
-  course('ELECTIVE', '.NET Development', 3, '#', 'Dot Net'),
+  course('ELECTIVE', '.NET Technologies', 3, '#', 'Dot Net'),
   course('ELECTIVE', 'Generative AI', 3, 'AI', 'Generative AI'),
   course('ELECTIVE', 'Information System Audit', 3, '✓', 'Information System Audit'),
   course('ELECTIVE', 'Mobile App Development', 3, '▯', 'Mobile App Development'),
