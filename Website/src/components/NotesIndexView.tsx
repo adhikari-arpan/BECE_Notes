@@ -17,7 +17,7 @@ export function NotesIndexView() {
       <section className="semester-page-header section-wrap pqi-header">
         <div className="pqi-hero">
           <Link to="/" className="pqi-home" aria-label="Home" data-tip="Home"><ArrowLeft size={20} /></Link>
-          <h1 className="pqi-title">Semester <em>Notes</em></h1>
+          <h1 className="pqi-title">Semester-Wise <em>Notes</em></h1>
           <span className="pqi-kicker">Pokhara University · BE Computer Engineering</span>
           <p className="pqi-lead">Lecture notes, handwritten notes, lab works and syllabus for every semester, sorted by subject.</p>
         </div>

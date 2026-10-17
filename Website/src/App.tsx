@@ -119,7 +119,7 @@ function App() {
 
   // A title per page, for browser tabs, bookmarks and search results.
   useEffect(() => {
-    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'past-questions': 'Past Questions — Pokhara University BE Computer Engineering', 'pokhara-university': 'Pokhara University (PU) — About', notes: 'Semester Notes — Pokhara University BE Computer Engineering', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University' };
+    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'past-questions': 'Past Questions — Pokhara University BE Computer Engineering', 'pokhara-university': 'Pokhara University (PU) — About', notes: 'Semester-Wise Notes — Pokhara University BE Computer Engineering', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University' };
     document.title = page === 'home' ? SITE_TITLE
       : staticPage ? `${titles[staticPage]} | BECE Vault`
       : syllabusSemester ? `${syllabusSemester.label} Syllabus — PU BE Computer Engineering | BECE Vault`

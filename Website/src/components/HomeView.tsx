@@ -13,6 +13,9 @@ import {
   HardDrive,
   FileStack,
   MessageSquareHeart,
+  ScrollText,
+  Calculator,
+  GraduationCap,
 } from 'lucide-react';
 import { allFiles, isSyllabus, pastQuestionCollections, plural, semesters } from '@/content/notes';
 import { COUNTING_SINCE, useSiteStats } from '@/content/visits';
@@ -23,10 +26,6 @@ import { openTipJar } from '@/content/tipJar';
 import { Link } from '@/components/Link';
 import { contributors } from '@/content/contributors';
 import { SITE_FAQS } from '@/content/siteFaq';
-import { useStructure } from '@/content/structure';
-import { StructureToggle } from '@/components/StructureToggle';
-import { SubjectSearch } from '@/components/SubjectSearch';
-import { SemesterCards } from '@/components/SemesterCards';
 
 const courseSemesters = semesters.filter((s) => /^\d+$/.test(s.id));
 const subjectsWithNotes = semesters.flatMap((s) => s.subjects).filter((s) => !isSyllabus(s) && s.files.length > 0).length;
@@ -36,6 +35,20 @@ const totalSubjects = courseSemesters.flatMap((s) => s.subjects).filter((s) => s
 const totalBytes = allFiles.reduce((sum, f) => sum + f.size, 0);
 /** Past exam and assessment papers across every semester's Past Question Collection. */
 const questionPapers = pastQuestionCollections.reduce((sum, c) => sum + c.files.length, 0);
+/** Year (and term) of every paper: `2024_Spring_AG.pdf`, or a `2026_College_Assessments` folder. */
+const paperDates = pastQuestionCollections.flatMap((c) => c.files).flatMap((f) => {
+  const exam = /^(\d{4})_(Spring|Fall)_/i.exec(f.name);
+  if (exam) return [{ year: Number(exam[1]), term: exam[2][0].toUpperCase() + exam[2].slice(1).toLowerCase() }];
+  const assessment = /(?:^|\/)(\d{4})_College_Assessments?(?:\/|$)/i.exec(f.folder);
+  return assessment ? [{ year: Number(assessment[1]), term: 'Assessment' }] : [];
+});
+/** The newest paper on the site, shown on the home page's past-questions thumbnail (Fall comes after Spring). */
+const TERM_ORDER: Record<string, number> = { Assessment: 0, Spring: 1, Fall: 2 };
+const latestPaper = paperDates.reduce<{ year: number; term: string } | null>(
+  (best, d) => (!best || d.year > best.year || (d.year === best.year && TERM_ORDER[d.term] > TERM_ORDER[best.term]) ? d : best),
+  null,
+);
+const firstPaperYear = paperDates.length ? Math.min(...paperDates.map((d) => d.year)) : null;
 /** Total size split into a number that can count up and its unit, matching formatSize (e.g. 3.1 + " GB"). */
 const [sizeValue, sizeUnit, sizeDecimals] = totalBytes >= 1024 ** 3
   ? [Math.round((totalBytes / 1024 ** 3) * 10) / 10, ' GB', 1]
@@ -43,7 +56,6 @@ const [sizeValue, sizeUnit, sizeDecimals] = totalBytes >= 1024 ** 3
 
 export function HomeView() {
   const { visitors, pageViews, todayVisitors, todayPageViews } = useSiteStats();
-  const structure = useStructure();
 
   return (
     <>
@@ -73,20 +85,52 @@ export function HomeView() {
 
       <section className="semester-section section-wrap">
         <div className="section-heading">
-          <div><span className="section-kicker">The curriculum</span><h2>Choose a semester</h2></div>
-          <span className="semester-count">01 — {String(courseSemesters.length).padStart(2, '0')} · extras</span>
+          <div><span className="section-kicker">Start here</span><h2>What are you looking for?</h2></div>
         </div>
-        <div className="structure-bar structure-bar-home">
-          <StructureToggle />
-          <span className="structure-note-inline">
-            {structure === '2025'
-              ? 'Showing the 2025 order: same subjects and credits, in their new semesters.'
-              : 'Joined in 2025 or later? Switch to see your semesters.'}
-          </span>
+        {/* Two "stacks of paper" that fan out on hover, each opening its own page; the other tools as plain links. */}
+        <div className="shelf">
+          <Link to="/notes" className="shelf-item">
+            <span className="shelf-stack" aria-hidden="true">
+              <span className="sheet sheet-3" />
+              <span className="sheet sheet-2" />
+              <span className="sheet sheet-1">
+                <em>Unit 3</em>
+                <i /><i /><i /><i className="short" />
+                <b>Handwritten</b>
+              </span>
+            </span>
+            <span className="shelf-text">
+              <span className="section-kicker">{courseSemesters.length} semesters · {allFiles.length.toLocaleString('en-US')} files</span>
+              <strong>Semester-Wise <em>Notes</em></strong>
+              <span className="shelf-desc">Lecture notes, handwritten notes, lab works and syllabus, subject by subject.</span>
+              <span className="shelf-cta">Browse notes <ArrowRight size={15} /></span>
+            </span>
+          </Link>
+          <Link to="/past-questions" className="shelf-item shelf-papers">
+            <span className="shelf-stack" aria-hidden="true">
+              <span className="sheet sheet-3" />
+              <span className="sheet sheet-2" />
+              <span className="sheet sheet-1">
+                <em>Pokhara University</em>
+                {latestPaper && <span className="sheet-tags"><u>{latestPaper.year}</u><u>{latestPaper.term}</u></span>}
+                <i /><i /><i className="short" />
+                <b>Full marks 100</b>
+              </span>
+            </span>
+            <span className="shelf-text">
+              <span className="section-kicker">{firstPaperYear && latestPaper ? `${firstPaperYear} → ${latestPaper.year} · ` : ''}{questionPapers.toLocaleString('en-US')} papers</span>
+              <strong>Past <em>Questions</em></strong>
+              <span className="shelf-desc">PU exam papers and college assessments, sorted by subject and year.</span>
+              <span className="shelf-cta">Practise papers <ArrowRight size={15} /></span>
+            </span>
+          </Link>
         </div>
-        <SubjectSearch structure={structure}>
-        <SemesterCards structure={structure} />
-        </SubjectSearch>
+        <p className="shelf-more">
+          Also here:
+          <Link to="/syllabus"><ScrollText size={14} /> Syllabus</Link>
+          <Link to="/cgpa-calculator"><Calculator size={14} /> CGPA Calculator</Link>
+          <Link to="/pu-grading-system"><GraduationCap size={14} /> Grading guide</Link>
+        </p>
       </section>
 
       <section className="about-section section-wrap">
