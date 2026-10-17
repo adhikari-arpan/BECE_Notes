@@ -47,6 +47,7 @@ export function Footer() {
             <h4>Explore</h4>
             <Link to="/"><Home size={15} /> Home</Link>
             <Link to="/cgpa-calculator"><Calculator size={15} /> CGPA Calculator</Link>
+            <Link to="/notes"><BookOpen size={15} /> Notes</Link>
             <Link to="/past-questions"><FileStack size={15} /> Past Questions</Link>
             <Link to="/syllabus"><ScrollText size={15} /> Syllabus</Link>
             <Link to="/pu-grading-system"><GraduationCap size={15} /> PU Grading Guide</Link>
