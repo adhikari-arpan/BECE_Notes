@@ -23,6 +23,7 @@ import {
 import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
 import { BackArrow } from '@/components/PageHero';
+import { studyGuideForSubject, studyGuidePath } from '@/content/studyGuides';
 import { PastQuestionsView } from '@/components/PastQuestionsView';
 import { navigate } from '@/content/router';
 import { Loader } from '@/components/Loader';
@@ -226,6 +227,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                     <details className="subject-about">
                       <summary><Info size={13} /> About this subject</summary>
                       <p>{subject.description}</p>
+                      {studyGuideForSubject(subject) && <Link to={studyGuidePath(studyGuideForSubject(subject))} className="subject-about-guide">Study guide →</Link>}
                     </details>
                   )}
                   <div className="tree-title">

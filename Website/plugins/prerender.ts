@@ -24,7 +24,7 @@ export interface PrerenderOptions {
 
 // Minimal shapes of what src/content/notes.ts exports (kept local so this file has no app imports).
 interface NoteFile { name: string; path: string; folder: string; updated: string | null }
-interface Subject { slug: string; kind: 'course' | 'syllabus' | 'resource'; code: string; name: string; credits: number | null; description?: string; electiveSlot?: boolean; files: NoteFile[] }
+interface Subject { slug: string; kind: 'course' | 'syllabus' | 'resource'; code: string; name: string; credits: number | null; description?: string; guide?: { focus: string[]; study: string; exam: string }; electiveSlot?: boolean; files: NoteFile[] }
 interface Semester { slug: string; year: string; label: string; subjects: Subject[] }
 interface Course2025 { code: string; name: string; credits: number; hours: [number, number, number]; subject?: Subject; noteSemester?: Semester }
 interface Semester2025 { id: number; year: string; label: string; courses: Course2025[] }
@@ -38,6 +38,11 @@ interface AppData {
   PU_GUIDE_DESCRIPTION: string;
   PU_GUIDE_PATH: string;
   SITE_FAQS: { q: string; a: string }[];
+  studyGuides: { slug: string; semester: Semester; subject: Subject & { guide: NonNullable<Subject['guide']> } }[];
+  STUDY_GUIDES_TITLE: string;
+  STUDY_GUIDES_DESCRIPTION: string;
+  studyGuideTitle: (g: AppData['studyGuides'][number]) => string;
+  studyGuideDescription: (g: AppData['studyGuides'][number]) => string;
 }
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -56,6 +61,7 @@ async function loadNotes(root: string, repoRoot: string): Promise<AppData> {
         "export { GRADES } from './content/grades';",
         "export { PU_FAQS, PU_GUIDE_TITLE, PU_GUIDE_DESCRIPTION, PU_GUIDE_PATH } from './content/puGuide';",
         "export { SITE_FAQS } from './content/siteFaq';",
+        "export { studyGuides, STUDY_GUIDES_TITLE, STUDY_GUIDES_DESCRIPTION, studyGuideTitle, studyGuideDescription } from './content/studyGuides';",
       ].join('\n'),
       resolveDir: src,
       loader: 'ts',
@@ -168,6 +174,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
         lastmod: newest(sub.files),
         body: `<main><h1>${esc(sub.name)}${isCourse ? ` (${esc(sub.code)})` : ''} — ${esc(semFull(sem))} notes, Pokhara University BECE</h1>`
           + `${sub.description ? `<p>${esc(sub.description)}</p>` : ''}`
+          + `${sub.guide ? `<p><a href="/study-guides/${sub.slug}">How to study ${esc(sub.name)}</a></p>` : ''}`
           + `<p>${sub.files.length} files: lecture notes, question collections, lab reports and more for ${esc(sub.name)}.</p>`
           + `${fileList}<p><a href="${semRoute}">All ${esc(sem.label)} subjects</a></p>${nav}</main>`,
         jsonLd: [
@@ -223,6 +230,32 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
   ];
   for (const [route, name, desc] of statics) {
     pages.push({ route, title: `${name} | ${opts.siteName}`, description: clip(desc), body: `<main><h1>${esc(name)}</h1><p>${esc(desc)}</p>${nav}</main>` });
+  }
+
+  // Study guides: an index, and one article per subject.
+  const guideGroups = data.semesters.map((sem) => [sem, data.studyGuides.filter((g) => g.semester.slug === sem.slug)] as const).filter(([, gs]) => gs.length);
+  pages.push({
+    route: '/study-guides',
+    title: `${data.STUDY_GUIDES_TITLE} | ${opts.siteName}`,
+    description: clip(data.STUDY_GUIDES_DESCRIPTION),
+    body: `<main><h1>Study guides — Pokhara University BE Computer Engineering</h1><p>${esc(data.STUDY_GUIDES_DESCRIPTION)}</p>`
+      + guideGroups.map(([sem, gs]) => `<h2>${esc(sem.label)}</h2><ul>${gs.map((g) => `<li><a href="/study-guides/${g.slug}">How to study ${esc(g.subject.name)}</a></li>`).join('')}</ul>`).join('')
+      + `${nav}</main>`,
+    jsonLd: [breadcrumbs(opts, [['Study Guides', '/study-guides']])],
+  });
+  for (const g of data.studyGuides) {
+    const route = `/study-guides/${g.slug}`;
+    pages.push({
+      route,
+      title: `${data.studyGuideTitle(g)} | ${opts.siteName}`,
+      description: clip(data.studyGuideDescription(g)),
+      body: `<main><article><h1>How to study ${esc(g.subject.name)} — ${esc(g.semester.label)}, Pokhara University BECE</h1>`
+        + `${g.subject.description ? `<h2>What it covers</h2><p>${esc(g.subject.description)}</p>` : ''}`
+        + `<h2>Topics worth extra time</h2><ol>${g.subject.guide.focus.map((t) => `<li>${esc(t)}</li>`).join('')}</ol>`
+        + `<h2>How to study it</h2><p>${esc(g.subject.guide.study)}</p><h2>In the exam</h2><p>${esc(g.subject.guide.exam)}</p>`
+        + `<p><a href="/${g.semester.slug}/${g.slug}">${esc(g.subject.name)} notes</a> · <a href="/study-guides">All study guides</a></p></article>${nav}</main>`,
+      jsonLd: [breadcrumbs(opts, [['Study Guides', '/study-guides'], [g.subject.name, route]])],
+    });
   }
 
   // PU grading guide: the rules, the grade table and the FAQ (also as FAQPage structured data).

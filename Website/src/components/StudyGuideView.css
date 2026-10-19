@@ -1,0 +1,23 @@
+/* Study guides: an index grouped by semester, and one short article per subject. */
+.sg-index { padding: 10px 0 70px; display: grid; gap: 28px; }
+.sg-group h2 { margin: 0 0 12px; font: 500 11px 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--c-5c6b64); }
+.sg-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+a.sg-item { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border: 1px solid var(--c-e3e6de); border-radius: 12px; background: var(--c-fffdf7); color: var(--c-0b1f1a); text-decoration: none; font-size: 14px; font-weight: 600; transition: border-color .15s; }
+a.sg-item:hover { border-color: #e8c873; }
+a.sg-item span { flex: 1; min-width: 0; }
+a.sg-item small { font: 500 11px 'DM Mono', monospace; color: var(--c-7d8b84); }
+a.sg-item svg { flex-shrink: 0; color: var(--c-7d8b84); }
+.pqi-title .sg-title-long { font-size: .78em; }
+
+.sg-article { padding-bottom: 70px; }
+.sg-article p { margin: 0; font-size: 14.5px; line-height: 1.75; color: var(--c-4c5b54); }
+.sg-links { display: flex; flex-wrap: wrap; gap: 8px 22px; padding-top: 4px; }
+.sg-links a { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13.5px; color: #b8860b; text-decoration: none; }
+.sg-links a:hover { text-decoration: underline; }
+:root[data-theme="dark"] .sg-links a { color: #f0c34a; }
+.sg-pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--c-e3e6de); }
+.sg-pager a { display: inline-flex; align-items: center; gap: 10px; color: var(--c-0b1f1a); text-decoration: none; font-size: 14px; font-weight: 600; }
+.sg-pager a:hover { color: #b8860b; }
+.sg-pager span { display: grid; }
+.sg-pager small { font: 500 10.5px 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--c-7d8b84); }
+.sg-next { margin-left: auto; text-align: right; }

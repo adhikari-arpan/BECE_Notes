@@ -1,5 +1,6 @@
 import { config, entries, type ManifestEntry } from 'virtual:notes-manifest';
 import { subjectDescriptions } from '@/content/descriptions';
+import { subjectGuides, type SubjectGuide } from '@/content/subjectGuides';
 
 export type FileKind = 'pdf' | 'doc' | 'slides' | 'sheet' | 'image' | 'markdown' | 'code' | 'text' | 'other';
 
@@ -28,6 +29,8 @@ export interface Subject {
   credits: number | null;
   /** Short summary of what the course covers (see descriptions.ts). */
   description?: string;
+  /** Topics to focus on, how to study it and exam advice (see subjectGuides.ts). */
+  guide?: SubjectGuide;
   /** An "Elective I/II/III" slot: its notes live in the Electives collection, not in the semester. */
   electiveSlot?: boolean;
   icon: string;
@@ -147,6 +150,8 @@ export const normalizeName = (s: string) => s.toLowerCase().replace(/&/g, 'and')
 
 const descriptionsByName = new Map(Object.entries(subjectDescriptions).map(([name, text]) => [normalizeName(name), text]));
 const descriptionFor = (name: string) => descriptionsByName.get(normalizeName(name));
+const guidesByName = new Map(Object.entries(subjectGuides).map(([name, guide]) => [normalizeName(name), guide]));
+const guideFor = (name: string) => guidesByName.get(normalizeName(name));
 
 function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: string): Subject[] {
   const groups = groupByFolder(root);
@@ -168,6 +173,7 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
       code: c.code,
       name: c.name,
       description: descriptionFor(c.name),
+      guide: guideFor(c.name),
       electiveSlot: /^ELEC\b/.test(c.code),
       credits: c.credits,
       icon: c.icon,
