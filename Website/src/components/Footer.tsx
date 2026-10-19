@@ -1,4 +1,4 @@
-import { BookOpen, BookOpenCheck, Calculator, FileStack, GraduationCap, ScrollText, CircleHelp, Coffee, Cookie, Eye, Github, Heart, Home, Mail, MessageSquareHeart, MousePointerClick, ShieldCheck, Users } from 'lucide-react';
+import { BookOpen, BookOpenCheck, Calculator, FileStack, GraduationCap, ScrollText, CircleHelp, Coffee, Cookie, Eye, Github, Heart, Mail, MessageSquareHeart, MousePointerClick, ShieldCheck, Users } from 'lucide-react';
 import { formatCount, useSiteStats } from '@/content/visits';
 import { Logo } from '@/components/Logo';
 import { openTipJar } from '@/content/tipJar';
@@ -45,16 +45,17 @@ export function Footer() {
 
           <nav className="footer-col" aria-label="Explore">
             <h4>Explore</h4>
-            <Link to="/"><Home size={15} /> Home</Link>
-            <Link to="/cgpa-calculator"><Calculator size={15} /> CGPA Calculator</Link>
-            <Link to="/notes"><BookOpen size={15} /> Notes</Link>
-            <Link to="/past-questions"><FileStack size={15} /> Past Questions</Link>
-            <Link to="/syllabus"><ScrollText size={15} /> Syllabus</Link>
-            <Link to="/pu-grading-system"><GraduationCap size={15} /> PU Grading Guide</Link>
-            <Link to="/study-guides"><BookOpenCheck size={15} /> Study Guides</Link>
-            <Link to="/about"><CircleHelp size={15} /> About Us</Link>
-            <Link to="/contributors"><Users size={15} /> Contributors</Link>
-            <Link to="/contributing"><Heart size={15} /> Contribute</Link>
+            <div className="footer-links-2col">
+              <Link to="/notes"><BookOpen size={15} /> Notes</Link>
+              <Link to="/past-questions"><FileStack size={15} /> Past Questions</Link>
+              <Link to="/syllabus"><ScrollText size={15} /> Syllabus</Link>
+              <Link to="/study-guides"><BookOpenCheck size={15} /> Study Guides</Link>
+              <Link to="/cgpa-calculator"><Calculator size={15} /> CGPA Calculator</Link>
+              <Link to="/pu-grading-system"><GraduationCap size={15} /> PU Grading Guide</Link>
+              <Link to="/about"><CircleHelp size={15} /> About Us</Link>
+              <Link to="/contributors"><Users size={15} /> Contributors</Link>
+              <Link to="/contributing"><Heart size={15} /> Contribute</Link>
+            </div>
           </nav>
 
           <nav className="footer-col" aria-label="Site">

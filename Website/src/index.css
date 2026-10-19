@@ -662,7 +662,7 @@ a.stat-card-link:hover { border-color: #e8c873; transform: translateY(-2px); }
 .site-footer { background: #173f37; color: #c8d8cf; padding: 50px 0 30px; margin-top: auto; }
 .footer-inner { width: min(1180px, calc(100% - 64px)); margin: 0 auto; }
 /* Brand column on the left, then three link columns spread across the width. */
-.footer-top { display: grid; grid-template-columns: minmax(260px, 1.5fr) minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 36px; padding-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,.1); }
+.footer-top { display: grid; grid-template-columns: minmax(240px, 1.3fr) minmax(0, 1.2fr) minmax(0, 1.5fr) minmax(0, .9fr); gap: 36px; padding-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,.1); }
 .footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
 a.footer-brand-lockup { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
 .footer-brand .brand-mark { flex-shrink: 0; }
@@ -677,8 +677,10 @@ a.footer-brand-lockup { display: inline-flex; align-items: center; gap: 10px; te
 .footer-col svg { flex-shrink: 0; opacity: .75; }
 .footer-semesters { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 10px 22px; }
 .footer-semesters a { white-space: nowrap; }
+.footer-links-2col { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 10px 22px; }
+.footer-links-2col a { white-space: nowrap; }
 @media (max-width: 560px) {
-  .footer-col[aria-label="Semesters"] { grid-column: 1 / -1; }
+  .footer-col[aria-label="Semesters"], .footer-col[aria-label="Explore"] { grid-column: 1 / -1; }
   .footer-semesters { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; width: 100%; }
 }
 .footer-bottom { padding-top: 22px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
