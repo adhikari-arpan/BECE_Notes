@@ -31,7 +31,7 @@ export function NotesIndexView() {
 
         <div className="pqi-cta">
           <FileStack size={20} />
-          <p><strong>Practising for exams?</strong> Past PU papers for every semester, sorted by subject and year.</p>
+          <p><strong>Practicing for exams?</strong> Past PU papers for every semester, sorted by subject and year.</p>
           <Link to="/past-questions" className="pqi-cta-link">Past questions <ArrowRight size={14} /></Link>
         </div>
         <div className="pqi-cta">

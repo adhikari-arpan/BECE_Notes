@@ -23,7 +23,7 @@ export const studyGuideForSubject = (subject: Subject) => studyGuides.find((g) =
 
 export const STUDY_GUIDES_TITLE = 'Study Guides — Pokhara University BE Computer Engineering';
 export const STUDY_GUIDES_DESCRIPTION =
-  'How to study every Pokhara University BE Computer Engineering subject: the topics worth extra time, how to practise, and how to prepare for the final exam.';
+  'How to study every Pokhara University BE Computer Engineering subject: the topics worth extra time, how to practice, and how to prepare for the final exam.';
 export const studyGuideTitle = (g: StudyGuideEntry) => `How to Study ${g.subject.name} — ${g.semester.label}, PU BECE`;
 export const studyGuideDescription = (g: StudyGuideEntry) =>
   `Study guide for ${g.subject.name}${g.subject.kind === 'course' ? ` (${g.subject.code})` : ''}, ${g.semester.label}, Pokhara University BE Computer Engineering: key topics, how to study it and exam tips.`;

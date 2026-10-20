@@ -16,7 +16,7 @@ export function StudyGuidesIndexView() {
         <PageHero
           title={<>Study <em>Guides</em></>}
           kicker="Pokhara University · BE Computer Engineering"
-          lead="How to study each subject: the topics worth extra time, how to practise, and how to prepare for the exam."
+          lead="How to study each subject: the topics worth extra time, how to practice, and how to prepare for the exam."
         />
       </section>
       <section className="section-wrap sg-index">

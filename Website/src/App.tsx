@@ -156,6 +156,7 @@ function App() {
             {page !== 'home' && <Link to="/" className="text-button">Home</Link>}
             {page !== 'notes' && <Link to="/notes" className="text-button">Notes</Link>}
             {!page.startsWith('past-questions') && <Link to="/past-questions" className="text-button">Past Questions</Link>}
+            {!page.startsWith('syllabus') && <Link to="/syllabus" className="text-button">Syllabus</Link>}
             {page !== 'cgpa-calculator' && <Link to="/cgpa-calculator" className="text-button">CGPA Calculator</Link>}
             <ChiyaButton />
             <ThemeToggle />

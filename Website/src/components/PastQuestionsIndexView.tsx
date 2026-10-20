@@ -88,7 +88,7 @@ export function PastQuestionsIndexView() {
 
         <div className="pqi-cta">
           <FileUp size={20} />
-          <p><strong>Have a past paper?</strong> The collection is still growing. Add it so the next batch can practise too.</p>
+          <p><strong>Have a past paper?</strong> The collection is still growing. Add it so the next batch can practice too.</p>
           <Link to="/contributing#past-question-papers" className="pqi-cta-link">How to send papers <ArrowRight size={14} /></Link>
         </div>
       </section>

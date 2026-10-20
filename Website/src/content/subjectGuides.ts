@@ -4,7 +4,7 @@
  *
  * To add or edit one:
  *   focus  — 4–6 topics worth extra time (the ideas the rest of the course is built on)
- *   study  — how to actually learn it: what to practise, in what order
+ *   study  — how to actually learn it: what to practice, in what order
  *   exam   — how to prepare for and write the final paper
  * Keep it honest and general: advice that holds for any batch, not guesses about what "will come".
  */
@@ -27,7 +27,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
     study:
       'Calculus is learnt by solving, not reading. Work through each chapter’s solved examples first, then try the exercise problems without looking at the solution. Keep a one-page sheet of standard derivatives, integrals and reduction formulae and revise it daily until it is automatic. When a problem goes wrong, find the exact step that failed rather than starting a new one.',
     exam:
-      'Most marks come from complete, step-by-step working, so write every step and state the rule you use. Practise past papers under time pressure and learn to recognise which integration technique a question is asking for at a glance.',
+      'Most marks come from complete, step-by-step working, so write every step and state the rule you use. Practice past papers under time pressure and learn to recognise which integration technique a question is asking for at a glance.',
   },
   'Digital Logic': {
     focus: [
@@ -53,7 +53,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
     study:
       'Write and run code every day, even short programs. Start with the classic exercises (patterns, primes, factorials, Fibonacci, matrix operations, string reversal) and type them yourself instead of copying. Pointers are where most students struggle: draw memory boxes and arrows until you can predict what each line does.',
     exam:
-      'Practise writing programs on paper, since there is no compiler in the exam hall: indent clearly, declare every variable and include headers. For output-prediction questions, trace the code line by line in a table of variable values.',
+      'Practice writing programs on paper, since there is no compiler in the exam hall: indent clearly, declare every variable and include headers. For output-prediction questions, trace the code line by line in a table of variable values.',
   },
   'Basic Electrical Engineering': {
     focus: [
@@ -118,7 +118,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Analytic geometry: lines, planes, spheres and conic sections in three dimensions',
     ],
     study:
-      'Linear algebra rewards understanding the definitions exactly, since most proofs follow directly from them. Practise row reduction until it is quick and accurate, because it underlies rank, inverses and solving systems. For geometry, sketch each surface or line before calculating.',
+      'Linear algebra rewards understanding the definitions exactly, since most proofs follow directly from them. Practice row reduction until it is quick and accurate, because it underlies rank, inverses and solving systems. For geometry, sketch each surface or line before calculating.',
     exam:
       'Arithmetic slips are the usual cause of lost marks in matrix questions, so check your working (for example, multiply back to verify an inverse). Write proofs in clear steps, quoting the property you use at each step.',
   },
@@ -133,7 +133,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
     study:
       'Learn each derivation as a sequence of ideas, not lines to memorise: know where each equation comes from and what each symbol means. Then solve numericals on the same topic so the formulas have context. Lab experiments on interference, diffraction and resonance reinforce the theory.',
     exam:
-      'Derivations carry significant marks, so practise writing them out fully with labelled diagrams. For numericals, list the given values with units, write the formula, substitute and box the final answer.',
+      'Derivations carry significant marks, so practice writing them out fully with labelled diagrams. For numericals, list the given values with units, write the formula, substitute and box the final answer.',
   },
   'Applied Chemistry': {
     focus: [
@@ -144,7 +144,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Fuels, polymers and engineering materials',
     ],
     study:
-      'Group topics by theme and make short comparison tables (for example, types of corrosion, or methods of water softening). Practise the numerical parts, such as hardness calculations and cell potentials, until the steps are routine.',
+      'Group topics by theme and make short comparison tables (for example, types of corrosion, or methods of water softening). Practice the numerical parts, such as hardness calculations and cell potentials, until the steps are routine.',
     exam:
       'Use reactions, labelled diagrams and tables wherever they fit, since they show understanding quickly. Learn definitions precisely, and show units in every calculation.',
   },
@@ -157,7 +157,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Isometric drawing, and an introduction to CAD',
     ],
     study:
-      'Drawing is a skill built by repetition. Complete every sheet yourself, and practise visualising objects: look at a 3-D object and sketch its front, top and side views before drawing them properly. Keep your instruments in good condition and pencils sharp.',
+      'Drawing is a skill built by repetition. Complete every sheet yourself, and practice visualising objects: look at a 3-D object and sketch its front, top and side views before drawing them properly. Keep your instruments in good condition and pencils sharp.',
     exam:
       'Neatness, correct line types and complete dimensioning all carry marks. Plan the layout of the sheet before you start so views are aligned and nothing runs off the page.',
   },
@@ -224,7 +224,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Indexing and file organisation, including B+ trees',
     ],
     study:
-      'Practise SQL on a real database such as MySQL or PostgreSQL: create tables, insert data and write queries until joins and GROUP BY feel natural. For normalisation, work through examples step by step, writing out the functional dependencies first. Design a small database (library, college, hospital) end to end, from ER diagram to tables.',
+      'Practice SQL on a real database such as MySQL or PostgreSQL: create tables, insert data and write queries until joins and GROUP BY feel natural. For normalisation, work through examples step by step, writing out the functional dependencies first. Design a small database (library, college, hospital) end to end, from ER diagram to tables.',
     exam:
       'Write SQL and relational algebra precisely; small syntax errors matter. Draw ER diagrams with correct notation for keys, cardinality and participation. In normalisation answers, show each normal form and why the relation satisfies it.',
   },
@@ -252,7 +252,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
     study:
       'Write and run assembly programs on a simulator or trainer kit; reading programs alone does not build the skill. Keep an instruction reference sheet nearby and comment every line of your programs. Draw the internal architecture from memory until you can explain each block.',
     exam:
-      'Programs should be commented and use correct mnemonics. Architecture and timing-diagram questions need clean, labelled diagrams; practise drawing them within a fixed time.',
+      'Programs should be commented and use correct mnemonics. Architecture and timing-diagram questions need clean, labelled diagrams; practice drawing them within a fixed time.',
   },
   'Computer Graphics': {
     focus: [
@@ -263,7 +263,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Visible surface detection, illumination and shading models',
     ],
     study:
-      'Trace each algorithm on a small grid by hand, writing out every pixel or step, then implement it in C or C++ with a graphics library. For transformations, practise building the composite matrix in the right order and applying it to points.',
+      'Trace each algorithm on a small grid by hand, writing out every pixel or step, then implement it in C or C++ with a graphics library. For transformations, practice building the composite matrix in the right order and applying it to points.',
     exam:
       'Algorithm questions expect a full step table for the given input. Write matrices clearly, state the order of multiplication, and verify the final coordinates.',
   },
@@ -276,7 +276,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Error detection and correction (parity, CRC, Hamming code)',
     ],
     study:
-      'Draw waveforms for each encoding scheme from a sample bit stream; it is the fastest way to learn them. Practise the numerical topics, such as Nyquist and Shannon capacity and CRC calculation, until the steps are routine.',
+      'Draw waveforms for each encoding scheme from a sample bit stream; it is the fastest way to learn them. Practice the numerical topics, such as Nyquist and Shannon capacity and CRC calculation, until the steps are routine.',
     exam:
       'Waveform and block-diagram questions need neat, labelled drawings. Show the working for CRC and Hamming code questions bit by bit.',
   },
@@ -291,7 +291,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Partial differential equations and their solutions',
     ],
     study:
-      'Keep a table of standard transform pairs and properties, and practise until you can apply them without looking. Work through solved examples of each type, then attempt mixed problems so you learn to choose the right method.',
+      'Keep a table of standard transform pairs and properties, and practice until you can apply them without looking. Work through solved examples of each type, then attempt mixed problems so you learn to choose the right method.',
     exam:
       'State the property or theorem you use at each step. Long problems earn partial marks for correct method, so never leave a question blank.',
   },
@@ -330,7 +330,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Turing machines, decidability and undecidability',
     ],
     study:
-      'Design machines yourself for many small languages ("strings ending in 01", "equal numbers of a and b"). Test each design with accepted and rejected strings. For proofs like the pumping lemma, learn the structure of the argument and practise it on different languages.',
+      'Design machines yourself for many small languages ("strings ending in 01", "equal numbers of a and b"). Test each design with accepted and rejected strings. For proofs like the pumping lemma, learn the structure of the argument and practice it on different languages.',
     exam:
       'Draw state diagrams clearly with start and accepting states marked, and include a transition table where asked. Show conversions (NFA to DFA, grammar to normal form) step by step.',
   },
@@ -343,7 +343,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Memory hierarchy, cache mapping and virtual memory; I/O organisation',
     ],
     study:
-      'Work through arithmetic algorithms (Booth’s multiplication, restoring division) on examples by hand. For caches, practise mapping addresses to sets and computing hit ratios. Relate pipelining hazards to real instruction sequences.',
+      'Work through arithmetic algorithms (Booth’s multiplication, restoring division) on examples by hand. For caches, practice mapping addresses to sets and computing hit ratios. Relate pipelining hazards to real instruction sequences.',
     exam:
       'Step-by-step tables for arithmetic algorithms and clear block diagrams score well. In cache and pipeline numericals, state your assumptions and show the formula before substituting.',
   },
@@ -371,7 +371,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Correlation and regression',
     ],
     study:
-      'Practise many problems and learn to recognise which distribution or test a question describes. Keep a summary sheet of formulas, conditions for using each test, and how to read the statistical tables.',
+      'Practice many problems and learn to recognise which distribution or test a question describes. Keep a summary sheet of formulas, conditions for using each test, and how to read the statistical tables.',
     exam:
       'For hypothesis tests, write the null and alternative hypotheses, the test statistic, the critical value and a conclusion in words. Present calculations neatly in tables.',
   },
@@ -410,7 +410,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Introduction to machine learning and neural networks',
     ],
     study:
-      'Trace search algorithms by hand on small graphs and game trees, noting the order nodes are expanded. Practise converting English sentences into logic and applying resolution. Implementing a search algorithm in Python makes the ideas stick.',
+      'Trace search algorithms by hand on small graphs and game trees, noting the order nodes are expanded. Practice converting English sentences into logic and applying resolution. Implementing a search algorithm in Python makes the ideas stick.',
     exam:
       'Show the search tree or table step by step. In logic questions, write each conversion step clearly; marks are awarded for the method.',
   },
@@ -423,7 +423,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Design of FIR and IIR filters',
     ],
     study:
-      'Build intuition with plots: compute and plot signals and their transforms in Python or MATLAB. Practise convolution by hand on short sequences. Keep a table of Z-transform pairs and properties.',
+      'Build intuition with plots: compute and plot signals and their transforms in Python or MATLAB. Practice convolution by hand on short sequences. Keep a table of Z-transform pairs and properties.',
     exam:
       'Show each step of convolution and transform calculations. Filter design questions need the specification, design steps and final transfer function.',
   },
@@ -477,7 +477,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Application layer protocols: DNS, HTTP, email and others',
     ],
     study:
-      'Practise subnetting until it is quick, since it appears everywhere. Trace routing algorithms on small networks. Using Wireshark or Packet Tracer to see real packets makes the layers concrete.',
+      'Practice subnetting until it is quick, since it appears everywhere. Trace routing algorithms on small networks. Using Wireshark or Packet Tracer to see real packets makes the layers concrete.',
     exam:
       'Subnetting and routing questions need complete, tabulated working. Draw protocol diagrams and header formats neatly.',
   },
@@ -490,7 +490,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Discrete event simulation, and verification and validation of models',
     ],
     study:
-      'Write small simulations in C or Python (random numbers, a single-server queue, a Monte Carlo estimate) as the lab does. Practise queueing formulas and randomness tests on numerical examples.',
+      'Write small simulations in C or Python (random numbers, a single-server queue, a Monte Carlo estimate) as the lab does. Practice queueing formulas and randomness tests on numerical examples.',
     exam:
       'Simulation tables must be complete and neat. State the formulas used in queueing problems and interpret the result.',
   },
@@ -609,7 +609,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Communicating results',
     ],
     study:
-      'Take a public dataset and go end to end in Python with pandas: clean it, explore it, model it and present findings. Practise explaining your charts in plain words.',
+      'Take a public dataset and go end to end in Python with pandas: clean it, explore it, model it and present findings. Practice explaining your charts in plain words.',
     exam:
       'Explain each step of the process with an example, and justify the choice of technique.',
   },
@@ -650,7 +650,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Security governance, policy and law',
     ],
     study:
-      'Practise on legal training platforms and deliberately vulnerable lab apps to understand how attacks work and how to defend against them.',
+      'Practice on legal training platforms and deliberately vulnerable lab apps to understand how attacks work and how to defend against them.',
     exam:
       'Explain attacks with the steps involved and the countermeasures for each.',
   },
@@ -663,7 +663,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Building and deploying APIs',
     ],
     study:
-      'Build a small web application with ASP.NET Core connected to a database. Practise C# features through short console programs first.',
+      'Build a small web application with ASP.NET Core connected to a database. Practice C# features through short console programs first.',
     exam:
       'Support explanations with short, correct C# code examples.',
   },
@@ -689,7 +689,7 @@ export const subjectGuides: Record<string, SubjectGuide> = {
       'Business continuity and disaster recovery',
     ],
     study:
-      'Study real audit frameworks and case studies, and practise writing an audit checklist for a familiar system.',
+      'Study real audit frameworks and case studies, and practice writing an audit checklist for a familiar system.',
     exam:
       'Structured answers with headings, steps and examples work best.',
   },

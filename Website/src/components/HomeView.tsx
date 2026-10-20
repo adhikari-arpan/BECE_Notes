@@ -121,7 +121,7 @@ export function HomeView() {
               <span className="section-kicker">{firstPaperYear && latestPaper ? `${firstPaperYear} → ${latestPaper.year} · ` : ''}{questionPapers.toLocaleString('en-US')} papers</span>
               <strong>Past <em>Questions</em></strong>
               <span className="shelf-desc">PU exam papers and college assessments, sorted by subject and year.</span>
-              <span className="shelf-cta">Practise papers <ArrowRight size={15} /></span>
+              <span className="shelf-cta">Practice papers <ArrowRight size={15} /></span>
             </span>
           </Link>
         </div>
