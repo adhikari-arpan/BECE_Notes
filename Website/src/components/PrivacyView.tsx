@@ -35,8 +35,11 @@ export function PrivacyView() {
             <p>
               The site shows how many visitors and page visits it has had. To count them, your browser sends an anonymous
               “+1” to a Firebase Realtime Database (a Google service). Only the running totals are stored — no names, no IP
-              addresses and nothing that identifies you. To avoid double-counting, your browser remembers the time it was
-              last counted. Visit counting always runs and is not affected by your cookie choice.
+              addresses and nothing that identifies you. The same anonymous counts are also kept per part of the site and
+              per subject (for example “Past questions” or “DBMS”), per kind of device (phone, tablet or computer) and per
+              kind of site a visitor came from (for example Google or Facebook; the full address isn’t kept). To avoid
+              double-counting, your browser remembers the time it was last counted. Visit counting always runs and is not
+              affected by your cookie choice.
             </p>
           </div>
 

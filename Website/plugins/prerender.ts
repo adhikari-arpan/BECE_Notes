@@ -232,6 +232,15 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
     pages.push({ route, title: `${name} | ${opts.siteName}`, description: clip(desc), body: `<main><h1>${esc(name)}</h1><p>${esc(desc)}</p>${nav}</main>` });
   }
 
+  // /analytics: live numbers, unlisted. Prerendered so the address loads, but noindex and not in the sitemap.
+  pages.push({
+    route: '/analytics',
+    title: `Site Analytics | ${opts.siteName}`,
+    description: `Live visit numbers for ${opts.siteName}.`,
+    index: false,
+    body: `<main><h1>Site analytics</h1><p>Loading live visit numbers…</p></main>`,
+  });
+
   // Study guides: an index, and one article per subject.
   const guideGroups = data.semesters.map((sem) => [sem, data.studyGuides.filter((g) => g.semester.slug === sem.slug)] as const).filter(([, gs]) => gs.length);
   pages.push({

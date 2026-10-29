@@ -13,6 +13,13 @@ import { useSyncExternalStore } from 'react';
  *
  * Each count also goes into a counter for the current day (Nepal time), stored as its own "site"
  * — counters/bece-notes-2026-10-09/visitors — so the same database rules apply unchanged.
+ *
+ * Breakdowns for the /analytics page work the same way, as lifetime counters only:
+ * - which part of the site a page visit is in (counters/bece-notes-section-notes/pageviews)
+ *   and, on subject pages, which subject (counters/bece-notes-subject-3-1f0a9c2e/pageviews, see analytics.ts);
+ * - for each counted visitor, the kind of device (counters/bece-notes-device-mobile/visitors)
+ *   and where they came from (counters/bece-notes-source-google/visitors).
+ * All anonymous: one "+1" per counter, nothing about the person is stored.
  */
 
 /** e.g. https://your-project-default-rtdb.firebaseio.com — set in Website/.env */
@@ -46,6 +53,67 @@ let stats: SiteStats = { visitors: null, pageViews: null, todayVisitors: null, t
 /** Today's date in Nepal, e.g. "2026-10-09" — the day counters reset at midnight Nepal time. */
 const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kathmandu', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const listeners = new Set<() => void>();
+
+/** Kinds of breakdown counters; each value is its own "site" (see breakdownSite). */
+export type Breakdown = 'section' | 'subject' | 'device' | 'source';
+/** e.g. breakdownSite('section', 'notes') → "bece-notes-section-notes". */
+export const breakdownSite = (kind: Breakdown, key: string) => `${SITE}-${kind}-${key}`;
+
+/** The day the breakdown counters (sections, subjects, devices, sources) started. */
+export const BREAKDOWNS_SINCE = '29 October 2026';
+
+/** A lifetime "+1" on a breakdown counter (no number is shown, so the reply isn't used). */
+function hitBreakdown(kind: Breakdown, key: string, counter: string) {
+  // Counter names may be at most 40 characters (database rules).
+  if (!DB_URL || !/^[a-z0-9-]+$/.test(key) || breakdownSite(kind, key).length > 40) return;
+  void fetch(`${DB_URL}/counters/${breakdownSite(kind, key)}/${counter}.json`, { method: 'PUT', body: JSON.stringify({ '.sv': { increment: 1 } }) }).catch(() => {});
+}
+
+/** "mobile", "tablet" or "desktop", from the browser's own report or its user agent. */
+export function deviceType(): 'mobile' | 'tablet' | 'desktop' {
+  const ua = navigator.userAgent;
+  if (/iPad|Tablet|PlayBook|Silk|Android(?!.*Mobile)/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'tablet';
+  const hint = (navigator as Navigator & { userAgentData?: { mobile?: boolean } }).userAgentData?.mobile;
+  if (hint ?? /Mobi|iPhone|iPod|Android|Opera Mini|IEMobile/i.test(ua)) return 'mobile';
+  return 'desktop';
+}
+
+/** Where a visitor came from, by kind of site (the full address isn't kept). */
+const SOURCE_RULES: [RegExp, string][] = [
+  [/(^|\.)(chatgpt\.com|openai\.com|claude\.ai|perplexity\.ai|gemini\.google\.com|copilot\.microsoft\.com)$/, 'ai-assistant'],
+  [/(^|\.)google\./, 'google'],
+  [/(^|\.)bing\.com$/, 'bing'],
+  [/(^|\.)(duckduckgo|yahoo|yandex|baidu|ecosia|brave)\./, 'other-search'],
+  [/(^|\.)(facebook\.com|fb\.com|fb\.me|messenger\.com)$/, 'facebook'],
+  [/(^|\.)instagram\.com$/, 'instagram'],
+  [/(^|\.)(whatsapp\.com|wa\.me)$/, 'whatsapp'],
+  [/(^|\.)(t\.me|telegram\.org)$/, 'telegram'],
+  [/(^|\.)(discord\.com|discord\.gg)$/, 'discord'],
+  [/(^|\.)(linkedin\.com|lnkd\.in)$/, 'linkedin'],
+  [/(^|\.)(twitter\.com|x\.com|t\.co)$/, 'x'],
+  [/(^|\.)(youtube\.com|youtu\.be)$/, 'youtube'],
+  [/(^|\.)reddit\.com$/, 'reddit'],
+  [/(^|\.)github\.com$/, 'github'],
+  [/(^|\.)arpanadhikari7\.com\.np$/, 'portfolio'],
+];
+
+export function trafficSource(): string {
+  // A shared link can say where it was posted: ?utm_source=facebook
+  const utm = new URLSearchParams(location.search).get('utm_source')?.toLowerCase().replace(/[^a-z0-9-]/g, '');
+  let host = '';
+  try {
+    host = document.referrer ? new URL(document.referrer).hostname.toLowerCase() : '';
+  } catch {
+    host = '';
+  }
+  // Moving between pages of this site isn't a source; neither is an empty referrer (typed, bookmarked or an app).
+  if (!host || host === location.hostname) {
+    if (utm) return SOURCE_RULES.find(([re]) => re.test(`${utm}.com`))?.[1] ?? 'other';
+    return 'direct';
+  }
+  if (/^(www\.)?arpanadhikari7\.com\.np$/.test(host)) return 'portfolio';
+  return SOURCE_RULES.find(([re]) => re.test(host))?.[1] ?? 'other';
+}
 
 function update(key: keyof SiteStats, value: number) {
   stats = { ...stats, [key]: value };
@@ -107,6 +175,8 @@ function checkVisitor() {
     // Claim the slot before the request so other tabs don't count the same visit.
     writeLastCounted(now);
     request(VISITORS, 'visitors', 'hit');
+    hitBreakdown('device', deviceType(), VISITORS);
+    hitBreakdown('source', trafficSource(), VISITORS);
   } else if (stats.visitors === null) {
     request(VISITORS, 'visitors', 'get');
   }
@@ -132,14 +202,19 @@ export function startVisitTracking() {
 
 let lastPage = { key: '', time: 0 };
 
-/** Counts one page visit. Call whenever the user opens a page; `pageKey` identifies it. */
-export function trackPageView(pageKey: string) {
+/**
+ * Counts one page visit. Call whenever the user opens a page; `pageKey` identifies it. `section` is
+ * the part of the site (see analytics.ts) and `subject` the subject page's key, for the breakdowns.
+ */
+export function trackPageView(pageKey: string, section?: string, subject?: string) {
   if (!DB_URL) return;
   const now = Date.now();
   // React's StrictMode runs effects twice in development — ignore an immediate repeat.
   if (pageKey === lastPage.key && now - lastPage.time < 1000) return;
   lastPage = { key: pageKey, time: now };
   request(PAGE_VIEWS, 'pageViews', 'hit');
+  if (section) hitBreakdown('section', section, PAGE_VIEWS);
+  if (subject) hitBreakdown('subject', subject, PAGE_VIEWS);
 }
 
 /** Lifetime and today's visitors and page visits; each is null while loading or if unavailable. */
