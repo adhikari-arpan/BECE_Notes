@@ -1,0 +1,44 @@
+/* Sponsor spot mock-ups (one per tier on /sponsor): a mini browser window with the slot marked */
+.sp-window { border-radius: 12px; border: 1px solid var(--c-dde3dc); background: var(--c-f6f7f2); overflow: hidden; box-shadow: 0 10px 24px rgba(var(--shadow-rgb), .1); transition: transform .3s cubic-bezier(.16, 1, .3, 1), box-shadow .3s; }
+.sp-chrome { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--c-e3e6de); }
+.sp-dots { display: flex; gap: 4px; }
+.sp-dots i { width: 7px; height: 7px; border-radius: 50%; background: #e0806a; }
+.sp-dots i:nth-child(2) { background: #e8c35a; }
+.sp-dots i:nth-child(3) { background: #6cc28a; }
+.sp-url { flex: 1; min-width: 0; padding: 2px 8px; border-radius: 6px; background: var(--c-fffdf7); font: 500 9px 'DM Mono', monospace; color: var(--c-5c6b64); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-topbar { display: flex; align-items: center; gap: 5px; padding: 7px 10px; background: var(--c-fffdf7); border-bottom: 1px solid var(--c-e3e6de); }
+.sp-topbar img { width: 12px; height: 12px; }
+.sp-topbar b { font: 700 8px 'Cinzel', serif; letter-spacing: .04em; color: var(--c-0b1f1a); }
+.sp-nav { display: flex; gap: 6px; margin-left: auto; }
+.sp-nav i { width: 18px; height: 4px; border-radius: 2px; background: var(--c-dde3dc); }
+.sp-body { height: 168px; padding: 12px; display: flex; flex-direction: column; gap: 9px; overflow: hidden; }
+.sp-l { display: block; height: 5px; border-radius: 3px; background: var(--c-dde3dc); }
+.sp-hero { display: grid; justify-items: center; gap: 5px; padding: 4px 0 2px; }
+.sp-l-kicker { width: 30%; height: 3px; background: var(--c-e3e6de); }
+.sp-l-title { width: 70%; height: 8px; background: var(--c-c9d2cb, #c9d2cb); }
+.sp-l-short { width: 45%; }
+.sp-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: auto; }
+.sp-cards i { height: 34px; border-radius: 6px; background: var(--c-fffdf7); border: 1px solid var(--c-e3e6de); }
+.sp-rows { display: grid; gap: 7px; }
+.sp-rows i { height: 14px; border-radius: 5px; background: var(--c-fffdf7); border: 1px solid var(--c-e3e6de); }
+.sp-rows i:nth-child(2n) { width: 86%; }
+.sp-footer { margin: auto -12px -12px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #0b1f1a; }
+.sp-footer-brand { display: inline-flex; align-items: center; gap: 4px; font: 700 7.5px 'Cinzel', serif; color: #f0c34a; }
+.sp-footer-brand img { width: 10px; height: 10px; }
+.sp-footer-credit { display: inline-flex; align-items: center; gap: 6px; font-size: 8px; color: #c8d8cf; }
+.sp-pq { flex: 1; display: grid; grid-template-columns: 30% 1fr; gap: 8px; min-height: 0; }
+.sp-pq-side { display: grid; gap: 5px; align-content: start; }
+.sp-pq-side i { height: 14px; border-radius: 5px; background: var(--c-fffdf7); border: 1px solid var(--c-e3e6de); }
+.sp-pq-side i.is-on { border-color: #e8c873; background: #fff4cf; }
+:root[data-theme="dark"] .sp-pq-side i.is-on { background: rgba(240, 195, 74, .16); border-color: rgba(240, 195, 74, .4); }
+.sp-pq-main { display: grid; gap: 6px; align-content: start; }
+.sp-papers { display: grid; gap: 5px; }
+.sp-papers i { height: 13px; border-radius: 4px; background: var(--c-fffdf7); border: 1px solid var(--c-e3e6de); }
+/* The sponsor slot: dashed gold, gently pulsing, so the eye lands on it. */
+.sp-slot { display: grid; place-items: center; border: 1.5px dashed #d4a72c; border-radius: 7px; background: repeating-linear-gradient(135deg, rgba(240, 195, 74, .16) 0 8px, rgba(240, 195, 74, .07) 8px 16px); color: #8a6508; font: 700 9px 'DM Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; animation: sp-pulse 2.6s ease-in-out infinite; }
+:root[data-theme="dark"] .sp-slot { color: #f0c34a; border-color: #c99a26; }
+.sp-slot-banner { height: 40px; }
+.sp-slot-chip { display: inline-grid; padding: 3px 8px; font-size: 7px; }
+.sp-slot-card { height: 36px; }
+@keyframes sp-pulse { 50% { box-shadow: 0 0 0 4px rgba(240, 195, 74, .14); } }
+@media (prefers-reduced-motion: reduce) { .sp-slot { animation: none; } .sp-window { transition: none; } }
