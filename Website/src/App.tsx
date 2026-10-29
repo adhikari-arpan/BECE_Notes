@@ -32,6 +32,7 @@ const PokharaUniversityView = lazy(() => import('@/components/PokharaUniversityV
 const FeedbackView = lazy(() => import('@/components/FeedbackView').then((m) => ({ default: m.FeedbackView })));
 const StudyGuidesIndexView = lazy(() => import('@/components/StudyGuideView').then((m) => ({ default: m.StudyGuidesIndexView })));
 const StudyGuideView = lazy(() => import('@/components/StudyGuideView').then((m) => ({ default: m.StudyGuideView })));
+const SponsorView = lazy(() => import('@/components/SponsorView').then((m) => ({ default: m.SponsorView })));
 const AnalyticsView = lazy(() => import('@/components/AnalyticsView').then((m) => ({ default: m.AnalyticsView })));
 const SyllabusView = lazy(() => import('@/components/SyllabusView').then((m) => ({ default: m.SyllabusView })));
 
@@ -52,6 +53,7 @@ let defaultDescription = '';
  *   /past-questions/semester-1        a semester's past papers; ?file=<path in its folder> opens one
  *   /study-guides, /study-guides/dbms  how to study each subject (all subjects, or one)
  *   /analytics                         live visit numbers; unlisted (linked nowhere, noindex)
+ *   /sponsor                           sponsor spots and tiers; unlisted like /analytics (they link to each other)
  *   /semester-1, /electives, ...      a semester (or collection)
  *   /semester-1/programming-in-c      a subject; ?file=<path in subject> opens a specific file
  */
@@ -59,7 +61,7 @@ function App() {
   const { pathname, params } = useLocation();
   const [first, second] = pathname.split('/').filter(Boolean);
 
-  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy' || first === 'feedback' || first === 'notes' || first === 'past-questions' || first === 'pokhara-university' || first === 'cgpa-calculator' || first === 'pu-grading-system' || first === 'syllabus' || first === 'study-guides' || first === 'analytics') ? first : null;
+  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy' || first === 'feedback' || first === 'notes' || first === 'past-questions' || first === 'pokhara-university' || first === 'cgpa-calculator' || first === 'pu-grading-system' || first === 'syllabus' || first === 'study-guides' || first === 'analytics' || first === 'sponsor') ? first : null;
   // /syllabus/semester-N
   const syllabusSemester = first === 'syllabus' && second ? semesters2025.find((s) => `semester-${s.id}` === second) : undefined;
   // /past-questions/semester-N
@@ -82,9 +84,9 @@ function App() {
   }, [pathname]);
 
   // Every page opened (home, a semester, a subject, about...) counts as one page visit, also by part of
-  // the site and subject for /analytics. Looking at /analytics itself isn't counted.
+  // the site and subject for /analytics. Looking at /analytics or /sponsor isn't counted.
   useEffect(() => {
-    if (page === 'analytics') return;
+    if (page === 'analytics' || page === 'sponsor') return;
     trackPageView(pathname, sectionFor(page), page === 'subject' && semester && subject ? subjectKey(semester, subject) : undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per address; page/semester/subject follow from it
   }, [pathname]);
@@ -130,12 +132,12 @@ function App() {
     const url = `${SITE_URL}${pathname === '/' ? '/' : pathname}`;
     document.querySelector('link[rel="canonical"]')?.setAttribute('href', url);
     document.querySelector('meta[property="og:url"]')?.setAttribute('content', url);
-    document.querySelector('meta[name="robots"]')?.setAttribute('content', page === 'not-found' ? 'noindex, follow' : page === 'analytics' ? 'noindex, nofollow' : 'index, follow');
+    document.querySelector('meta[name="robots"]')?.setAttribute('content', page === 'not-found' ? 'noindex, follow' : page === 'analytics' || page === 'sponsor' ? 'noindex, nofollow' : 'index, follow');
   }, [pathname, page]);
 
   // A title per page, for browser tabs, bookmarks and search results.
   useEffect(() => {
-    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'past-questions': 'Past Questions — Pokhara University BE Computer Engineering', 'pokhara-university': 'Pokhara University (PU) — About', notes: 'Semester-Wise Notes — Pokhara University BE Computer Engineering', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University', 'study-guides': STUDY_GUIDES_TITLE, analytics: 'Site Analytics' };
+    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'past-questions': 'Past Questions — Pokhara University BE Computer Engineering', 'pokhara-university': 'Pokhara University (PU) — About', notes: 'Semester-Wise Notes — Pokhara University BE Computer Engineering', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University', 'study-guides': STUDY_GUIDES_TITLE, analytics: 'Site Analytics', sponsor: 'Sponsor BECE Vault' };
     document.title = page === 'home' ? SITE_TITLE
       : staticPage ? `${titles[staticPage]} | BECE Vault`
       : studyGuide ? `${studyGuideTitle(studyGuide)} | BECE Vault`
@@ -191,6 +193,7 @@ function App() {
         {page === 'syllabus' && <SyllabusView />}
         {page === 'study-guides' && <StudyGuidesIndexView />}
         {page === 'analytics' && <AnalyticsView />}
+        {page === 'sponsor' && <SponsorView />}
         {page === 'study-guide' && <StudyGuideView key={studyGuide!.slug} entry={studyGuide!} />}
         {page === 'syllabus-semester' && <SyllabusView semesterId={syllabusSemester!.id} />}
         {page === 'not-found' && <NotFoundView />}

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
-import { BookOpen, Check, Code2, Loader2, Copy, Database, Download, ExternalLink, FileStack, Mail, RefreshCw, ShieldCheck, TrendingDown, TrendingUp } from 'lucide-react';
+import { ArrowRight, BookOpen, Check, Code2, Copy, Database, ExternalLink, FileStack, Mail, RefreshCw, ShieldCheck, TrendingDown, TrendingUp } from 'lucide-react';
 import { PageHero } from '@/components/PageHero';
 import { CountUp } from '@/components/CountUp';
 import { Loader } from '@/components/Loader';
+import { DownloadPitch } from '@/components/DownloadPitch';
+import { Link } from '@/components/Link';
 import { DB_HOST, loadAnalytics, nepalToday, rawCounterUrl, type AnalyticsData, type DayCount, type Row } from '@/content/analytics';
 import { BREAKDOWNS_SINCE, COUNTING_SINCE } from '@/content/visits';
-import { allFiles, isSyllabus, pastQuestionCollections, semesters } from '@/content/notes';
-import { studyGuides } from '@/content/studyGuides';
-import { contributors } from '@/content/contributors';
+import { SITE_LIBRARY } from '@/content/sponsor';
 import './AnalyticsView.css';
 
 const CONTACT_EMAIL = 'adhikariarpan2063@gmail.com';
@@ -55,13 +55,7 @@ function linePath(ys: number[], top: number): string {
 }
 
 /** The library itself (from the notes manifest), for the "what's on the site" panel. */
-const library = {
-  files: allFiles.length,
-  papers: pastQuestionCollections.reduce((t, c) => t + c.files.length, 0),
-  subjects: semesters.flatMap((s) => s.subjects).filter((s) => !isSyllabus(s) && s.files.length > 0).length,
-  guides: studyGuides.length,
-  contributors: contributors.length,
-};
+const library = SITE_LIBRARY;
 
 /** /analytics: unlisted (no links anywhere, noindex). Live numbers for the owner and for sponsors. */
 export function AnalyticsView() {
@@ -205,7 +199,10 @@ function Dashboard({ data, loading, onRefresh }: { data: AnalyticsData; loading:
             notes, past papers, syllabus and a CGPA calculator for all 8 semesters. A single, clearly marked sponsor spot
             reaches students right when they study, without pop-ups or clutter.
           </p>
-          <a className="an-sponsor-cta" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Sponsoring BECE Vault')}`}><Mail size={15} /> {CONTACT_EMAIL}</a>
+          <div className="an-sponsor-actions">
+            <Link to="/sponsor" className="an-sponsor-cta">See sponsor spots and tiers <ArrowRight size={15} /></Link>
+            <a className="an-sponsor-mail" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Sponsoring BECE Vault')}`}><Mail size={14} /> {CONTACT_EMAIL}</a>
+          </div>
         </div>
       </div>
 
@@ -523,26 +520,6 @@ function Verify() {
         shared on request: <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('BECE Vault analytics')}`}>{CONTACT_EMAIL}</a>.
       </p>
     </details>
-  );
-}
-
-/** A two-page sponsor pitch PDF made from the live numbers (not a printout of this page). */
-function DownloadPitch({ data }: { data: AnalyticsData }) {
-  const [busy, setBusy] = useState(false);
-  const download = async () => {
-    setBusy(true);
-    try {
-      const { createPitchPdf, pitchFileName } = await import('@/content/analyticsReport');
-      const { saveBlob } = await import('@/content/watermark');
-      saveBlob(new Blob([(await createPitchPdf(data, library)) as BlobPart], { type: 'application/pdf' }), pitchFileName());
-    } finally {
-      setBusy(false);
-    }
-  };
-  return (
-    <button className="an-btn an-btn-primary" onClick={() => void download()} disabled={busy} title="A two-page PDF for sponsors, with the live numbers">
-      {busy ? <Loader2 size={14} className="spin" /> : <Download size={14} />} Download pitch (PDF)
-    </button>
   );
 }
 

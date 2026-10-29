@@ -240,6 +240,13 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
     index: false,
     body: `<main><h1>Site analytics</h1><p>Loading live visit numbers…</p></main>`,
   });
+  pages.push({
+    route: '/sponsor',
+    title: `Sponsor ${opts.siteName}`,
+    description: `Sponsorship spots and tiers on ${opts.siteName}, the notes library for Pokhara University BE Computer Engineering students.`,
+    index: false,
+    body: `<main><h1>Sponsor ${opts.siteName}</h1><p>Reach Pokhara University engineering students where they study.</p></main>`,
+  });
 
   // Study guides: an index, and one article per subject.
   const guideGroups = data.semesters.map((sem) => [sem, data.studyGuides.filter((g) => g.semester.slug === sem.slug)] as const).filter(([, gs]) => gs.length);

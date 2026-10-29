@@ -199,6 +199,9 @@ a.an-verified:hover { background: rgba(47, 158, 106, .18); }
 .an-sponsor p { margin: 0 0 16px; font-size: 14px; line-height: 1.65; color: var(--c-4c5b54); }
 a.an-sponsor-cta { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 99px; background: #173f37; color: #f8f4e9; font-weight: 700; font-size: 13.5px; text-decoration: none; }
 a.an-sponsor-cta:hover { background: #0b1f1a; }
+.an-sponsor-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+a.an-sponsor-mail { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--c-1d3f35); text-decoration: none; }
+a.an-sponsor-mail:hover { text-decoration: underline; }
 .an-footnote { margin: 4px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--c-5c6b64); }
 
 @media (max-width: 900px) {
