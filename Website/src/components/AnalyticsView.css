@@ -49,6 +49,7 @@
 
 /* Panels */
 .an-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.an-grid > .an-panel-wide { grid-column: 1 / -1; }
 .an-panel { padding: 20px 22px; border-radius: 18px; border: 1px solid var(--c-e3e6de); background: var(--c-fffdf7); min-width: 0; }
 .an-panel-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin-bottom: 16px; }
 .an-panel-head h3 { margin: 0; font: 600 18px 'Playfair Display', serif; color: var(--c-0b1f1a); }
@@ -90,7 +91,6 @@
 .an-seg button { padding: 5px 12px; border: 0; border-radius: 99px; background: transparent; color: var(--c-4c5b54); font: 600 12px 'DM Sans', sans-serif; cursor: pointer; }
 .an-seg button[aria-pressed="true"] { background: var(--c-fffdf7); color: var(--c-0b1f1a); box-shadow: 0 1px 4px rgba(var(--shadow-rgb), .12); }
 .an-plot { position: relative; height: 260px; margin: 10px 0 0 44px; }
-.an-plot-sm { height: 170px; }
 .an-chart-grid span { position: absolute; left: 0; right: 0; border-top: 1px solid var(--an-grid); }
 .an-chart-grid span:last-child { border-top-color: var(--c-dde3dc); }
 .an-chart-grid em { position: absolute; right: calc(100% + 8px); top: -8px; font: normal 500 11px 'DM Mono', monospace; color: var(--c-5c6b64); white-space: nowrap; }
@@ -213,7 +213,6 @@ a.an-sponsor-mail:hover { text-decoration: underline; }
   .an-tile-big strong { font-size: 34px; }
   .an-tile strong { font-size: 24px; }
   .an-plot { height: 210px; margin-left: 36px; }
-  .an-plot-sm { height: 150px; }
   .an-chart-x { margin-left: 36px; }
   .an-panel { padding: 16px; }
   .an-week-cols, .an-week-x { gap: 5px; }

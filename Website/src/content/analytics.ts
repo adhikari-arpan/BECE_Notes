@@ -1,5 +1,5 @@
 import { semesters, type Semester, type Subject } from '@/content/notes';
-import { breakdownSite, type Breakdown } from '@/content/visits';
+import { COUNTRY_CODES, breakdownSite, type Breakdown } from '@/content/visits';
 
 /**
  * Reading side of the visit counters, for the unlisted /analytics page. Every number is one
@@ -88,6 +88,16 @@ export const SOURCES = [
   { key: 'other', label: 'Other websites' },
 ] as const;
 
+/** "NP" → 🇳🇵 (two regional-indicator letters). */
+const flag = (code: string) => String.fromCodePoint(...[...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
+const regionNames = typeof Intl.DisplayNames === 'function' ? new Intl.DisplayNames(['en'], { type: 'region' }) : null;
+
+/** The countries with their own counter (see visits.ts), plus everything else. */
+export const COUNTRIES = [
+  ...COUNTRY_CODES.map((code) => ({ key: code.toLowerCase(), label: `${flag(code)}  ${regionNames?.of(code) ?? code}` })),
+  { key: 'other', label: '🌐  Other countries' },
+];
+
 export interface DayCount { date: string; visitors: number; pageViews: number }
 export interface Row { key: string; label: string; value: number }
 export interface AnalyticsData {
@@ -99,6 +109,8 @@ export interface AnalyticsData {
   subjects: (Row & { semester: string })[];
   devices: Row[];
   sources: Row[];
+  /** Visitors by country (label has the flag), largest first. */
+  countries: Row[];
   loadedAt: Date;
 }
 
@@ -153,13 +165,14 @@ export async function loadAnalytics(): Promise<AnalyticsData> {
     sem.subjects.filter((s) => s.kind !== 'syllabus' && !s.electiveSlot).map((s) => ({ key: subjectKey(sem, s), label: s.name, semester: sem.label })),
   );
 
-  const [visitors, pageViews, dailyRaw, sections, devices, sources, subjects] = await Promise.all([
+  const [visitors, pageViews, dailyRaw, sections, devices, sources, countries, subjects] = await Promise.all([
     read(SITE, 'visitors'),
     read(SITE, 'pageviews'),
     pool(days, 16, async (date) => ({ date, visitors: await read(`${SITE}-${date}`, 'visitors'), pageViews: await read(`${SITE}-${date}`, 'pageviews') })),
     rows('section', SECTIONS, 'pageviews'),
     rows('device', DEVICES, 'visitors'),
     rows('source', SOURCES, 'visitors'),
+    rows('country', COUNTRIES, 'visitors'),
     pool(subjectList, 16, async (s) => ({ ...s, value: await readOr0(breakdownSite('subject', s.key), 'pageviews') })),
   ]);
 
@@ -174,6 +187,7 @@ export async function loadAnalytics(): Promise<AnalyticsData> {
     sections,
     devices,
     sources,
+    countries,
     subjects: subjects.filter((s) => s.value > 0).sort((a, b) => b.value - a.value),
     loadedAt: new Date(),
   };

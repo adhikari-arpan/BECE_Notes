@@ -6,7 +6,7 @@ import { Loader } from '@/components/Loader';
 import { DownloadPitch } from '@/components/DownloadPitch';
 import { Link } from '@/components/Link';
 import { DB_HOST, loadAnalytics, nepalToday, rawCounterUrl, type AnalyticsData, type DayCount, type Row } from '@/content/analytics';
-import { BREAKDOWNS_SINCE, COUNTING_SINCE } from '@/content/visits';
+import { BREAKDOWNS_SINCE, COUNTING_SINCE, COUNTRIES_SINCE } from '@/content/visits';
 import { SITE_LIBRARY } from '@/content/sponsor';
 import './AnalyticsView.css';
 
@@ -23,36 +23,6 @@ const niceTop = (max: number) => {
   const p = 10 ** Math.floor(Math.log10(Math.max(1, max)));
   return [1, 2, 2.5, 5, 10].map((m) => m * p).find((v) => v >= max) ?? max;
 };
-/**
- * A smooth SVG path through points on a 0–100 × 0–100 box (monotone cubic: it never overshoots,
- * so the curve doesn't dip below zero or above a peak that isn't there).
- */
-function linePath(ys: number[], top: number): string {
-  const pts = ys.map((y, i) => [ys.length === 1 ? 50 : ((i + 0.5) / ys.length) * 100, 100 - (y / top) * 100]);
-  if (pts.length < 3) return pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x},${y}`).join(' ');
-  const n = pts.length;
-  const slope = pts.slice(0, -1).map(([x, y], i) => (pts[i + 1][1] - y) / (pts[i + 1][0] - x));
-  const tan = pts.map((_, i) => {
-    if (i === 0) return slope[0];
-    if (i === n - 1) return slope[n - 2];
-    return slope[i - 1] * slope[i] <= 0 ? 0 : (slope[i - 1] + slope[i]) / 2;
-  });
-  for (let i = 0; i < n - 1; i++) {
-    if (slope[i] === 0) { tan[i] = 0; tan[i + 1] = 0; continue; }
-    const a = tan[i] / slope[i];
-    const b = tan[i + 1] / slope[i];
-    const h = Math.hypot(a, b);
-    if (h > 3) { tan[i] = (3 / h) * a * slope[i]; tan[i + 1] = (3 / h) * b * slope[i]; }
-  }
-  let d = `M${pts[0][0]},${pts[0][1]}`;
-  for (let i = 0; i < n - 1; i++) {
-    const [x0, y0] = pts[i];
-    const [x1, y1] = pts[i + 1];
-    const dx = (x1 - x0) / 3;
-    d += ` C${x0 + dx},${y0 + tan[i] * dx} ${x1 - dx},${y1 - tan[i + 1] * dx} ${x1},${y1}`;
-  }
-  return d;
-}
 
 /** The library itself (from the notes manifest), for the "what's on the site" panel. */
 const library = SITE_LIBRARY;
@@ -159,23 +129,24 @@ function Dashboard({ data, loading, onRefresh }: { data: AnalyticsData; loading:
       <DailyChart daily={daily} />
 
       <div className="an-grid">
-        <Panel title="Growth" note="Total visitors over time">
-          <GrowthChart daily={daily} cumulative={cumulative} />
-        </Panel>
-        <Panel title="Busiest days of the week" note="Average visitors per weekday">
-          <WeekdayChart daily={daily} />
-        </Panel>
+        {/* Two columns: what people read on the left, who they are on the right. */}
         <Panel title="Where visits go" note={`Page visits by part of the site · since ${BREAKDOWNS_SINCE}`}>
           <BarList rows={data.sections} unit="page visits" />
+        </Panel>
+        <Panel title="Countries" note={`Visitors · since ${COUNTRIES_SINCE}`}>
+          <BarList rows={data.countries} unit="visitors" limit={8} />
+        </Panel>
+        <Panel title="Most-read subjects" note={`Subject page visits · since ${BREAKDOWNS_SINCE}`}>
+          <BarList rows={data.subjects.map((s) => ({ ...s, label: `${s.label} · ${s.semester}` }))} unit="page visits" limit={8} />
         </Panel>
         <Panel title="How people find the site" note={`Visitors by source · since ${BREAKDOWNS_SINCE}`}>
           <BarList rows={data.sources} unit="visitors" limit={8} />
         </Panel>
+        <Panel title="Busiest days of the week" note="Average visitors per weekday">
+          <WeekdayChart daily={daily} />
+        </Panel>
         <Panel title="Devices" note={`Visitors · since ${BREAKDOWNS_SINCE}`}>
           <ShareBar rows={data.devices} unit="visitors" />
-        </Panel>
-        <Panel title="Most-read subjects" note={`Subject page visits · since ${BREAKDOWNS_SINCE}`}>
-          <BarList rows={data.subjects.map((s) => ({ ...s, label: `${s.label} · ${s.semester}` }))} unit="page visits" limit={8} />
         </Panel>
       </div>
 
@@ -330,38 +301,6 @@ function WeekdayChart({ daily }: { daily: DayCount[] }) {
       </div>
       <div className="an-week-x">{WEEKDAYS.map((d, i) => <span key={d} className={i === best ? 'is-best' : undefined}>{d}</span>)}</div>
       <p className="an-week-note"><strong>{['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][best]}</strong> is the busiest day, with about {fmt(avgs[best])} visitors.</p>
-    </div>
-  );
-}
-
-/** Running total of visitors as a filled line, labelled at both ends. */
-function GrowthChart({ daily, cumulative }: { daily: DayCount[]; cumulative: number[] }) {
-  const [hover, setHover] = useState<number | null>(null);
-  if (cumulative.length < 2) return <Empty />;
-  const top = niceTop(cumulative[cumulative.length - 1]);
-  const d = linePath(cumulative, top);
-  const first = cumulative[0];
-  const last = cumulative[cumulative.length - 1];
-  const x = (i: number) => ((i + 0.5) / cumulative.length) * 100;
-  return (
-    <div className="an-growth">
-      <div className="an-plot an-plot-sm" onMouseLeave={() => setHover(null)}>
-        <Gridlines top={top} />
-        <svg className="an-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path className="an-area" d={`${d} L${x(cumulative.length - 1)},100 L${x(0)},100 Z`} />
-          <path className="an-line an-line-primary" d={d} vectorEffect="non-scaling-stroke" />
-        </svg>
-        {hover !== null && <span className="an-crosshair" style={{ left: `${x(hover)}%` }} />}
-        <HoverColumns count={cumulative.length} onHover={setHover} label={(i) => `${dayLabel(daily[i].date)}: ${fmt(cumulative[i])} visitors in total`} />
-        {hover !== null && (
-          <div className="an-tip" style={{ left: `${x(hover)}%` }} role="status">
-            <strong>{dayLabel(daily[hover].date, { weekday: 'short', day: 'numeric', month: 'short' })}</strong>
-            <span><b>{fmt(cumulative[hover])}</b> visitors in total</span>
-          </div>
-        )}
-      </div>
-      <div className="an-chart-x" aria-hidden="true"><span>{dayLabel(daily[0].date)}</span><span>{dayLabel(daily[daily.length - 1].date)}</span></div>
-      <p className="an-week-note">From <strong>{fmt(first)}</strong> to <strong>{fmt(last)}</strong> visitors: <strong>+{fmt(last - first)}</strong> in {cumulative.length} days.</p>
     </div>
   );
 }

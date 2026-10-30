@@ -18,7 +18,8 @@ import { useSyncExternalStore } from 'react';
  * - which part of the site a page visit is in (counters/bece-notes-section-notes/pageviews)
  *   and, on subject pages, which subject (counters/bece-notes-subject-3-1f0a9c2e/pageviews, see analytics.ts);
  * - for each counted visitor, the kind of device (counters/bece-notes-device-mobile/visitors)
- *   and where they came from (counters/bece-notes-source-google/visitors).
+ *   where they came from (counters/bece-notes-source-google/visitors) and their country
+ *   (counters/bece-notes-country-np/visitors, from the host's lookup; see api/geo.ts).
  * All anonymous: one "+1" per counter, nothing about the person is stored.
  */
 
@@ -55,12 +56,42 @@ const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kathmandu
 const listeners = new Set<() => void>();
 
 /** Kinds of breakdown counters; each value is its own "site" (see breakdownSite). */
-export type Breakdown = 'section' | 'subject' | 'device' | 'source';
+export type Breakdown = 'section' | 'subject' | 'device' | 'source' | 'country';
 /** e.g. breakdownSite('section', 'notes') → "bece-notes-section-notes". */
 export const breakdownSite = (kind: Breakdown, key: string) => `${SITE}-${kind}-${key}`;
 
 /** The day the breakdown counters (sections, subjects, devices, sources) started. */
 export const BREAKDOWNS_SINCE = '29 October 2026';
+/** The day the country counters started. */
+export const COUNTRIES_SINCE = '30 October 2026';
+
+/**
+ * Countries with their own counter (ISO codes; the database can only be read counter by counter,
+ * so /analytics needs the list). Any other country is counted as "other".
+ */
+export const COUNTRY_CODES = [
+  'NP', 'IN', 'BD', 'PK', 'LK', 'BT', 'MV', 'CN', 'HK', 'TW', 'JP', 'KR', 'MY', 'SG', 'TH', 'PH', 'ID', 'VN',
+  'AE', 'SA', 'QA', 'KW', 'OM', 'BH', 'IL', 'TR', 'US', 'CA', 'MX', 'BR', 'GB', 'IE', 'DE', 'FR', 'NL', 'BE',
+  'IT', 'ES', 'PT', 'PL', 'CZ', 'AT', 'CH', 'SE', 'NO', 'FI', 'DK', 'RU', 'UA', 'AU', 'NZ', 'ZA', 'NG', 'EG',
+] as const;
+
+/**
+ * Counts this visitor's country. The country comes from the host (Vercel works it out per request;
+ * see api/geo.ts) and only its two-letter code is used. Nothing is counted if it can't be found
+ * (e.g. in local development, where there's no /api).
+ */
+async function countCountry() {
+  try {
+    const res = await fetch('/api/geo', { cache: 'no-store' });
+    if (!res.ok) return;
+    const { country } = (await res.json()) as { country?: string | null };
+    if (!country) return;
+    const code = (COUNTRY_CODES as readonly string[]).includes(country) ? country.toLowerCase() : 'other';
+    hitBreakdown('country', code, VISITORS);
+  } catch {
+    // No country this time.
+  }
+}
 
 /** A lifetime "+1" on a breakdown counter (no number is shown, so the reply isn't used). */
 function hitBreakdown(kind: Breakdown, key: string, counter: string) {
@@ -177,6 +208,7 @@ function checkVisitor() {
     request(VISITORS, 'visitors', 'hit');
     hitBreakdown('device', deviceType(), VISITORS);
     hitBreakdown('source', trafficSource(), VISITORS);
+    void countCountry();
   } else if (stats.visitors === null) {
     request(VISITORS, 'visitors', 'get');
   }

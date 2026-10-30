@@ -37,7 +37,9 @@ export function PrivacyView() {
               “+1” to a Firebase Realtime Database (a Google service). Only the running totals are stored — no names, no IP
               addresses and nothing that identifies you. The same anonymous counts are also kept per part of the site and
               per subject (for example “Past questions” or “DBMS”), per kind of device (phone, tablet or computer) and per
-              kind of site a visitor came from (for example Google or Facebook; the full address isn’t kept). To avoid
+              kind of site a visitor came from (for example Google or Facebook; the full address isn’t kept) and per
+              country. The country is worked out by our host, Vercel, from the request; only the country is used, and your
+              IP address isn’t stored. To avoid
               double-counting, your browser remembers the time it was last counted. Visit counting always runs and is not
               affected by your cookie choice.
             </p>
