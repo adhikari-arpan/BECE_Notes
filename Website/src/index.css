@@ -1256,3 +1256,22 @@ a.shelf-item:hover .shelf-cta svg { transform: translateX(4px); }
 a.subject-about-guide { display: inline-block; margin-top: 8px; font-size: 12.5px; font-weight: 700; color: #b8860b; text-decoration: none; }
 a.subject-about-guide:hover { text-decoration: underline; }
 :root[data-theme="dark"] a.subject-about-guide { color: #f0c34a; }
+
+/*
+ * Scrollbars in the site's colors: a gold-to-amber thumb on a cream track (deep green in dark mode).
+ * Scrolling panels inside the page keep a transparent track, so only the thumb shows.
+ * Chromium/Safari draw the gradient; Firefox only takes two solid colors (see @supports below).
+ */
+:root { --sb-track: #f6f2e4; --sb-thumb-a: #f0c34a; --sb-thumb-b: #c9971c; --sb-thumb-hover-a: #e5a927; --sb-thumb-hover-b: #a8780a; }
+:root[data-theme="dark"] { --sb-track: #0d1a16; --sb-thumb-a: #c99a26; --sb-thumb-b: #8a6508; --sb-thumb-hover-a: #f0c34a; --sb-thumb-hover-b: #b8860b; }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: transparent; }
+html::-webkit-scrollbar-track { background: var(--sb-track); }
+::-webkit-scrollbar-thumb { border: 3px solid transparent; border-radius: 99px; background: linear-gradient(180deg, var(--sb-thumb-a), var(--sb-thumb-b)) padding-box; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, var(--sb-thumb-hover-a), var(--sb-thumb-hover-b)) padding-box; }
+::-webkit-scrollbar-thumb:horizontal { background: linear-gradient(90deg, var(--sb-thumb-a), var(--sb-thumb-b)) padding-box; }
+::-webkit-scrollbar-corner { background: transparent; }
+@supports not selector(::-webkit-scrollbar) {
+  html { scrollbar-color: var(--sb-thumb-b) var(--sb-track); }
+  * { scrollbar-color: var(--sb-thumb-b) transparent; }
+}
