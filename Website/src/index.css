@@ -516,6 +516,30 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .subject-box .file-body-full { flex: 1; min-height: 0; grid-template-columns: var(--sidebar-width, 280px) 0 minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
 .subject-box .file-body-full.sidebar-collapsed { grid-template-columns: 0 0 minmax(0, 1fr); }
 .subject-box .sidebar-collapsed .file-tree { visibility: hidden; padding: 0; border: 0; overflow: hidden; }
+/*
+ * Browsing (no file open): the file list takes most of the box as one centered, larger list;
+ * opening a file slides it back to the sidebar. The column change animates (not while dragging the edge).
+ */
+.subject-box .file-body-full { transition: grid-template-columns .5s cubic-bezier(.16, 1, .3, 1); }
+.subject-box .file-body-full.sidebar-dragging { transition: none; }
+.subject-box .file-body-full.is-browsing { grid-template-columns: min(62%, 780px) 0 minmax(0, 1fr); }
+.is-browsing .sidebar-resizer { pointer-events: none; }
+.is-browsing .file-tree { padding: 26px 24px 32px; }
+.is-browsing .file-tree > * { max-width: 600px; margin-inline: auto; }
+.is-browsing .tree-title-label { font-size: 11px; }
+.is-browsing .tree-folder { padding: 10px; font-size: 14px; gap: 8px; }
+.is-browsing .tree-folder-icon { width: 17px; height: 17px; }
+.is-browsing .tree-group-label { font-size: 10.5px; padding: 4px 10px 8px; }
+.is-browsing .file-row { padding: 10px 12px; gap: 12px; }
+.is-browsing .file-row strong { font-size: 14px; }
+.is-browsing .file-row small { font-size: 10.5px; }
+.is-browsing .file-row > .file-badge { width: 32px; height: 32px; border-radius: 9px; }
+.is-browsing .preview-pane .pick-file { animation: pick-in .5s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes pick-in { from { opacity: 0; transform: translateX(16px); } }
+@media (prefers-reduced-motion: reduce) {
+  .subject-box .file-body-full { transition: none; }
+  .is-browsing .preview-pane .pick-file { animation: none; }
+}
 /* Resize handle: a zero-width grid column with a wider invisible grab area over the border. */
 .sidebar-resizer { position: relative; z-index: 5; width: 0; cursor: col-resize; outline: none; touch-action: none; }
 .sidebar-resizer::before { content: ''; position: absolute; top: 0; bottom: 0; left: -4px; width: 8px; }
@@ -761,6 +785,9 @@ a.footer-author:hover { color: #f7d77a; }
   .subject-meta, .subject-box-file-name, .subject-box-file-size, .subject-box-file .file-badge { display: none; }
   .subject-box .file-body-full { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 34%) minmax(0, 1fr); }
   .subject-box .file-body-full.sidebar-collapsed { grid-template-columns: minmax(0, 1fr); grid-template-rows: 0 minmax(0, 1fr); }
+  /* Phones: while browsing, the file list fills the box; the prompt beside it isn't needed. */
+  .subject-box .file-body-full.is-browsing { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) 0; }
+  .is-browsing .preview-pane { overflow: hidden; }
   .sidebar-resizer { display: none; }
   .subject-box .file-tree { max-height: none; }
   .subject-box .preview-content, .subject-box .preview-content iframe { min-height: 0; }

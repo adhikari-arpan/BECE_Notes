@@ -252,7 +252,9 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
 
             {hasFiles ? (
               <div
-                className={`file-body-full ${sidebar.collapsed ? 'sidebar-collapsed' : ''} ${sidebar.dragging ? 'sidebar-dragging' : ''}`}
+                // No file open yet: the file list takes most of the box ("browsing"); opening a file slides it
+                // back to the sidebar. A collapsed sidebar only applies once a file is open.
+                className={`file-body-full ${activeFile ? '' : 'is-browsing'} ${sidebar.collapsed && activeFile ? 'sidebar-collapsed' : ''} ${sidebar.dragging ? 'sidebar-dragging' : ''}`}
                 style={{ '--sidebar-width': `${sidebar.width}px` } as CSSProperties}
               >
                 <div className="file-tree" aria-hidden={sidebar.collapsed || undefined}>
