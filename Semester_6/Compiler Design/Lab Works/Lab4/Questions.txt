@@ -1,0 +1,2 @@
+1. Write a C program to implement DFAs that recognize identifier, constants, operators.
+2. Write a C program to implement NFAs that recognize identifier, cosntants, operators.
