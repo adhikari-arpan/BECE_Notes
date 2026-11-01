@@ -1,24 +1,30 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   ArrowDownToLine,
+  BookOpenText,
   Info,
   MousePointerClick,
   ArrowLeft,
   ChevronDown,
   ChevronRight,
+  ClipboardList,
   Code2,
   Download,
   ExternalLink,
   File,
   FileImage,
+  FileQuestion,
   FileSpreadsheet,
   FileText,
+  Monitor,
   Folder,
   FolderOpen,
   PanelLeftClose,
   PanelLeftOpen,
   Presentation,
   ScrollText,
+  Sparkles,
+  type LucideIcon,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
@@ -98,6 +104,28 @@ function buildTree(files: NoteFile[]): TreeFolder {
   return root;
 }
 
+/**
+ * What a subject's top-level folder holds, from its name, so the file list can group and mark them:
+ * the syllabus, notes (the default), lab works, assignments, question collections and extras.
+ */
+type FolderKind = 'syllabus' | 'notes' | 'lab' | 'assignment' | 'questions' | 'extra';
+function folderKind(name: string): FolderKind {
+  if (isSyllabusFolder(name)) return 'syllabus';
+  if (/\blab/i.test(name)) return 'lab';
+  if (/assignment/i.test(name)) return 'assignment';
+  if (/question|qsn|past\s*paper/i.test(name)) return 'questions';
+  if (/^_*extras?\b/i.test(name)) return 'extra';
+  return 'notes';
+}
+/** The groups after the syllabus and notes, in the order they're listed. */
+const FOLDER_GROUPS: { kind: FolderKind; label: string; icon: LucideIcon }[] = [
+  { kind: 'lab', label: 'Lab works', icon: Monitor },
+  { kind: 'assignment', label: 'Assignments', icon: ClipboardList },
+  { kind: 'questions', label: 'Question collections', icon: FileQuestion },
+  { kind: 'extra', label: 'Extras', icon: Sparkles },
+];
+const FOLDER_ICON: Partial<Record<FolderKind, LucideIcon>> = { syllabus: ScrollText, ...Object.fromEntries(FOLDER_GROUPS.map((g) => [g.kind, g.icon])) };
+
 /** A semester's past papers (/past-questions/semester-N), using the same file viewer as the notes. */
 export function PastQuestionsPage(props: { semester: Semester; requestedFile?: NoteFile }) {
   return <PastQuestionsView {...props} renderPreview={(file) => <FilePreview key={file.id} file={file} />} />;
@@ -105,9 +133,12 @@ export function PastQuestionsPage(props: { semester: Semester; requestedFile?: N
 
 export function SubjectView({ semester, subject, requestedFile }: SubjectViewProps) {
   const tree = useMemo(() => buildTree(subject.files), [subject]);
-  // At the top: the `_Syllabus` folder, then files at the subject root, then other folders.
-  const syllabusFolders = tree.folders.filter((f) => isSyllabusFolder(f.name));
-  const otherFolders = tree.folders.filter((f) => !isSyllabusFolder(f.name));
+  // Top to bottom: the `_Syllabus` folder, the notes (files at the subject root, then note folders),
+  // then lab works, assignments, question collections and extras, each under its own label.
+  const byKind = (kind: FolderKind) => tree.folders.filter((f) => folderKind(f.name) === kind);
+  const syllabusFolders = byKind('syllabus');
+  const noteFolders = byKind('notes');
+  const groups = FOLDER_GROUPS.map((g) => ({ ...g, folders: byKind(g.kind) })).filter((g) => g.folders.length);
 
   // The open file lives in the URL (?file=…) so it can be shared; otherwise start on the first note.
   const activeFile = requestedFile;
@@ -144,16 +175,18 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
     </button>
   );
 
-  // A folder, then (when open) its files and subfolders indented beneath it.
-  const renderFolder = (folder: TreeFolder): ReactNode => {
+  // A folder, then (when open) its files and subfolders indented beneath it. Top-level folders that
+  // aren't notes (syllabus, lab works, …) get their own icon and color.
+  const renderFolder = (folder: TreeFolder, top = false): ReactNode => {
     const open = !collapsed.has(folder.path);
-    const syllabus = isSyllabusFolder(folder.name);
+    const kind = top ? folderKind(folder.name) : 'notes';
+    const KindIcon = FOLDER_ICON[kind];
     return (
-      <div key={folder.path} className={`tree-folder-block ${syllabus ? 'tree-folder-syllabus' : ''}`}>
+      <div key={folder.path} className={`tree-folder-block ${kind !== 'notes' ? `tree-folder-${kind}` : ''}`}>
         <button className="tree-folder" onClick={() => toggleFolder(folder.path)} title={folder.path} aria-expanded={open}>
           {open ? <ChevronDown size={13} className="tree-chevron" /> : <ChevronRight size={13} className="tree-chevron" />}
-          {syllabus
-            ? <ScrollText size={15} className="tree-folder-icon" />
+          {KindIcon
+            ? <KindIcon size={15} className="tree-folder-icon" />
             : open ? <FolderOpen size={15} className="tree-folder-icon" /> : <Folder size={15} className="tree-folder-icon" />}
           <span>{folder.name.replace(/^_+/, '')}</span>
           <small className="tree-count">{folder.total}</small>
@@ -161,7 +194,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
         {open && (
           <div className="tree-children">
             {folder.files.map((file) => renderFile(file, true))}
-            {folder.folders.map(renderFolder)}
+            {folder.folders.map((f) => renderFolder(f))}
           </div>
         )}
       </div>
@@ -235,13 +268,20 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                     <span className="tree-count">{subject.files.length}</span>
                   </div>
                   {syllabusFolders.map((folder) => (
-                    <div key={folder.path} className="tree-group tree-group-syllabus">{renderFolder(folder)}</div>
+                    <div key={folder.path} className="tree-group tree-group-syllabus">{renderFolder(folder, true)}</div>
                   ))}
-                  {tree.files.length > 0 && (
-                    <div className="tree-group">{tree.files.map((file) => renderFile(file, false))}</div>
+                  {(tree.files.length > 0 || noteFolders.length > 0) && (
+                    <div className="tree-group tree-group-notes">
+                      {groups.length > 0 && <div className="tree-group-label"><BookOpenText size={12} /> Notes</div>}
+                      {tree.files.map((file) => renderFile(file, false))}
+                      {noteFolders.map((folder) => renderFolder(folder, true))}
+                    </div>
                   )}
-                  {otherFolders.map((folder) => (
-                    <div key={folder.path} className="tree-group">{renderFolder(folder)}</div>
+                  {groups.map(({ kind, label, icon: Icon, folders }) => (
+                    <div key={kind} className={`tree-group tree-group-kind tree-group-${kind}`}>
+                      <div className="tree-group-label"><Icon size={12} /> {label}</div>
+                      {folders.map((folder) => renderFolder(folder, true))}
+                    </div>
                   ))}
                 </div>
                 <div className="sidebar-resizer" {...sidebar.handleProps} />

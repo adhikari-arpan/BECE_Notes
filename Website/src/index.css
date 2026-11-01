@@ -563,6 +563,24 @@ body.is-resizing-sidebar, body.is-resizing-sidebar * { cursor: col-resize !impor
 .tree-group-syllabus { margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px dashed var(--c-dde3dc); }
 .tree-folder-syllabus > .tree-folder { background: var(--c-fffdf0); border: 1px solid #efd98f; }
 .tree-folder-syllabus > .tree-folder .tree-folder-icon { color: #b8860b; fill: none; }
+/*
+ * Folder groups after the notes (lab works, assignments, question collections, extras): a small
+ * label, the folder in its own color, and the guide line under it in that color too.
+ */
+.tree-group-lab { --kind: #1e8a5f; --kind-bg: rgba(30, 138, 95, .08); --kind-line: rgba(30, 138, 95, .45); }
+.tree-group-assignment { --kind: #3a6cc8; --kind-bg: rgba(58, 108, 200, .08); --kind-line: rgba(58, 108, 200, .45); }
+.tree-group-questions { --kind: #b5562f; --kind-bg: rgba(181, 86, 47, .08); --kind-line: rgba(181, 86, 47, .45); }
+.tree-group-extra { --kind: var(--c-7d8b84); --kind-bg: var(--c-f6f7f2); --kind-line: var(--c-dde3dc); }
+:root[data-theme="dark"] .tree-group-lab { --kind: #6fd3a2; --kind-bg: rgba(111, 211, 162, .08); --kind-line: rgba(111, 211, 162, .4); }
+:root[data-theme="dark"] .tree-group-assignment { --kind: #8fb0e8; --kind-bg: rgba(143, 176, 232, .08); --kind-line: rgba(143, 176, 232, .4); }
+:root[data-theme="dark"] .tree-group-questions { --kind: #f0907a; --kind-bg: rgba(240, 144, 122, .08); --kind-line: rgba(240, 144, 122, .4); }
+.tree-group-label { display: flex; align-items: center; gap: 6px; padding: 2px 8px 6px; font: 600 9.5px 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--kind, var(--c-7d8b84)); }
+.tree-group-kind > .tree-folder-block > .tree-folder { background: var(--kind-bg); }
+.tree-group-kind > .tree-folder-block > .tree-folder:hover { background: var(--c-ebf0e8); }
+.tree-group-kind > .tree-folder-block > .tree-folder .tree-folder-icon { color: var(--kind); fill: none; }
+.tree-group-kind > .tree-folder-block + .tree-folder-block { margin-top: 4px; }
+.tree-group-kind .tree-children { border-left: 2px solid var(--kind-line); }
+.tree-group-kind .tree-count { background: var(--kind-bg); color: var(--kind); }
 /* A folder's contents sit indented under it, with a faint guide line like VS Code. */
 .tree-children { margin-left: 14px; padding-left: 4px; border-left: 1px solid var(--c-dde3dc); }
 .tree-children > .tree-folder-block { margin-top: 2px; }
