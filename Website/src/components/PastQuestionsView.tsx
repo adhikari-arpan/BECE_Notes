@@ -5,7 +5,7 @@ import { PageHero } from '@/components/PageHero';
 import { DownloadButton } from '@/components/DownloadButton';
 import { PastQuestionsGuide } from '@/components/PastQuestionsGuide';
 import { navigate, useLocation } from '@/content/router';
-import { formatSize, normalizeName, pastQuestionsFor, pastQuestionsPath, plural, semesterPath, type NoteFile, type PastQuestionFolder, type Semester } from '@/content/notes';
+import { formatSize, normalizeName, pastQuestionsFor, pastQuestionsPath, plural, semesterPath, subjectPath, type NoteFile, type PastQuestionFolder, type Semester } from '@/content/notes';
 import { pastQuestionSubjects } from '@/content/pastQuestions';
 import { STRUCTURE_LABELS, useStructure } from '@/content/structure';
 import './PastQuestionsView.css';
@@ -118,6 +118,7 @@ export function PastQuestionsView({ semester, subject, requestedFile, renderPrev
   const allPapers = sections.flatMap((s) => s.papers);
   // One subject at a time (or all of them): the one picked, else the one holding the paper in the link, else the first.
   const [picked, setPicked] = useState<string | null>(null);
+  const notesSubject = subject ? semester.subjects.find((s) => normalizeName(s.name) === normalizeName(subject.name)) : undefined;
   const subjectParam = useLocation().params.get('subject'); // from subject search on /past-questions
   const wanted = subject?.folder ?? subjectParam;
   const subjectKey = picked && (picked === ALL || sections.some((s) => s.key === picked)) ? picked
@@ -174,7 +175,7 @@ export function PastQuestionsView({ semester, subject, requestedFile, renderPrev
           backLabel={subject ? semester.label : 'All semesters'}
           title={subject ? <>{subject.name} <em>Past Questions</em></> : <>{semester.label} <em>Past Questions</em></>}
           kicker={`Pokhara University exam papers · ${STRUCTURE_LABELS[structure]}`}
-          lead={`${plural(allPapers.length, 'paper')}, sorted by subject and year. Pick a subject to see its papers.`}
+          lead={subject ? `${plural(subject.papers, 'past exam paper')} for ${subject.name}, newest first. Open any paper to read or download it.` : `${plural(allPapers.length, 'paper')}, sorted by subject and year. Pick a subject to see its papers.`}
         />
       </section>
 
@@ -235,7 +236,19 @@ export function PastQuestionsView({ semester, subject, requestedFile, renderPrev
           </div>
         )}
 
-        <p className="pastq-notes-link"><Link to={semesterPath(semester)}>Looking for notes? Go to {semester.label} notes <ArrowRight size={14} /></Link></p>
+        {notesSubject?.units && (
+          <section className="pastq-units" aria-labelledby="pastq-units-title">
+            <h2 id="pastq-units-title">{notesSubject.name} syllabus units</h2>
+            <p>These are the units in the Pokhara University syllabus for this subject.</p>
+            <ol>{notesSubject.units.map(([name, hours], i) => <li key={name + i}><span>{name}</span>{hours ? <small>{hours} hrs</small> : null}</li>)}</ol>
+          </section>
+        )}
+
+        <p className="pastq-notes-link">
+          {notesSubject
+            ? <Link to={subjectPath(semester, notesSubject)}>Read {notesSubject.name} notes <ArrowRight size={14} /></Link>
+            : <Link to={semesterPath(semester)}>Looking for notes? Go to {semester.label} notes <ArrowRight size={14} /></Link>}
+        </p>
 
         <div className="pastq-help"><PastQuestionsGuide semester={semester} subjects={subjects} /></div>
       </section>

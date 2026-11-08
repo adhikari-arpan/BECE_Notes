@@ -223,7 +223,8 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
         title: data.subjectPapersTitle(f.name, semShort(sem)),
         description: clip(data.subjectPapersDescription(f.name, semShort(sem), f.papers)),
         body: `<main><h1>${esc(f.name)} past questions — ${esc(semFull(sem))}, Pokhara University BE Computer Engineering</h1><p>${esc(data.subjectPapersDescription(f.name, semShort(sem), f.papers))}</p>`
-          + `<ul>${paperNames.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`
+          + `<h2>Question papers</h2><ul>${paperNames.map((n) => { const m = /^(\d{4})_(Spring|Fall)/i.exec(n); return `<li>${esc(m ? `${f.name} ${m[1]} ${m[2]} question paper` : n.replace(/\.[a-z0-9]+$/i, '').replace(/_+/g, ' '))}</li>`; }).join('')}</ul>`
+          + (notes?.units ? `<h2>${esc(f.name)} syllabus units</h2><ol>${notes.units.map(([u, h]) => `<li>${esc(u)}${h ? ` (${h} hours)` : ''}</li>`).join('')}</ol>` : '')
           + `<p>${notes ? `<a href="/${sem.slug}/${notes.slug}">${esc(f.name)} notes</a> · ` : ''}<a href="${route}">All ${esc(sem.label)} past questions</a> · <a href="/syllabus/${sem.slug}">${esc(sem.label)} syllabus</a></p>${nav}</main>`,
         jsonLd: [breadcrumbs(opts, [['Past Questions', '/past-questions'], [sem.label, route], [f.name, subRoute]])],
       });

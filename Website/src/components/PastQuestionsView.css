@@ -94,3 +94,14 @@
   .pastq-subjects button { width: auto; flex-shrink: 0; }
   .pastq-subject-name { white-space: nowrap; }
 }
+
+/* One subject's page: its syllabus units under the papers. */
+.pastq-units { margin-top: 24px; padding: 20px 22px; border: 1px solid var(--c-e3e6de); border-radius: 16px; background: var(--c-fffdf7); }
+.pastq-units h2 { margin: 0 0 4px; font: 600 20px/1.25 'Playfair Display', serif; color: var(--c-0b1f1a); }
+.pastq-units p { margin: 0 0 14px; font-size: 13.5px; color: var(--c-5c6b64); }
+.pastq-units ol { list-style: none; counter-reset: unit; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px 24px; }
+.pastq-units li { counter-increment: unit; display: flex; align-items: baseline; gap: 8px; font-size: 13.5px; line-height: 1.4; color: var(--c-1d3f35); }
+.pastq-units li::before { content: counter(unit, decimal-leading-zero); flex-shrink: 0; font: 600 10.5px 'DM Mono', monospace; color: #b8860b; }
+:root[data-theme="dark"] .pastq-units li::before { color: #f0c34a; }
+.pastq-units li span { flex: 1; min-width: 0; }
+.pastq-units li small { flex-shrink: 0; font: 500 10px 'DM Mono', monospace; color: var(--c-8a978f); }
