@@ -1,0 +1,59 @@
+# Runs in the PUBLIC repo on every pull request: the site must still pass lint and type checks, build,
+# and open its main pages without crashing. Required check: "Site checks".
+#
+# Security: this runs the pull request's own code, so it uses pull_request (no secrets, read-only).
+name: Site checks
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Site checks
+    if: github.repository == 'adhikari-arpan/BECE_Notes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # Only .github/ and Website/ on disk: the notes are too big to download here.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          filter: blob:none
+          persist-credentials: false
+          sparse-checkout: |
+            .github
+            Website
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Website/package-lock.json
+      - run: npm ci
+        working-directory: Website
+      - name: Lint
+        run: npm run lint
+        working-directory: Website
+      - name: Type check
+        run: npm run typecheck
+        working-directory: Website
+      - name: Empty stand-ins for the notes
+        run: node scripts/ci-placeholder-notes.mjs
+        working-directory: Website
+      - name: Build the site
+        run: npm run build
+        working-directory: Website
+        env:
+          NOTES_SKIP_AUTHOR_COUNTS: '1'
+      - name: Open the main pages in a browser
+        working-directory: Website
+        run: |
+          npx playwright-core install --with-deps chromium
+          node scripts/smoke-test.mjs

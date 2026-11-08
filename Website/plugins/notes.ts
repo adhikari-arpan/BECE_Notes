@@ -144,6 +144,8 @@ export function authorCounts(repoRoot: string, files: string[]): AuthorCount[] {
 }
 
 function countAuthors(repoRoot: string, files: string[]): AuthorCount[] {
+  // The pull request check has only a partial copy of the repo; following renames would download every file.
+  if (process.env.NOTES_SKIP_AUTHOR_COUNTS) return [];
   const roots = listNoteRoots(repoRoot);
   if (git(repoRoot, ['rev-parse', '--is-shallow-repository'])?.trim() === 'true') {
     git(repoRoot, ['fetch', '--unshallow', '--filter=blob:none', '--quiet']);
