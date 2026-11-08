@@ -450,7 +450,7 @@ function homeShell(): string {
     + '<nav class="top-actions"><a href="/past-questions" class="text-button">Past Questions</a><a href="/syllabus" class="text-button">Syllabus</a><a href="/cgpa-calculator" class="text-button">CGPA Calculator</a></nav></div></header><main>'
     + '<section class="hero section-wrap"><div class="hero-copy">'
     + '<div class="eyebrow"><span class="eyebrow-line"></span> <a href="/pokhara-university" class="eyebrow-link">Pokhara University</a> · BECE</div>'
-    + '<h1>Computer Engineering notes,<br><em>in one place.</em></h1>'
+    + '<h1><span class="hero-title-lead">Computer Engineering</span>notes,<br><em>in one place.</em></h1>'
     + '<p class="hero-lede">Free, semester-wise notes for Pokhara University BE Computer Engineering: every lecture note, past question, lab report and syllabus across your BECE journey. Pick a semester to explore its subjects.</p>'
     + `<a href="/syllabus" class="hero-badge">${badge} Based on the new PU syllabus</a>`
     + '<div class="hero-stats"><div><strong>00</strong><span>Semesters</span></div><div><strong>0</strong><span>Subjects</span></div><div><strong>0</strong><span>Note Files</span></div></div>'
