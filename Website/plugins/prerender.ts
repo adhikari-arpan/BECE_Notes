@@ -24,7 +24,7 @@ export interface PrerenderOptions {
 
 // Minimal shapes of what src/content/notes.ts exports (kept local so this file has no app imports).
 interface NoteFile { name: string; path: string; folder: string; updated: string | null }
-interface Subject { slug: string; kind: 'course' | 'syllabus' | 'resource'; code: string; name: string; credits: number | null; description?: string; guide?: { focus: string[]; study: string; exam: string }; electiveSlot?: boolean; files: NoteFile[] }
+interface Subject { slug: string; kind: 'course' | 'syllabus' | 'resource'; code: string; name: string; credits: number | null; description?: string; units?: readonly (readonly [string, number?])[]; electiveSlot?: boolean; files: NoteFile[] }
 interface Semester { slug: string; year: string; label: string; subjects: Subject[] }
 interface Course2025 { code: string; name: string; credits: number; hours: [number, number, number]; subject?: Subject; noteSemester?: Semester }
 interface Semester2025 { id: number; year: string; label: string; courses: Course2025[] }
@@ -38,11 +38,13 @@ interface AppData {
   PU_GUIDE_DESCRIPTION: string;
   PU_GUIDE_PATH: string;
   SITE_FAQS: { q: string; a: string }[];
-  studyGuides: { slug: string; semester: Semester; subject: Subject & { guide: NonNullable<Subject['guide']> } }[];
-  STUDY_GUIDES_TITLE: string;
-  STUDY_GUIDES_DESCRIPTION: string;
-  studyGuideTitle: (g: AppData['studyGuides'][number]) => string;
-  studyGuideDescription: (g: AppData['studyGuides'][number]) => string;
+  pastQuestionFolders: (semester: never) => { name: string; folder: string; short: string | null; papers: number }[];
+  pastSubjectPath: (semester: never, name: string) => string;
+  SITE_SEO_TITLE: string;
+  subjectNotesTitle: (name: string, semester: string) => string;
+  subjectNotesDescription: (name: string, code: string, semester: string, units?: readonly (readonly [string, number?])[], fallback?: string) => string;
+  subjectPapersTitle: (name: string, semester: string) => string;
+  subjectPapersDescription: (name: string, semester: string, count: number) => string;
 }
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -61,7 +63,8 @@ async function loadNotes(root: string, repoRoot: string): Promise<AppData> {
         "export { GRADES } from './content/grades';",
         "export { PU_FAQS, PU_GUIDE_TITLE, PU_GUIDE_DESCRIPTION, PU_GUIDE_PATH } from './content/puGuide';",
         "export { SITE_FAQS } from './content/siteFaq';",
-        "export { studyGuides, STUDY_GUIDES_TITLE, STUDY_GUIDES_DESCRIPTION, studyGuideTitle, studyGuideDescription } from './content/studyGuides';",
+        "export { pastQuestionFolders, pastSubjectPath } from './content/notes';",
+        "export { SITE_SEO_TITLE, subjectNotesTitle, subjectNotesDescription, subjectPapersTitle, subjectPapersDescription } from './content/seo';",
       ].join('\n'),
       resolveDir: src,
       loader: 'ts',
@@ -161,8 +164,9 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
       if (sub.electiveSlot) continue; // no page of their own — see /electives
       const route = `${semRoute}/${sub.slug}`;
       const isCourse = sub.kind === 'course';
-      const title = `${sub.name} Notes — ${semShort(sem)}, Pokhara University BECE | ${opts.siteName}`;
-      const desc = clip(`${sub.name}${isCourse ? ` (${sub.code})` : ''} notes for ${sem.label}, Pokhara University BECE. ${sub.description ?? 'Lecture notes, past questions and resources.'}`);
+      const title = data.subjectNotesTitle(sub.name, semShort(sem));
+      const desc = clip(data.subjectNotesDescription(sub.name, sub.code, semShort(sem), sub.units, sub.description));
+      const papers = data.pastQuestionFolders(sem as never).find((f) => f.papers > 0 && f.name === sub.name);
       const byFolder = new Map<string, string[]>();
       for (const f of sub.files) byFolder.set(f.folder || 'Files', [...(byFolder.get(f.folder || 'Files') ?? []), f.name]);
       const fileList = [...byFolder].map(([folder, names]) => `<h3>${esc(folder.replace(/^_+/, ''))}</h3><ul>${names.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`).join('');
@@ -174,7 +178,9 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
         lastmod: newest(sub.files),
         body: `<main><h1>${esc(sub.name)}${isCourse ? ` (${esc(sub.code)})` : ''} — ${esc(semFull(sem))} notes, Pokhara University BECE</h1>`
           + `${sub.description ? `<p>${esc(sub.description)}</p>` : ''}`
-          + `${sub.guide ? `<p><a href="/study-guides/${sub.slug}">How to study ${esc(sub.name)}</a></p>` : ''}`
+          + (sub.units ? `<h2>${esc(sub.name)} syllabus units (Pokhara University)</h2><ol>${sub.units.map(([u, h]) => `<li>${esc(u)}${h ? ` (${h} hours)` : ''}</li>`).join('')}</ol>` : '')
+          + (papers ? `<p><a href="${data.pastSubjectPath(sem as never, sub.name)}">${esc(sub.name)} past questions</a></p>` : '')
+          + (/^semester-\d+$/.test(sem.slug) ? `<p><a href="/syllabus/${sem.slug}">${esc(sem.label)} syllabus</a></p>` : '')
           + `<p>${sub.files.length} files: lecture notes, question collections, lab reports and more for ${esc(sub.name)}.</p>`
           + `${fileList}<p><a href="${semRoute}">All ${esc(sem.label)} subjects</a></p>${nav}</main>`,
         jsonLd: [
@@ -204,7 +210,24 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
       const top = f.folder.split('/')[0] || 'All subjects';
       byFolder.set(top, [...(byFolder.get(top) ?? []), f.name]);
     }
+    const folders = data.pastQuestionFolders(sem as never).filter((f) => f.papers > 0);
     const list = [...byFolder].map(([folder, names]) => `<h2>${esc(folder.replace(/_+/g, ' '))}</h2><ul>${names.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`).join('');
+    const subjectLinks = folders.length ? `<h2>Past questions by subject</h2><ul>${folders.map((f) => `<li><a href="${data.pastSubjectPath(sem as never, f.name)}">${esc(f.name)} past questions</a> (${f.papers})</li>`).join('')}</ul>` : '';
+    for (const f of folders) {
+      const subRoute = data.pastSubjectPath(sem as never, f.name);
+      const key = f.folder.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const paperNames = (files as { name: string; folder: string; updated: string | null }[]).filter((p) => p.folder.split('/')[0].toLowerCase().replace(/[^a-z0-9]/g, '') === key).map((p) => p.name);
+      const notes = sem.subjects.find((x) => x.name === f.name);
+      pages.push({
+        route: subRoute,
+        title: data.subjectPapersTitle(f.name, semShort(sem)),
+        description: clip(data.subjectPapersDescription(f.name, semShort(sem), f.papers)),
+        body: `<main><h1>${esc(f.name)} past questions — ${esc(semFull(sem))}, Pokhara University BE Computer Engineering</h1><p>${esc(data.subjectPapersDescription(f.name, semShort(sem), f.papers))}</p>`
+          + `<ul>${paperNames.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`
+          + `<p>${notes ? `<a href="/${sem.slug}/${notes.slug}">${esc(f.name)} notes</a> · ` : ''}<a href="${route}">All ${esc(sem.label)} past questions</a> · <a href="/syllabus/${sem.slug}">${esc(sem.label)} syllabus</a></p>${nav}</main>`,
+        jsonLd: [breadcrumbs(opts, [['Past Questions', '/past-questions'], [sem.label, route], [f.name, subRoute]])],
+      });
+    }
     pages.push({
       route,
       title: `${semFull(sem)} Past Questions — Pokhara University BECE | ${opts.siteName}`,
@@ -212,7 +235,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
       index: files.length > 0,
       lastmod: newest(files),
       body: `<main><h1>${esc(semFull(sem))} past questions — Pokhara University BE Computer Engineering</h1><p>${esc(desc)}</p>`
-        + `${list || '<p>No papers yet: this collection is being built.</p>'}<p><a href="/past-questions">All semesters</a> · <a href="/${sem.slug}">${esc(sem.label)} notes</a></p>${nav}</main>`,
+        + `${subjectLinks}${list || '<p>No papers yet: this collection is being built.</p>'}<p><a href="/past-questions">All semesters</a> · <a href="/${sem.slug}">${esc(sem.label)} notes</a></p>${nav}</main>`,
       jsonLd: [breadcrumbs(opts, [['Past Questions', '/past-questions'], [sem.label, route]])],
     });
   }
@@ -247,32 +270,6 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
     index: false,
     body: `<main><h1>Sponsor ${opts.siteName}</h1><p>Reach Pokhara University engineering students where they study.</p></main>`,
   });
-
-  // Study guides: an index, and one article per subject.
-  const guideGroups = data.semesters.map((sem) => [sem, data.studyGuides.filter((g) => g.semester.slug === sem.slug)] as const).filter(([, gs]) => gs.length);
-  pages.push({
-    route: '/study-guides',
-    title: `${data.STUDY_GUIDES_TITLE} | ${opts.siteName}`,
-    description: clip(data.STUDY_GUIDES_DESCRIPTION),
-    body: `<main><h1>Study guides — Pokhara University BE Computer Engineering</h1><p>${esc(data.STUDY_GUIDES_DESCRIPTION)}</p>`
-      + guideGroups.map(([sem, gs]) => `<h2>${esc(sem.label)}</h2><ul>${gs.map((g) => `<li><a href="/study-guides/${g.slug}">How to study ${esc(g.subject.name)}</a></li>`).join('')}</ul>`).join('')
-      + `${nav}</main>`,
-    jsonLd: [breadcrumbs(opts, [['Study Guides', '/study-guides']])],
-  });
-  for (const g of data.studyGuides) {
-    const route = `/study-guides/${g.slug}`;
-    pages.push({
-      route,
-      title: `${data.studyGuideTitle(g)} | ${opts.siteName}`,
-      description: clip(data.studyGuideDescription(g)),
-      body: `<main><article><h1>How to study ${esc(g.subject.name)} — ${esc(g.semester.label)}, Pokhara University BECE</h1>`
-        + `${g.subject.description ? `<h2>What it covers</h2><p>${esc(g.subject.description)}</p>` : ''}`
-        + `<h2>Topics worth extra time</h2><ol>${g.subject.guide.focus.map((t) => `<li>${esc(t)}</li>`).join('')}</ol>`
-        + `<h2>How to study it</h2><p>${esc(g.subject.guide.study)}</p><h2>In the exam</h2><p>${esc(g.subject.guide.exam)}</p>`
-        + `<p><a href="/${g.semester.slug}/${g.slug}">${esc(g.subject.name)} notes</a> · <a href="/study-guides">All study guides</a></p></article>${nav}</main>`,
-      jsonLd: [breadcrumbs(opts, [['Study Guides', '/study-guides'], [g.subject.name, route]])],
-    });
-  }
 
   // PU grading guide: the rules, the grade table and the FAQ (also as FAQPage structured data).
   const gradeRows = data.GRADES.map((g, i) => {
@@ -453,7 +450,7 @@ function homeShell(): string {
     + '<nav class="top-actions"><a href="/past-questions" class="text-button">Past Questions</a><a href="/syllabus" class="text-button">Syllabus</a><a href="/cgpa-calculator" class="text-button">CGPA Calculator</a></nav></div></header><main>'
     + '<section class="hero section-wrap"><div class="hero-copy">'
     + '<div class="eyebrow"><span class="eyebrow-line"></span> <a href="/pokhara-university" class="eyebrow-link">Pokhara University</a> · BECE</div>'
-    + '<h1>Your BECE notes,<br><em>in one place.</em></h1>'
+    + '<h1>Computer Engineering notes,<br><em>in one place.</em></h1>'
     + '<p class="hero-lede">Free, semester-wise notes for Pokhara University BE Computer Engineering: every lecture note, past question, lab report and syllabus across your BECE journey. Pick a semester to explore its subjects.</p>'
     + `<a href="/syllabus" class="hero-badge">${badge} Based on the new PU syllabus</a>`
     + '<div class="hero-stats"><div><strong>00</strong><span>Semesters</span></div><div><strong>0</strong><span>Subjects</span></div><div><strong>0</strong><span>Note Files</span></div></div>'

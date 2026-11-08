@@ -8,7 +8,7 @@ const BASE = `http://localhost:${PORT}`;
 const ROUTES = [
   '/', '/notes', '/semester-1', '/semester-1/programming-in-c', '/electives',
   '/past-questions', '/past-questions/semester-1',
-  '/syllabus', '/syllabus/semester-1', '/study-guides', '/study-guides/digital-logic',
+  '/past-questions/semester-3/database-management-system', '/syllabus', '/syllabus/semester-1',
   '/cgpa-calculator', '/pu-grading-system', '/pokhara-university',
   '/about', '/contributors', '/contributing', '/feedback', '/privacy',
 ];

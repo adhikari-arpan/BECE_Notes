@@ -29,13 +29,13 @@ import {
 import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
 import { BackArrow } from '@/components/PageHero';
-import { studyGuideForSubject, studyGuidePath } from '@/content/studyGuides';
+import { syllabusPath } from '@/content/curriculum2025';
 import { PastQuestionsView } from '@/components/PastQuestionsView';
 import { navigate } from '@/content/router';
 import { Loader } from '@/components/Loader';
 import { DownloadButton } from '@/components/DownloadButton';
 import { useResizableSidebar } from '@/components/useResizableSidebar';
-import { formatDate, formatSize, isSyllabusFolder, plural, semesterPath, semesters, subjectPath, type FileKind, type NoteFile, type Semester, type Subject } from '@/content/notes';
+import { formatDate, formatSize, isSyllabusFolder, normalizeName, pastQuestionFolders, pastSubjectPath, plural, semesterPath, semesters, subjectPath, type FileKind, type NoteFile, type PastQuestionFolder, type Semester, type Subject } from '@/content/notes';
 import { semester2025For } from '@/content/curriculum2025';
 import { useStructure } from '@/content/structure';
 
@@ -127,7 +127,7 @@ const FOLDER_GROUPS: { kind: FolderKind; label: string; icon: LucideIcon }[] = [
 const FOLDER_ICON: Partial<Record<FolderKind, LucideIcon>> = { syllabus: ScrollText, ...Object.fromEntries(FOLDER_GROUPS.map((g) => [g.kind, g.icon])) };
 
 /** A semester's past papers (/past-questions/semester-N), using the same file viewer as the notes. */
-export function PastQuestionsPage(props: { semester: Semester; requestedFile?: NoteFile }) {
+export function PastQuestionsPage(props: { semester: Semester; subject?: PastQuestionFolder; requestedFile?: NoteFile }) {
   return <PastQuestionsView {...props} renderPreview={(file) => <FilePreview key={file.id} file={file} />} />;
 }
 
@@ -151,6 +151,8 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
   const structure = useStructure();
   const sem2025 = structure === '2025' ? semester2025For(subject) : undefined;
   const homeSemester = (sem2025 && semesters.find((s) => s.id === String(sem2025.id))) || semester;
+  // This subject's past papers, if it has any (filed under the semester its notes are in).
+  const pastPapers = pastQuestionFolders(semester).find((f) => f.papers > 0 && normalizeName(f.name) === normalizeName(subject.name));
 
   const toggleFolder = (folder: string) =>
     setCollapsed((prev) => {
@@ -254,7 +256,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
               <div
                 // No file open yet: the file list takes most of the box ("browsing"); opening a file slides it
                 // back to the sidebar. A collapsed sidebar only applies once a file is open.
-                className={`file-body-full ${activeFile ? '' : 'is-browsing'} ${sidebar.collapsed && activeFile ? 'sidebar-collapsed' : ''} ${sidebar.dragging ? 'sidebar-dragging' : ''}`}
+                className={`file-body-full ${activeFile ? '' : 'is-browsing'} ${subject.units ? 'has-units' : ''} ${sidebar.collapsed && activeFile ? 'sidebar-collapsed' : ''} ${sidebar.dragging ? 'sidebar-dragging' : ''}`}
                 style={{ '--sidebar-width': `${sidebar.width}px` } as CSSProperties}
               >
                 <div className="file-tree" aria-hidden={sidebar.collapsed || undefined}>
@@ -262,7 +264,6 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                     <details className="subject-about">
                       <summary><Info size={13} /> About this subject</summary>
                       <p>{subject.description}</p>
-                      {studyGuideForSubject(subject) && <Link to={studyGuidePath(studyGuideForSubject(subject))} className="subject-about-guide">Study guide →</Link>}
                     </details>
                   )}
                   <div className="tree-title">
@@ -291,7 +292,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                   <FilePreview key={activeFile.id} file={activeFile} />
                 ) : (
                   <div className="preview-pane">
-                    <div className="pick-file">
+                    <div className={`pick-file ${subject.units ? 'has-units' : ''}`}>
                       <div className="pick-file-icon"><MousePointerClick size={30} /></div>
                       <h3>Pick a file to start reading</h3>
                       <p>
@@ -299,6 +300,20 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                         search, zoom and highlighter tools, or download it for offline study.
                       </p>
                       <span className="pick-file-hint"><ArrowLeft size={14} /> {plural(subject.files.length, 'file')} in {subject.name}</span>
+                      {subject.units && (
+                        <div className="subject-units">
+                          <h3>{subject.name} units</h3>
+                          <ol>
+                            {subject.units.map(([name, hours], i) => (
+                              <li key={name + i}><span>{name}</span>{hours ? <small>{hours} hrs</small> : null}</li>
+                            ))}
+                          </ol>
+                          <div className="subject-units-links">
+                            {pastPapers && <Link to={pastSubjectPath(semester, pastPapers.name)}>{subject.name} past questions</Link>}
+                            {/^\d+$/.test(semester.id) && <Link to={syllabusPath(Number(semester.id))}>{semester.label} syllabus</Link>}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

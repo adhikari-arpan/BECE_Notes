@@ -73,7 +73,7 @@ export function SponsorView() {
           <h2>Students come here to <em>study</em></h2>
           <p className="sv-lead">
             BECE Vault is the free notes library for Pokhara University BE Computer Engineering students: notes, past exam
-            papers, syllabus, study guides and a CGPA calculator for all 8 semesters. Students rely on it before mid-terms
+            papers, syllabus and a CGPA calculator for all 8 semesters. Students rely on it before mid-terms
             and finals, when they need notes and past papers most.
           </p>
           <div className="sv-why">
@@ -102,7 +102,7 @@ export function SponsorView() {
           <dl className="sv-library">
             <div><dt><BookOpen size={14} /> Note files</dt><dd>{SITE_LIBRARY.files.toLocaleString('en-US')}</dd></div>
             <div><dt><FileStack size={14} /> Past papers</dt><dd>{SITE_LIBRARY.papers.toLocaleString('en-US')}</dd></div>
-            <div><dt>Study guides</dt><dd>{SITE_LIBRARY.guides}</dd></div>
+            <div><dt>Subjects</dt><dd>{SITE_LIBRARY.subjects}</dd></div>
             <div><dt>Semesters</dt><dd>8</dd></div>
           </dl>
         </div>

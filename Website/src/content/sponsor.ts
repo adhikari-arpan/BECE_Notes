@@ -1,5 +1,4 @@
 import { allFiles, isSyllabus, pastQuestionCollections, semesters } from '@/content/notes';
-import { studyGuides } from '@/content/studyGuides';
 import { contributors } from '@/content/contributors';
 
 /** Shared by /sponsor, /analytics and the pitch PDF. */
@@ -11,7 +10,6 @@ export const SITE_LIBRARY = {
   files: allFiles.length,
   papers: pastQuestionCollections.reduce((t, c) => t + c.files.length, 0),
   subjects: semesters.flatMap((s) => s.subjects).filter((s) => !isSyllabus(s) && s.files.length > 0).length,
-  guides: studyGuides.length,
   contributors: contributors.length,
 };
 
@@ -69,7 +67,7 @@ export const SPONSOR_TIERS: SponsorTier[] = [
     price: null,
     includes: [
       'Everything in Featured',
-      'Spotlight card on the past papers and study guides pages during Pokhara University exam weeks',
+      'Spotlight card on the past papers pages during Pokhara University exam weeks',
       'One sponsor per season: no other brand shares the spot',
     ],
   },

@@ -5,13 +5,15 @@ import { PageHero } from '@/components/PageHero';
 import { DownloadButton } from '@/components/DownloadButton';
 import { PastQuestionsGuide } from '@/components/PastQuestionsGuide';
 import { navigate, useLocation } from '@/content/router';
-import { formatSize, normalizeName, pastQuestionsFor, pastQuestionsPath, plural, semesterPath, type NoteFile, type Semester } from '@/content/notes';
+import { formatSize, normalizeName, pastQuestionsFor, pastQuestionsPath, plural, semesterPath, type NoteFile, type PastQuestionFolder, type Semester } from '@/content/notes';
 import { pastQuestionSubjects } from '@/content/pastQuestions';
 import { STRUCTURE_LABELS, useStructure } from '@/content/structure';
 import './PastQuestionsView.css';
 
 interface Props {
   semester: Semester;
+  /** On /past-questions/semester-N/<subject>: the subject this page is about. */
+  subject?: PastQuestionFolder;
   /** The paper open in the viewer (from ?file=…), if any. */
   requestedFile?: NoteFile;
   /** The note viewer used on subject pages, shown inside the slide-in panel. */
@@ -68,9 +70,11 @@ const newestFirst = (a: NoteFile, b: NoteFile) =>
  * closing it returns to the list. Folders like `2024_College_Assessments` come last. Follows the
  * curriculum switch: in the 2025 view it lists that semester's 2025 subjects, wherever their papers are filed.
  */
-export function PastQuestionsView({ semester, requestedFile, renderPreview }: Props) {
+export function PastQuestionsView({ semester, subject, requestedFile, renderPreview }: Props) {
   const collectionFiles = useMemo(() => pastQuestionsFor(semester)?.files ?? [], [semester]);
-  const structure = useStructure();
+  // A single subject's page always lists its papers where they're filed (the before-2025 semesters).
+  const chosenStructure = useStructure();
+  const structure = subject ? 'pre2025' : chosenStructure;
   const subjects = useMemo(() => pastQuestionSubjects(semester, structure), [semester, structure]);
   const [year, setYear] = useState<string | null>(null);
 
@@ -114,7 +118,8 @@ export function PastQuestionsView({ semester, requestedFile, renderPreview }: Pr
   const allPapers = sections.flatMap((s) => s.papers);
   // One subject at a time (or all of them): the one picked, else the one holding the paper in the link, else the first.
   const [picked, setPicked] = useState<string | null>(null);
-  const wanted = useLocation().params.get('subject'); // from subject search on /past-questions
+  const subjectParam = useLocation().params.get('subject'); // from subject search on /past-questions
+  const wanted = subject?.folder ?? subjectParam;
   const subjectKey = picked && (picked === ALL || sections.some((s) => s.key === picked)) ? picked
     : sections.find((s) => requestedFile && s.papers.includes(requestedFile))?.key
       ?? sections.find((s) => wanted && normalizeName(s.title) === normalizeName(wanted))?.key ?? sections[0]?.key ?? ALL;
@@ -165,9 +170,9 @@ export function PastQuestionsView({ semester, requestedFile, renderPreview }: Pr
     <>
       <section className="semester-page-header section-wrap pqi-header">
         <PageHero
-          back={pastQuestionsPath()}
-          backLabel="All semesters"
-          title={<>{semester.label} <em>Past Questions</em></>}
+          back={subject ? pastQuestionsPath(semester) : pastQuestionsPath()}
+          backLabel={subject ? semester.label : 'All semesters'}
+          title={subject ? <>{subject.name} <em>Past Questions</em></> : <>{semester.label} <em>Past Questions</em></>}
           kicker={`Pokhara University exam papers · ${STRUCTURE_LABELS[structure]}`}
           lead={`${plural(allPapers.length, 'paper')}, sorted by subject and year. Pick a subject to see its papers.`}
         />

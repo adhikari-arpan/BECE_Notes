@@ -19,7 +19,7 @@ const W = A4.width - M * 2;
 const CONTACT_EMAIL = 'adhikariarpan2063@gmail.com';
 const REPO_URL = 'https://github.com/adhikari-arpan/BECE_Notes';
 
-export interface PitchLibrary { files: number; papers: number; subjects: number; guides: number; contributors: number }
+export interface PitchLibrary { files: number; papers: number; subjects: number; contributors: number }
 
 export const pitchFileName = () => `BECE-Vault-Sponsorship-${new Date().toISOString().slice(0, 10)}.pdf`;
 
@@ -138,7 +138,7 @@ export async function createPitchPdf(data: AnalyticsData, library: PitchLibrary)
   text('engineering students where they study', M, y, 27, bold, C.gold);
   y -= 26;
   para(
-    `BECE Vault (${SITE_HOST}) is the free notes library for Pokhara University BE Computer Engineering students: notes, past exam papers, syllabus, study guides and a CGPA calculator for all 8 semesters.`,
+    `BECE Vault (${SITE_HOST}) is the free notes library for Pokhara University BE Computer Engineering students: notes, past exam papers, syllabus and a CGPA calculator for all 8 semesters.`,
     M, y, W - 40, 10.5, C.onGreenMuted,
   );
 
@@ -223,7 +223,7 @@ export async function createPitchPdf(data: AnalyticsData, library: PitchLibrary)
   const lib = [
     [fmt(library.files), 'note files'],
     [fmt(library.papers), 'past exam papers'],
-    [String(library.guides), 'study guides'],
+    ['8', 'semesters covered'],
     [String(library.subjects), 'subjects with notes'],
   ];
   lib.forEach(([v, l], i) => {
@@ -265,7 +265,7 @@ export async function createPitchPdf(data: AnalyticsData, library: PitchLibrary)
   const spots = [
     ['Home page feature', 'Your logo and one line on the home page, the first page most students open.'],
     ['Site-wide credit', '“Supported by” with your logo in the footer of every page.'],
-    ['Exam-season spotlight', 'A featured spot on the past papers and study guides pages during exam weeks.'],
+    ['Exam-season spotlight', 'A featured spot on the past papers pages during exam weeks.'],
   ];
   const sw = (W - 20) / 3;
   spots.forEach(([t, d], i) => {

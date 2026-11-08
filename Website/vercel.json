@@ -19,6 +19,11 @@
       "permanent": true
     },
     {
+      "source": "/study-guides/:path*",
+      "destination": "/notes",
+      "permanent": true
+    },
+    {
       "source": "/electives/net-development",
       "destination": "/electives/net-technologies",
       "permanent": true

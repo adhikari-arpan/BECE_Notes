@@ -1,0 +1,67 @@
+/**
+ * Each subject's units, from its Pokhara University syllabus (the PDFs in the `_Syllabus` folders).
+ * Shown on the subject page and in its static HTML, so the topics a student searches for are on the site.
+ * Keyed by subject name, compared loosely like descriptions.ts. A unit is [name, lecture hours?].
+ * A subject without a syllabus PDF (internship, projects, some electives) simply has no entry.
+ */
+export type SubjectUnit = readonly [name: string, hours?: number];
+
+export const subjectUnits: Record<string, readonly SubjectUnit[]> = {
+  // ---------------- Semester I ----------------
+  'Calculus I': [['Limit, Continuity and Derivatives', 5], ['Applications of Derivatives', 8], ['Integral Calculus', 6], ['Application of Integral', 6], ['Partial Differentiation', 3], ['Application of Partial Differentiation', 4], ['First Order Ordinary Differential Equations', 6], ['Second Order Ordinary Differential Equations', 7]],
+  'Digital Logic': [['Introduction', 2], ['Number Systems and Codes', 6], ['Boolean Algebra and Logic Gates', 4], ['Simplification of Boolean Function', 5], ['Combinational Circuit', 4], ['MSI and LSI Design', 6], ['Sequential Circuits', 6], ['Registers and Counters', 6], ['Memory Unit and ALU', 6]],
+  'Programming in C': [['Programming Languages and Problem Solving', 6], ['Introduction to C', 6], ['Control Structures', 6], ['Arrays and Strings', 6], ['Functions', 6], ['Pointers', 6], ['Structure and Union', 5], ['Files and File Handling', 4]],
+  'Basic Electrical Engineering': [['Introduction', 2], ['DC Circuit Analysis', 15], ['Single Phase AC Circuits Analysis', 10], ['Poly-phase AC Circuit Analysis', 6], ['Electrical Machines', 12]],
+  'Computer Workshop': [['Introduction to Desktop/Workstation'], ['Assembling Desktop Computer'], ['Assembling Laptop'], ['Laptop/Desktop OS Installation'], ['Networking and Internet Setup'], ['Software Installation'], ['Server Installation and Backup'], ['Hardware and Software Troubleshooting']],
+  'Communication Technique': [['Audience, Purpose, Genre and Ethics in Technical Communication'], ['Writing Email and Letters; Style in Technical Prose'], ['Designing Technical Documents and Using Visuals'], ['Writing Proposals and Instructional Documents'], ['Testing Document Usability; Recommendation Reports'], ['White Papers, Information Reports and Sharing Documents Online'], ['Writing Online Documents; Status and Progress Reports'], ['Oral Presentation of Technical Reports']],
+  'Electronic Devices & Circuits': [['Semiconductor Diode', 6], ['Bipolar Junction Transistor', 6], ['DC Power Supply', 5], ['The Field Effect Transistor (FET)', 5], ['The Small Signal Low Frequency Analysis Model of BJT', 5], ['Multistage Amplifiers', 4], ['Large Signal Amplifiers', 4], ['Feedback Amplifiers', 3], ['Operational Amplifier and Oscillator', 7]],
+
+  // ---------------- Semester II ----------------
+  'Algebra & Geometry': [['Matrix and System of Linear Equations', 4], ['Vector Space', 7], ['Linear Programming Problems', 5], ['Vector Algebra', 6], ['Infinite Series', 5], ['Two-dimensional Geometry', 6], ['Three-dimensional Geometry', 12]],
+  'Applied Physics': [['Mechanical Oscillation', 6], ['Wave Motion', 4], ['Acoustics', 4], ['Photonics', 6], ['Capacitor and Dielectric', 6], ['Electromagnetism', 6], ['Quantum Mechanics', 5], ['Fundamentals of Thermodynamics and Heat Transfer', 8]],
+  'Applied Chemistry': [['Electrochemistry and Battery Technology', 6], ['Environmental Chemistry', 5], ['Transition Elements and Its Applications', 4], ['Types of Organic Reactions', 4], ['Engineering Materials and Its Applications', 7], ['Polymers and Its Applications', 4]],
+  'Basic Engineering Drawing': [['Introduction to Engineering Drawing', 3], ['Geometrical Constructions', 7], ['Multi-view Drawings and Sectional Views', 15], ['Developments of Surfaces', 4], ['Isometric, Oblique and Perspective Projections', 6], ['Symbols and Computer Aided Drawing', 10]],
+  'Object Oriented Programming in C++': [['Object Oriented Concepts', 8], ['Classes and Objects', 8], ['Inheritance', 8], ['Polymorphism', 9], ['Templates', 5], ['Exception Handling and Stream I/O', 7]],
+  'Data Structure & Algorithm': [['Introduction', 5], ['Stack and Recursion', 7], ['Queue and Linked List', 10], ['Tree', 7], ['Sorting Algorithms', 5], ['Searching Algorithms and Hashing', 5], ['Graphs', 6]],
+  'Instrumentation': [['Introduction to Instrumentation System', 10], ['Principle of Analog Instruments', 7], ['Electrical Signal Processing and Data Acquisition', 7], ['Data Converter and Connectors', 8], ['Wave Analyzers and Digital Instruments', 8], ['Recorders, Displays and Storage Devices', 5]],
+
+  // ---------------- Semester III ----------------
+  'Calculus II': [['Multiple Integrals', 6], ['Series Solution of Differential Equations and Special Functions', 6], ['Laplace Transform and Its Application', 8], ['Advanced Vector Calculus', 15], ['Fourier Series', 5], ['Partial Differential Equations', 5]],
+  'Database Management System': [['Introduction', 4], ['ER and Relational Model', 8], ['Structured Query Language', 5], ['Relational Database Design', 6], ['Security', 3], ['Query Processing and Optimization', 5], ['Storage Management and Indexing', 3], ['Transactions and Concurrency Control', 4], ['Crash Recovery', 3], ['Emerging Trend in Databases', 4]],
+  'Operating Systems': [['Introduction', 4], ['Processes and Threads', 10], ['Memory Management', 10], ['Kernel', 2], ['Input/Output Management', 5], ['File Systems', 3], ['New Trends in Operating System']],
+  'Microprocessor & Assembly Language Programming': [['Introduction to Microprocessor', 3], ['Architectural Details and Programming of 8085 Microprocessor', 12], ['Architectural Details and Programming of 8086 Microprocessor', 10], ['Bus Structure, Memory, I/O and Interfacing', 12], ['Interrupt Operation', 8]],
+  'Computer Graphics': [['Overview of Computer Graphics and Graphics Systems', 7], ['Scan Conversion Algorithms', 7], ['Two Dimensional Geometric Transformations and Viewing', 8], ['Graphics in Three Dimensions', 8], ['Visual Realism', 7], ['Graphical Standards', 4], ['Introduction to OpenGL', 4]],
+  'Data Communication': [['Introduction', 2], ['Data Transmission', 3], ['Signals and Systems', 6], ['Overview of Data Communication Networking and Protocols', 4], ['Transmission Media', 5], ['Impairments, Error Handling and Compression Techniques', 6], ['Data Link Control and Protocol', 5], ['Multiplexing and Switching', 5], ['Data Encoding and Modulation', 9]],
+
+  // ---------------- Semester IV ----------------
+  'Applied Mathematics': [['Complex Analysis', 17], ['Z-Transform and its Applications', 10], ['Partial Differential Equations', 12], ['Fourier Integral and Transform', 6]],
+  'Numerical Methods': [['Solution of Non-linear Equations', 5], ['Interpolation and Approximation', 5], ['Numerical Differentiation and Integration', 4], ['Solution of System of Linear Algebraic Equations', 6], ['Solution of Ordinary Differential Equations', 6], ['Numerical Solution of Partial Differential Equation', 4]],
+  'Advanced Programming with Java': [['Basics of Programming in Java', 7], ['Object Oriented Principles in Java', 6], ['Building Components using Swing and JavaFX', 6], ['Distributed Network Programming', 8], ['Database Connectivity with Java', 5], ['Servlets and JSP', 6], ['Advanced Topics in Java', 7]],
+  'Theory of Computation': [['Introduction', 4], ['Finite Automata and Regular Language', 10], ['Context-Free Language and Pushdown Automata', 13], ['Turing Machines', 10], ['Undecidability', 4], ['Computational Complexity', 4]],
+  'Computer Architecture': [['Introduction to Architecture', 4], ['Register Transfer Language and Micro-operations', 4], ['Processor Organization', 5], ['Control Unit', 5], ['Computer Arithmetic', 7], ['Pipelining', 4], ['Memory Organization', 4], ['Input-Output Processing', 4], ['Parallel Processing', 4], ['Multi-core Computer', 4]],
+  'Research Fundamentals': [['Introduction', 4], ['Research Process Model', 10], ['Participants and Research Ethics', 4], ['Proposal Writing', 4], ['Report Writing', 4]],
+
+  // ---------------- Semester V ----------------
+  'Probability & Statistics': [['Introduction and Descriptive Statistics', 3], ['Probability', 5], ['Discrete Probability Distributions', 3], ['Continuous Probability Distributions', 4], ['Bivariate Random Variables and Joint Probability Distribution', 2], ['Sampling Distribution and Estimation', 5], ['Hypothesis Testing', 5], ['Correlation and Regression', 3]],
+  'Embedded System': [['Introduction to Embedded Systems', 3], ['Programming for Embedded Systems', 5], ['Real-Time Operating Systems (RTOS)', 5], ['Embedded System Design using VHDL', 5], ['Communication Protocols', 3], ['Peripherals and Interfacing', 4], ['Internet of Things (IoT) and Embedded Systems', 3]],
+  'Engineering Management': [['Introduction', 6], ['Planning and Organizing', 6], ['Motivation and Leadership', 6], ['Human Resource Management and Control', 8], ['Emerging Trends in Engineering Management', 4]],
+  'Artificial Intelligence': [['Introduction to Artificial Intelligence', 4], ['Intelligent Agents', 5], ['Problem Solving and Search Algorithms', 10], ['Knowledge Representation and Reasoning', 10], ['Machine Learning', 6], ['Fuzzy Logic', 5], ['Expert System', 5]],
+  'Digital Signal Analysis & Processing': [['Discrete Signals and Systems', 8], ['Z-Transform', 6], ['Analysis of LTI System in Frequency Domain', 5], ['Discrete Filter Structures', 6], ['IIR Filter Design', 7], ['FIR Filter Design', 7], ['Discrete Fourier Transform', 6]],
+  'Software Engineering': [['Software Engineering and Project Management', 7], ['Software Process Models and Agility', 5], ['Requirements Engineering and Principles', 7], ['Software Design, Architecture and Principles', 7], ['Testing Techniques and Maintenance', 7], ['Software Quality Assurance Process', 4], ['Software Configuration Management', 4], ['Advanced Software Engineering Concepts', 4]],
+
+  // ---------------- Semester VI ----------------
+  'Image Processing & Pattern Recognition': [['Introduction to Digital Image Processing', 4], ['Image Enhancement in Spatial Domain', 7], ['Image Enhancement in the Frequency Domain', 6], ['Image Restoration', 4], ['Image Compression and Coding', 7], ['Image Analysis', 9], ['Pattern Recognition and Artificial Neural Network']],
+  'Machine Learning': [['Introduction to Machine Learning', 5], ['Supervised Learning', 10], ['Unsupervised Learning', 10], ['Artificial Neural Network', 12], ['Model Evaluation and Validation', 8]],
+  'Computer Networks': [['Introduction to Computer Network', 3], ['Reference Model', 4], ['Physical Layer', 4], ['Data Link Layer', 8], ['Network Layer Protocols and Addressing', 8], ['Transport Layer and Protocols', 4], ['Congestion Control and Quality of Services', 3], ['Application Layer, Servers and Protocols', 4], ['Network Management and Security', 7]],
+  'Simulation & Modeling': [['Introduction to Simulation and Modeling', 4], ['System Simulation', 8], ['Continuous System', 8], ['Discrete System', 7], ['Probability Concept and Random Numbers', 7], ['Discrete System Languages', 6], ['Output Analysis Method', 5]],
+  'Compiler Design': [['Overview of Compilation', 4], ['Scanners', 7], ['Parsers', 6], ['Intermediate Representations', 5], ['Code Generation', 4], ['Machine Independent Optimization', 4]],
+
+  // ---------------- Electives ----------------
+  'Big Data Technologies': [['Introduction to Big Data', 8], ['Google File System', 7], ['Map-Reduce Framework', 10], ['NoSQL', 6], ['Searching and Indexing of Big Data', 7], ['Case Study: Hadoop', 7]],
+  'Natural Language Processing': [['Introduction to NLP', 4], ['Text Preprocessing and Feature Engineering', 8], ['Traditional Text Representation', 7], ['Word Embeddings and Neural Methods', 6], ['Text Classification and Language Models', 5], ['Transformers and Modern Architectures'], ['Advanced Applications and Ethics']],
+  'Cybersecurity': [['Introduction to Cybersecurity', 7], ['Cryptography and Data Security', 8], ['Network Security', 7], ['Ethical Hacking and Penetration Testing', 7], ['Web Security and Application Protection', 8], ['Cybersecurity Laws, Ethics, and Compliance', 8]],
+  '.NET Technologies': [['Introduction to ASP.NET'], ['Web Application Development with ASP.NET'], ['Database Integration with Entity Framework'], ['Authentication and Authorization'], ['Web API Development'], ['Advanced ASP.NET Features'], ['Project Work and Final Project']],
+  'Generative AI': [['Introduction to Generative AI and Python Fundamentals', 7], ['Foundations of Large Language Models', 6], ['Prompt Engineering Fundamentals', 8], ['LangChain Framework and Applications', 8], ['Retrieval Augmented Generation (RAG)', 8], ['Ethical and Responsible AI', 4], ['Advanced Topics in Generative AI', 4]],
+  'Information System Audit': [['Overview of Systems Audit', 8], ['Hardware and Software Security Issues', 8], ['Information Systems Audit Requirements', 8], ['Conducting an Information Systems Audit', 10], ['Business Continuity and Disaster Recovery Plan', 6], ['Security Testing and Cloud Computing Audit', 5]],
+  'Mobile App Development': [['Introduction to Mobile OSes'], ['Android Classes and Basics'], ['Android User Interface'], ['Advanced Topics'], ['Graphics and Multimedia'], ['APIs and Sensors'], ['Packaging and Monetizing']],
+};

@@ -1,6 +1,6 @@
 import { config, entries, type ManifestEntry } from 'virtual:notes-manifest';
 import { subjectDescriptions } from '@/content/descriptions';
-import { subjectGuides, type SubjectGuide } from '@/content/subjectGuides';
+import { subjectUnits, type SubjectUnit } from '@/content/subjectUnits';
 
 export type FileKind = 'pdf' | 'doc' | 'slides' | 'sheet' | 'image' | 'markdown' | 'code' | 'text' | 'other';
 
@@ -29,8 +29,8 @@ export interface Subject {
   credits: number | null;
   /** Short summary of what the course covers (see descriptions.ts). */
   description?: string;
-  /** Topics to focus on, how to study it and exam advice (see subjectGuides.ts). */
-  guide?: SubjectGuide;
+  /** The units of its Pokhara University syllabus (see subjectUnits.ts). */
+  units?: readonly SubjectUnit[];
   /** An "Elective I/II/III" slot: its notes live in the Electives collection, not in the semester. */
   electiveSlot?: boolean;
   icon: string;
@@ -150,8 +150,8 @@ export const normalizeName = (s: string) => s.toLowerCase().replace(/&/g, 'and')
 
 const descriptionsByName = new Map(Object.entries(subjectDescriptions).map(([name, text]) => [normalizeName(name), text]));
 const descriptionFor = (name: string) => descriptionsByName.get(normalizeName(name));
-const guidesByName = new Map(Object.entries(subjectGuides).map(([name, guide]) => [normalizeName(name), guide]));
-const guideFor = (name: string) => guidesByName.get(normalizeName(name));
+const unitsByName = new Map(Object.entries(subjectUnits).map(([name, units]) => [normalizeName(name), units]));
+const unitsFor = (name: string) => unitsByName.get(normalizeName(name));
 
 function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: string): Subject[] {
   const groups = groupByFolder(root);
@@ -173,7 +173,7 @@ function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: stri
       code: c.code,
       name: c.name,
       description: descriptionFor(c.name),
-      guide: guideFor(c.name),
+      units: unitsFor(c.name),
       electiveSlot: /^ELEC\b/.test(c.code),
       credits: c.credits,
       icon: c.icon,
@@ -390,6 +390,10 @@ export const fileKey = (subject: Subject, file: NoteFile) =>
 
 export const subjectPath = (semester: Semester, subject: Subject, file?: NoteFile) =>
   `/${semester.slug}/${subject.slug}${file ? `?file=${encodeURIComponent(fileKey(subject, file))}` : ''}`;
+
+/** One subject's papers: /past-questions/semester-3/database-management-system. */
+export const pastSubjectPath = (semester: Semester, name: string) => `/past-questions/${semester.slug}/${slug(name)}`;
+export const findPastSubject = (semester: Semester, subjectSlug: string) => pastQuestionFolders(semester).find((f) => slug(f.name) === subjectSlug);
 
 /** /past-questions, or one semester's papers at /past-questions/semester-N (?file= opens a paper). */
 export const pastQuestionsPath = (semester?: Semester, file?: NoteFile) => {

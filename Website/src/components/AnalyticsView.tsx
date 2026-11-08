@@ -157,7 +157,6 @@ function Dashboard({ data, loading, onRefresh }: { data: AnalyticsData; loading:
             <div><dt><BookOpen size={15} /> Note files</dt><dd>{fmt(library.files)}</dd></div>
             <div><dt><FileStack size={15} /> Past exam papers</dt><dd>{fmt(library.papers)}</dd></div>
             <div><dt>Subjects with notes</dt><dd>{library.subjects}</dd></div>
-            <div><dt>Study guides</dt><dd>{library.guides}</dd></div>
             <div><dt>Semesters covered</dt><dd>8</dd></div>
             <div><dt>Contributors</dt><dd>{library.contributors}</dd></div>
           </dl>
@@ -470,7 +469,7 @@ function CopySummary({ data, avgDaily }: { data: AnalyticsData; avgDaily: number
     `BECE Vault (${SITE}): free notes library for Pokhara University BE Computer Engineering students`,
     `• ${fmt(data.visitors)} visitors and ${fmt(data.pageViews)} page visits since ${COUNTING_SINCE}`,
     `• ${fmt(last30)} visitors in the last 30 days (about ${fmt(avgDaily)} a day)`,
-    `• ${fmt(library.files)} note files, ${fmt(library.papers)} past exam papers, ${library.guides} study guides, all 8 semesters`,
+    `• ${fmt(library.files)} note files, ${fmt(library.papers)} past exam papers, all 8 semesters`,
     `Live numbers: https://${SITE}/analytics`,
   ].join('\n');
   const copy = () => {

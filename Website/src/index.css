@@ -534,6 +534,24 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .is-browsing .file-row strong { font-size: 14px; }
 .is-browsing .file-row small { font-size: 10.5px; }
 .is-browsing .file-row > .file-badge { width: 32px; height: 32px; border-radius: 9px; }
+/* Beside the file list while browsing: the subject's units from its syllabus. */
+.pick-file.has-units { justify-content: flex-start; overflow-y: auto; padding: 22px 20px; }
+.pick-file.has-units .pick-file-icon { width: 48px; height: 48px; border-radius: 14px; margin-bottom: 0; flex-shrink: 0; }
+.pick-file.has-units .pick-file-icon svg { width: 22px; height: 22px; }
+.pick-file.has-units > h3 { font-size: 19px; }
+.pick-file.has-units > p { display: none; }
+.subject-units { width: 100%; max-width: 420px; margin-top: 10px; padding-top: 14px; border-top: 1px dashed var(--c-dde3dc); text-align: left; }
+.subject-units h3 { margin: 0 0 10px; font: 600 16px/1.3 'Playfair Display', serif; color: var(--c-0b1f1a); }
+.subject-units ol { list-style: none; counter-reset: unit; margin: 0; padding: 0; display: grid; gap: 7px; }
+.subject-units li { counter-increment: unit; display: flex; align-items: baseline; gap: 8px; font-size: 13px; line-height: 1.4; color: var(--c-1d3f35); }
+.subject-units li::before { content: counter(unit, decimal-leading-zero); flex-shrink: 0; font: 600 10.5px 'DM Mono', monospace; color: #b8860b; }
+:root[data-theme="dark"] .subject-units li::before { color: #f0c34a; }
+.subject-units li span { flex: 1; min-width: 0; }
+.subject-units li small { flex-shrink: 0; font: 500 10px 'DM Mono', monospace; color: var(--c-8a978f); }
+.subject-units-links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 14px; }
+.subject-units-links a { font-size: 12.5px; font-weight: 700; color: #b8860b; text-decoration: none; }
+.subject-units-links a:hover { text-decoration: underline; }
+:root[data-theme="dark"] .subject-units-links a { color: #f0c34a; }
 .is-browsing .preview-pane .pick-file { animation: pick-in .5s cubic-bezier(.16, 1, .3, 1) both; }
 @keyframes pick-in { from { opacity: 0; transform: translateX(16px); } }
 @media (prefers-reduced-motion: reduce) {
@@ -787,6 +805,10 @@ a.footer-author:hover { color: #f7d77a; }
   .subject-box .file-body-full.sidebar-collapsed { grid-template-columns: minmax(0, 1fr); grid-template-rows: 0 minmax(0, 1fr); }
   /* Phones: while browsing, the file list fills the box; the prompt beside it isn't needed. */
   .subject-box .file-body-full.is-browsing { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) 0; }
+  /* A subject with units keeps them under the file list, without the "pick a file" prompt. */
+  .subject-box .file-body-full.is-browsing.has-units { grid-template-rows: minmax(0, 60%) minmax(0, 1fr); }
+  .pick-file.has-units > .pick-file-icon, .pick-file.has-units > h3, .pick-file.has-units > .pick-file-hint { display: none; }
+  .pick-file.has-units .subject-units { margin-top: 0; padding-top: 0; border-top: 0; max-width: none; }
   .is-browsing .preview-pane { overflow: hidden; }
   .sidebar-resizer { display: none; }
   .subject-box .file-tree { max-height: none; }
@@ -1252,10 +1274,6 @@ a.shelf-item:hover .shelf-cta svg { transform: translateX(4px); }
   .shelf-text strong { font-size: 24px; }
 }
 
-/* "Study guide →" inside a subject's About box. */
-a.subject-about-guide { display: inline-block; margin-top: 8px; font-size: 12.5px; font-weight: 700; color: #b8860b; text-decoration: none; }
-a.subject-about-guide:hover { text-decoration: underline; }
-:root[data-theme="dark"] a.subject-about-guide { color: #f0c34a; }
 
 /*
  * Scrollbars in the site's colors: a gold-to-amber thumb on a cream track (deep green in dark mode).

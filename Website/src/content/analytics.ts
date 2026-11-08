@@ -25,7 +25,6 @@ export const SECTIONS = [
   { key: 'subject', label: 'Subject notes (reading)' },
   { key: 'past-questions', label: 'Past questions' },
   { key: 'syllabus', label: 'Syllabus' },
-  { key: 'study-guides', label: 'Study guides' },
   { key: 'cgpa', label: 'CGPA calculator' },
   { key: 'grading', label: 'PU grading guide' },
   { key: 'other', label: 'About, contributors and other pages' },
@@ -40,8 +39,6 @@ const SECTION_OF_PAGE: Record<string, (typeof SECTIONS)[number]['key']> = {
   'past-questions-semester': 'past-questions',
   syllabus: 'syllabus',
   'syllabus-semester': 'syllabus',
-  'study-guides': 'study-guides',
-  'study-guide': 'study-guides',
   'cgpa-calculator': 'cgpa',
   'pu-grading-system': 'grading',
 };
