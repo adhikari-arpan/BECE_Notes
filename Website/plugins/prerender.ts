@@ -195,6 +195,8 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
             educationalLevel: 'Undergraduate',
             inLanguage: 'en',
             isAccessibleForFree: true,
+            // The units of its Pokhara University syllabus, with their lecture hours where known.
+            ...(sub.units ? { syllabusSections: sub.units.map(([u, h]) => ({ '@type': 'Syllabus', name: u, ...(h ? { timeRequired: `PT${h}H` } : {}) })) } : {}),
           }] : []),
         ],
       });

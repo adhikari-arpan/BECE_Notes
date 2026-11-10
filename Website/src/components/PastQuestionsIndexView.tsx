@@ -3,7 +3,7 @@ import { ArrowRight, FileUp, Search, X } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { PageHero } from '@/components/PageHero';
 import { StructureToggle } from '@/components/StructureToggle';
-import { normalizeName, pastQuestionCollections, pastQuestionsPath, plural } from '@/content/notes';
+import { normalizeName, pastQuestionCollections, pastQuestionsPath, pastSubjectPath, plural } from '@/content/notes';
 import { pastQuestionSubjects } from '@/content/pastQuestions';
 import { useStructure } from '@/content/structure';
 import './PastQuestionsIndexView.css';
@@ -55,7 +55,7 @@ export function PastQuestionsIndexView() {
         {words.length > 0 && (
           <div className="pqi-results" aria-live="polite">
             {results.length ? results.map((r) => (
-              <Link key={`${r.semester.id}:${r.folder}`} to={`${pastQuestionsPath(r.semester)}?subject=${encodeURIComponent(r.folder)}`} className={`pqi-result ${r.files.length ? '' : 'is-empty'}`}>
+              <Link key={`${r.semester.id}:${r.folder}`} to={pastSubjectPath(r.home, r.name)} className={`pqi-result ${r.files.length ? '' : 'is-empty'}`}>
                 <span className="pqi-result-name"><strong>{r.name}</strong>{r.short && <b>{r.short}</b>}</span>
                 <span className="pqi-result-sem">{r.semester.label}{r.home !== r.semester ? ` · filed in ${r.home.label}` : ''}</span>
                 <span className="pqi-result-count">{r.files.length ? plural(r.files.length, 'paper') : 'No papers yet'}</span>
