@@ -2,9 +2,15 @@
 /**
  * Stamps the library's files with a BECE Vault watermark, in place:
  *   - PDFs: a thin strip added below every page with a clickable "Available on notes.arpanadhikari7.com.np"
- *     line, and a very light logo in the middle of the page (the same look as website downloads).
- *   - Images (jpg, png): the same line in a strip below the picture, and the light logo.
+ *     line, and a very light logo in the middle of the page with the site's address under it.
+ *   - Images (jpg, png): the same line in a strip below the picture, and the light logo with the address.
  * Every stamped file carries a marker, so running this again never stamps a file twice.
+ *
+ * Harder to strip (no watermark is impossible to remove, but the easy ways don't work):
+ *   - the stamp is merged into each page's own drawing instructions, not added as a separate layer
+ *     that a tool could simply delete;
+ *   - the address also sits inside the page, so cropping the bottom strip off doesn't remove the credit;
+ *   - the file's properties name BECE Vault as the source.
  * Word, PowerPoint, code and other files are left unchanged.
  *
  * Usage (from Website/):
@@ -17,14 +23,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { PDFArray, PDFDocument, PDFName, PDFString, StandardFonts, degrees, rgb } from 'pdf-lib';
+import { PDFArray, PDFContentStream, PDFDocument, PDFName, PDFRawStream, PDFString, StandardFonts, decodePDFRawStream, degrees, rgb } from 'pdf-lib';
 
 const SITE_HOST = 'notes.arpanadhikari7.com.np';
 const SITE_URL = `https://${SITE_HOST}`;
 const TEXT = `Available on ${SITE_HOST}`;
 /** Info-dictionary key (PDF) and EXIF description (images) that mark a stamped file. */
 const MARK_KEY = 'BECEVaultWatermark';
-const MARK = 'BECE Vault watermark v1';
+const MARK = 'BECE Vault watermark v2';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(here, '../..');
@@ -91,6 +97,21 @@ async function stampPdf(bytes, logoBytes) {
       rotate: degrees(rotation),
       opacity: 0.07,
     });
+    // The address just under the logo, inside the page: cropping off the bottom strip leaves it in place.
+    const innerSize = Math.max(6, w * 0.06);
+    const innerWidth = font.widthOfTextAtSize(SITE_HOST, innerSize);
+    // Offsets from the page centre as displayed, turned into page coordinates.
+    const dx = -innerWidth / 2;
+    const dy = -h / 2 - innerSize * 1.6;
+    page.drawText(SITE_HOST, {
+      x: cx + W / 2 + dx * Math.cos(rad) - dy * Math.sin(rad),
+      y: cy + H / 2 + dx * Math.sin(rad) + dy * Math.cos(rad),
+      size: innerSize,
+      font,
+      color: rgb(0.09, 0.25, 0.22),
+      opacity: 0.12,
+      rotate: degrees(rotation),
+    });
 
     const pad = 2;
     const rect = rotation === 90 ? [x - size - pad, y - pad, x + pad, y + textWidth + pad]
@@ -104,10 +125,46 @@ async function stampPdf(bytes, logoBytes) {
     const annots = page.node.lookupMaybe(PDFName.of('Annots'), PDFArray);
     if (annots) annots.push(link);
     else page.node.set(PDFName.of('Annots'), pdf.context.obj([link]));
+    mergeContents(pdf, page);
   }
 
+  pdf.setAuthor('BECE Vault');
+  pdf.setCreator(`BECE Vault (${SITE_URL})`);
+  pdf.setSubject(TEXT);
+  pdf.setKeywords(['BECE Vault', SITE_HOST, 'Pokhara University', 'BE Computer Engineering']);
   pdf.getInfoDict().set(PDFName.of(MARK_KEY), PDFString.of(MARK));
   return pdf.save({ useObjectStreams: true });
+}
+
+/**
+ * Joins a page's content streams (its own drawing plus the stamp pdf-lib appended) into a single
+ * stream, so the watermark isn't a separate piece that can be deleted on its own. Pages that use a
+ * compression this can't read are left as they are.
+ */
+function mergeContents(pdf, page) {
+  const contents = page.node.Contents();
+  if (!(contents instanceof PDFArray) || contents.size() < 2) return;
+  const parts = [];
+  for (let i = 0; i < contents.size(); i++) {
+    const stream = pdf.context.lookup(contents.get(i));
+    if (stream instanceof PDFContentStream) parts.push(stream.getUnencodedContents());
+    else if (stream instanceof PDFRawStream) {
+      try {
+        parts.push(decodePDFRawStream(stream).decode());
+      } catch {
+        return;
+      }
+    } else return;
+  }
+  const total = parts.reduce((t, p) => t + p.length + 1, 0);
+  const joined = new Uint8Array(total);
+  let at = 0;
+  for (const p of parts) {
+    joined.set(p, at);
+    joined[at + p.length] = 10; // newline between the pieces
+    at += p.length + 1;
+  }
+  page.node.set(PDFName.of('Contents'), pdf.context.register(pdf.context.flateStream(joined)));
 }
 
 /* ------------------------------ Images ------------------------------ */
@@ -144,10 +201,20 @@ async function stampImage(file, logoBytes) {
   const logoMeta = await sharp(logo).metadata();
   // Scale the logo's own alpha down to ~7%.
   const faint = await sharp(logo).composite([{ input: Buffer.from([255, 255, 255, Math.round(255 * 0.07)]), raw: { width: 1, height: 1, channels: 4 }, tile: true, blend: 'dest-in' }]).png().toBuffer();
+  // The address under the logo, inside the picture, so cropping the strip off doesn't remove the credit.
+  const innerSize = Math.max(10, Math.round(logoW * 0.06));
+  const innerH = Math.round(innerSize * 1.6);
+  const innerTop = Math.round((height + logoMeta.height) / 2 + innerSize * 0.6);
+  const inner = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${innerH}">` +
+    `<text x="50%" y="${innerSize}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="${innerSize}" ` +
+    `fill="#173f37" fill-opacity="0.12">${esc(SITE_HOST)}</text></svg>`,
+  );
   const out = sharp({ create: { width, height: height + stripH, channels: 3, background: '#ffffff' } })
     .composite([
       { input: await img.toBuffer(), top: 0, left: 0 },
       { input: faint, top: Math.round((height - logoMeta.height) / 2), left: Math.round((width - logoMeta.width) / 2) },
+      ...(innerTop + innerH < height ? [{ input: inner, top: innerTop, left: 0 }] : []),
       { input: strip, top: height, left: 0 },
     ])
     .withMetadata({ exif: { IFD0: { ImageDescription: MARK } } });

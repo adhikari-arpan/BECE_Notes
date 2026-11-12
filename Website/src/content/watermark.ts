@@ -9,6 +9,9 @@
 export const SITE_HOST = 'notes.arpanadhikari7.com.np';
 export const SITE_URL = `https://${SITE_HOST}`;
 export const CREDIT_TEXT = `Downloaded from ${SITE_HOST}`;
+/** The marker the repo's watermark script leaves in stamped files (PDF info key / image EXIF text). */
+const STAMP_KEY = 'BECEVaultWatermark';
+const STAMP_TEXT = 'BECE Vault watermark';
 
 /** The logo for the page watermark (the full-size PNG; fetched once per download). */
 async function logoBytes(): Promise<ArrayBuffer | null> {
@@ -27,6 +30,11 @@ export async function stampPdf(bytes: Uint8Array | ArrayBuffer): Promise<Uint8Ar
     // Loaded on demand so the PDF library only downloads when someone actually saves a file.
     const { PDFArray, PDFDocument, PDFName, PDFString, StandardFonts, degrees, rgb } = await import('pdf-lib');
     const pdf = await PDFDocument.load(original, { ignoreEncryption: true, updateMetadata: false });
+    // Library files already carry "Available on notes.arpanadhikari7.com.np" (scripts/watermark.mjs):
+    // don't add a second credit line on top.
+    // (getInfoDict is marked private in pdf-lib's types but is the documented way to read the info dictionary.)
+    const info = (pdf as unknown as { getInfoDict(): { has(key: unknown): boolean } }).getInfoDict();
+    if (info.has(PDFName.of(STAMP_KEY))) return original;
     const font = await pdf.embedFont(StandardFonts.Helvetica);
     const size = 8;
     // Each page gets a thin extra strip below its content for the credit line, so the line
@@ -108,6 +116,9 @@ export async function stampPdf(bytes: Uint8Array | ArrayBuffer): Promise<Uint8Ar
 /** Returns the image with a thin credit strip added below it (or the original blob on failure). */
 export async function stampImage(blob: Blob): Promise<Blob> {
   try {
+    // Already stamped by the repo's watermark script (its marker sits in the image's EXIF, near the start).
+    const head = new TextDecoder('latin1').decode(await blob.slice(0, 256 * 1024).arrayBuffer());
+    if (head.includes(STAMP_TEXT)) return blob;
     const bitmap = await createImageBitmap(blob);
     const strip = Math.max(22, Math.round(bitmap.width * 0.028));
     const canvas = document.createElement('canvas');
