@@ -106,6 +106,7 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
         <PageHero
           share={`${semester.label} syllabus, PU BE Computer Engineering`}
           back={syllabusPath()}
+          crumbs={[{ label: 'Home', to: '/' }, { label: 'Syllabus', to: syllabusPath() }, { label: semester.label }]}
           backLabel="Full syllabus"
           title={<>{semester.label} <em>Syllabus</em></>}
           kicker={`Syllabus · ${semester.year} · ${STRUCTURE_LABELS[structure]}`}

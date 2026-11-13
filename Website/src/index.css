@@ -1326,3 +1326,17 @@ button.share-pill:hover { border-color: #e8c873; background: var(--c-fffdf0); }
 button.share-pill svg { color: #b8860b; }
 :root[data-theme="dark"] button.share-pill svg { color: #f0c34a; }
 
+/* Breadcrumbs: Home › Semester III › DBMS. */
+.crumbs ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 4px; font-size: 12.5px; color: var(--c-7d8b84); }
+.crumbs li { display: inline-flex; align-items: center; gap: 4px; min-width: 0; }
+.crumbs li svg { flex-shrink: 0; opacity: .7; }
+.crumbs a { color: var(--c-4c5b54); text-decoration: none; }
+.crumbs a:hover { color: #b8860b; text-decoration: underline; }
+:root[data-theme="dark"] .crumbs a:hover { color: #f0c34a; }
+.crumbs [aria-current="page"] { color: var(--c-0b1f1a); font-weight: 600; max-width: 32ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pqi-hero > .crumbs { margin-bottom: 6px; }
+/* Subject page: the back arrow and the breadcrumb on one line above the notes box. */
+.subject-topline { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.subject-topline a.pqi-home.pqi-home-inline { margin-bottom: 0; flex-shrink: 0; }
+.subject-topline .crumbs ol { justify-content: flex-start; }
+

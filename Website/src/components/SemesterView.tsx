@@ -55,6 +55,7 @@ export function SemesterView({ semester }: SemesterViewProps) {
       <section className="semester-page-header section-wrap pqi-header">
         <PageHero
           back="/notes"
+          crumbs={[{ label: 'Home', to: '/' }, { label: 'Notes', to: '/notes' }, { label: semester.label }]}
           backLabel="All semesters"
           share={`${semester.label} notes`}
           title={<AccentLast text={semester.label} />}

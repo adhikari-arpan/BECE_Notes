@@ -30,6 +30,7 @@ import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
 import { BackArrow } from '@/components/PageHero';
 import { ShareButton } from '@/components/ShareButton';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { syllabusPath } from '@/content/curriculum2025';
 import { PastQuestionsView } from '@/components/PastQuestionsView';
 import { navigate } from '@/content/router';
@@ -207,7 +208,10 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
   return (
     <>
       <section className="subject-page">
-        <BackArrow to={semesterPath(homeSemester)} label={homeSemester.label} inline />
+        <div className="subject-topline">
+          <BackArrow to={semesterPath(homeSemester)} label={homeSemester.label} inline />
+          <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Notes', to: '/notes' }, { label: homeSemester.label, to: semesterPath(homeSemester) }, { label: subject.name }]} />
+        </div>
 
         <div className="subject-box">
           <div className="subject-box-head">

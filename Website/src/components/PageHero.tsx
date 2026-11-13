@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { ShareButton } from '@/components/ShareButton';
+import { Breadcrumbs, type Crumb } from '@/components/Breadcrumbs';
 import './PageHero.css';
 
 interface BackProps {
@@ -32,14 +33,17 @@ interface Props {
   logo?: ReactNode;
   /** Adds a Share button on the right; this is the text shared with the link. */
   share?: string;
+  /** Where the page sits, shown above the title: Home › Semester III › … */
+  crumbs?: Crumb[];
 }
 
 /** Page heading: back arrow on the left, a centred title with a gold accent, a small kicker and a one-line lead. */
-export function PageHero({ title, kicker, lead, back, backLabel, logo, share }: Props) {
+export function PageHero({ title, kicker, lead, back, backLabel, logo, share, crumbs }: Props) {
   return (
     <div className="pqi-hero">
       <BackArrow to={back} label={backLabel} />
       {share && <ShareButton title={share} variant="round" />}
+      {crumbs && <Breadcrumbs items={crumbs} />}
       {logo ? (
         <div className="pqi-title-row">{logo}<h1 className="pqi-title">{title}</h1></div>
       ) : (

@@ -173,6 +173,12 @@ export function PastQuestionsView({ semester, subject, requestedFile, renderPrev
       <section className="semester-page-header section-wrap pqi-header">
         <PageHero
           back={subject ? pastQuestionsPath(semester) : pastQuestionsPath()}
+          crumbs={[
+            { label: 'Home', to: '/' },
+            { label: 'Past Questions', to: pastQuestionsPath() },
+            subject ? { label: semester.label, to: pastQuestionsPath(semester) } : { label: semester.label },
+            ...(subject ? [{ label: subject.name }] : []),
+          ]}
           backLabel={subject ? semester.label : 'All semesters'}
           share={subject ? `${subject.name} past questions` : `${semester.label} past questions`}
           title={subject ? <>{subject.name} <em>Past Questions</em></> : <>{semester.label} <em>Past Questions</em></>}
