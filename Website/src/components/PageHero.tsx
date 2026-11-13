@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from '@/components/Link';
+import { ShareButton } from '@/components/ShareButton';
 import './PageHero.css';
 
 interface BackProps {
@@ -29,13 +30,16 @@ interface Props {
   backLabel?: string;
   /** Shown beside the title (e.g. a logo). */
   logo?: ReactNode;
+  /** Adds a Share button on the right; this is the text shared with the link. */
+  share?: string;
 }
 
 /** Page heading: back arrow on the left, a centred title with a gold accent, a small kicker and a one-line lead. */
-export function PageHero({ title, kicker, lead, back, backLabel, logo }: Props) {
+export function PageHero({ title, kicker, lead, back, backLabel, logo, share }: Props) {
   return (
     <div className="pqi-hero">
       <BackArrow to={back} label={backLabel} />
+      {share && <ShareButton title={share} variant="round" />}
       {logo ? (
         <div className="pqi-title-row">{logo}<h1 className="pqi-title">{title}</h1></div>
       ) : (

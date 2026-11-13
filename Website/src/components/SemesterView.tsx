@@ -56,6 +56,7 @@ export function SemesterView({ semester }: SemesterViewProps) {
         <PageHero
           back="/notes"
           backLabel="All semesters"
+          share={`${semester.label} notes`}
           title={<AccentLast text={semester.label} />}
           kicker={`${semester.year} · Notes`}
           lead={`${plural(rows.length, 'subject')}${totalCredits ? ` · ${totalCredits} credits` : ''}, with notes, lab works and syllabus.`}

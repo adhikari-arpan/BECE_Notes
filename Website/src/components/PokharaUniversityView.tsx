@@ -37,6 +37,7 @@ export function PokharaUniversityView() {
     <>
       <section className="semester-page-header content-page-header section-wrap pqi-header">
         <PageHero
+          share="About Pokhara University"
           logo={<img src={`${import.meta.env.BASE_URL}images/pokhara-university-logo.png`} alt="Pokhara University logo" width={900} height={350} className="pu-hero-logo" />}
           title={<>Pokhara <em>University</em></>}
           kicker="About the university"

@@ -29,6 +29,7 @@ import {
 import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
 import { BackArrow } from '@/components/PageHero';
+import { ShareButton } from '@/components/ShareButton';
 import { syllabusPath } from '@/content/curriculum2025';
 import { PastQuestionsView } from '@/components/PastQuestionsView';
 import { navigate } from '@/content/router';
@@ -250,6 +251,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                 )}
               </div>
             )}
+            <ShareButton title={`${subject.name} notes`} />
           </div>
 
             {hasFiles ? (

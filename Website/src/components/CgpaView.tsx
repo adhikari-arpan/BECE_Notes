@@ -158,6 +158,7 @@ function CgpaCalculator({ mode, onMode }: { mode: CgpaMode; onMode: (m: CgpaMode
     <>
       <section className="semester-page-header section-wrap pqi-header">
         <PageHero
+          share="CGPA calculator for Pokhara University"
           title={<>CGPA <em>Calculator</em></>}
           kicker="Pokhara University · BE Computer Engineering"
           lead={`Your SGPA and CGPA on PU's grading scale, across ${sems.length} semesters and ${programCredits} credits.`}

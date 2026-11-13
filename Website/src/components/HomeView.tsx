@@ -24,6 +24,7 @@ import { Logo } from '@/components/Logo';
 import { ChiyaCup, ChiyaUses } from '@/components/TipJar';
 import { openTipJar } from '@/content/tipJar';
 import { Link } from '@/components/Link';
+import { ShareButton } from '@/components/ShareButton';
 import { contributors } from '@/content/contributors';
 import { SITE_FAQS } from '@/content/siteFaq';
 
@@ -64,7 +65,10 @@ export function HomeView() {
           <div className="eyebrow"><span className="eyebrow-line" /> <Link to="/pokhara-university" className="eyebrow-link" title="About Pokhara University">Pokhara University</Link> · BECE</div>
           <h1><span className="hero-title-lead">Computer Engineering notes,</span><em>in one place.</em></h1>
           <p className="hero-lede">Free, semester-wise notes for Pokhara University BE Computer Engineering: every lecture note, past question, lab report and syllabus across your BECE journey. Pick a semester to explore its subjects.</p>
-          <Link to="/syllabus" className="hero-badge" title="See the PU BE Computer Engineering syllabus"><BadgeCheck size={15} /> Based on the new PU syllabus <ArrowRight size={13} className="hero-badge-arrow" /></Link>
+          <div className="hero-actions">
+            <Link to="/syllabus" className="hero-badge" title="See the PU BE Computer Engineering syllabus"><BadgeCheck size={15} /> Based on the new PU syllabus <ArrowRight size={13} className="hero-badge-arrow" /></Link>
+            <ShareButton title="Free notes and past papers for PU BE Computer Engineering" variant="pill" />
+          </div>
           <div className="hero-stats">
             <div><strong><CountUp value={courseSemesters.length} pad={2} /></strong><span>Semesters</span></div>
             <div><strong><CountUp value={totalSubjects} /></strong><span>Subjects</span></div>

@@ -17,6 +17,7 @@ export function NotesIndexView() {
     <>
       <section className="semester-page-header section-wrap pqi-header">
         <PageHero
+          share="Semester-wise notes for PU BE Computer Engineering"
           title={<>Semester-Wise <em>Notes</em></>}
           kicker="Pokhara University · BE Computer Engineering"
           lead="Lecture notes, handwritten notes, lab works and syllabus for every semester, sorted by subject."

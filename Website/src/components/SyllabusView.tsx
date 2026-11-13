@@ -53,6 +53,7 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
       <>
         <section className="semester-page-header section-wrap pqi-header">
           <PageHero
+            share="PU BE Computer Engineering syllabus"
             title={<>Syllabus &amp; <em>Course Structure</em></>}
             kicker="Pokhara University · BE Computer Engineering"
             lead={`Every semester’s courses, codes, credit hours and weekly lecture, tutorial and practical hours: 8 semesters, ${totalCredits} credits.`}
@@ -103,6 +104,7 @@ export function SyllabusView({ semesterId }: { semesterId?: number }) {
     <>
       <section className="semester-page-header section-wrap pqi-header">
         <PageHero
+          share={`${semester.label} syllabus, PU BE Computer Engineering`}
           back={syllabusPath()}
           backLabel="Full syllabus"
           title={<>{semester.label} <em>Syllabus</em></>}

@@ -38,6 +38,7 @@ export function PastQuestionsIndexView() {
     <>
       <section className="semester-page-header section-wrap pqi-header">
         <PageHero
+          share="Past exam papers for PU BE Computer Engineering"
           title={<>Past <em>Questions</em></>}
           kicker="Pokhara University · BE Computer Engineering"
           lead="PU exam papers and college assessments for every semester, sorted by subject and year."

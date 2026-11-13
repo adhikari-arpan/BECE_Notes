@@ -139,7 +139,7 @@ export function trafficSource(): string {
   }
   // Moving between pages of this site isn't a source; neither is an empty referrer (typed, bookmarked or an app).
   if (!host || host === location.hostname) {
-    if (utm) return SOURCE_RULES.find(([re]) => re.test(`${utm}.com`))?.[1] ?? 'other';
+    if (utm) return SOURCE_RULES.find(([, key]) => key === utm)?.[1] ?? SOURCE_RULES.find(([re]) => re.test(`${utm}.com`))?.[1] ?? (utm === 'share' ? 'share' : 'other');
     return 'direct';
   }
   if (/^(www\.)?arpanadhikari7\.com\.np$/.test(host)) return 'portfolio';

@@ -30,6 +30,7 @@ export function GradingGuideView() {
     <>
       <section className="semester-page-header content-page-header section-wrap pqi-header">
         <PageHero
+          share="Pokhara University grading system, SGPA and CGPA"
           title={<>PU Grading <em>System</em></>}
           kicker="Student guide · Pokhara University"
           lead="How marks become grades, and grades become SGPA and CGPA."
