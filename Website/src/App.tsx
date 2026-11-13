@@ -11,6 +11,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { ChiyaButton, TipJar } from '@/components/TipJar';
 import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
+import { SiteSearch } from '@/components/SiteSearch';
 import { useLocation } from '@/content/router';
 import { trackPageView } from '@/content/visits';
 import { sectionFor, subjectKey } from '@/content/analytics';
@@ -155,6 +156,7 @@ function App() {
             </div>
           </Link>
           <nav className="top-actions">
+            <SiteSearch />
             {page !== 'home' && <Link to="/" className="text-button">Home</Link>}
             {page !== 'notes' && <Link to="/notes" className="text-button">Notes</Link>}
             {!page.startsWith('past-questions') && <Link to="/past-questions" className="text-button">Past Questions</Link>}

@@ -28,6 +28,9 @@ const ABBREVIATIONS: Record<string, string> = {
   'embedded system': 'ES',
 };
 
+/** The short name a subject is searched by (DBMS, OS…), if it has one. */
+export const subjectAbbreviation = (name: string): string | undefined => ABBREVIATIONS[name.toLowerCase()];
+
 const withAbbreviation = (name: string) => {
   const short = ABBREVIATIONS[name.toLowerCase()];
   return short ? `${name} (${short})` : name;
