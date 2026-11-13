@@ -105,3 +105,37 @@
 :root[data-theme="dark"] .pastq-units li::before { color: #f0c34a; }
 .pastq-units li span { flex: 1; min-width: 0; }
 .pastq-units li small { flex-shrink: 0; font: 500 10px 'DM Mono', monospace; color: var(--c-8a978f); }
+
+/* Subject pages: the viewer is wider and lists the subject's files on its left. */
+.pastq-viewer.has-side { width: min(1260px, 100%); }
+.pastq-viewer-main { flex: 1; min-height: 0; display: flex; }
+.pastq-viewer-main > .pastq-viewer-body { flex: 1; min-width: 0; }
+.pastq-viewer-side { width: 270px; flex-shrink: 0; overflow-y: auto; overflow-x: hidden; border-right: 1px solid var(--c-e0e5df); background: var(--c-f6f7f1); }
+.viewer-files { display: grid; gap: 12px; padding: 12px 10px 20px; }
+.viewer-files-group { display: grid; gap: 1px; }
+.viewer-files-label { padding: 0 8px 4px; font: 600 10px 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #b8860b; }
+:root[data-theme="dark"] .viewer-files-label { color: #f0c34a; }
+.viewer-files button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 6px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--c-1d3f35); text-align: left; cursor: pointer; }
+.viewer-files button:hover { background: var(--c-ebf0e8); }
+.viewer-files button.is-active { background: #fff4cf; color: var(--c-0b1f1a); font-weight: 600; }
+:root[data-theme="dark"] .viewer-files button.is-active { background: rgba(240, 195, 74, .16); }
+.viewer-files .file-badge { width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0; }
+.viewer-files-name { min-width: 0; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.viewer-files button:hover .viewer-files-name { white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 860px) { .pastq-viewer-side { display: none; } }
+
+/* Subject pages: the viewer sits inside the page (no overlay). */
+.pastq-viewer.is-inline { width: 100%; height: 100%; box-shadow: none; animation: none; }
+.pastq-viewer.is-inline .pastq-viewer-head > .icon-button:first-child { display: none; }
+.viewer-files-home { display: flex !important; align-items: center; gap: 10px; margin-bottom: 4px; padding: 8px !important; border-bottom: 1px solid var(--c-e0e5df) !important; border-radius: 10px 10px 0 0 !important; }
+.viewer-files-logo { display: grid; place-items: center; width: 34px; height: 26px; flex-shrink: 0; }
+.viewer-files-logo img, .viewer-files-logo svg { width: 34px; height: auto; }
+.viewer-files-home strong { display: block; font: 700 12.5px 'Cinzel', serif; color: #b8860b; letter-spacing: .02em; }
+:root[data-theme="dark"] .viewer-files-home strong { color: #f0c34a; }
+.viewer-files-home small { display: block; font-size: 11.5px; line-height: 1.35; color: var(--c-5c6b64); overflow-wrap: anywhere; }
+.viewer-files-home > span:last-child { min-width: 0; flex: 1; text-align: left; }
+/* While dragging the edge, the list follows the pointer instantly. */
+.is-resizing-sidebar .pastq-viewer-side { transition: none; }
+.viewer-files button { min-width: 0; }
+.pastq-viewer-main > .sidebar-resizer { flex-shrink: 0; }
+

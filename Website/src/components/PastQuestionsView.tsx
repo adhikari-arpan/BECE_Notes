@@ -278,17 +278,26 @@ export function PastQuestionsView({ semester, subject, requestedFile, renderPrev
 }
 
 /** One paper in a panel that slides in from the right, with close, previous/next and download. */
-function PaperViewer({ file, prev, next, onOpen, onClose, renderPreview }: {
+/** The slide-in viewer for one file (past papers here; notes on subject pages too). */
+export function PaperViewer({ file, prev, next, onOpen, onClose, renderPreview, sidebar, inline = false, sidebarWidth, resizer }: {
   file: NoteFile;
   prev?: NoteFile;
   next?: NoteFile;
   onOpen: (file: NoteFile) => void;
   onClose: () => void;
   renderPreview: (file: NoteFile) => ReactNode;
+  /** A list of other files beside the viewer (subject pages), for switching without closing. */
+  sidebar?: ReactNode;
+  /** Inside the page instead of sliding in over it (subject pages). */
+  inline?: boolean;
+  /** The file list's width, and a drag handle to resize it (subject pages). */
+  sidebarWidth?: number;
+  resizer?: ReactNode;
 }) {
   const panel = useRef<HTMLDivElement>(null);
   const [closing, setClosing] = useState(false);
   const close = () => {
+    if (inline) return onClose();
     setClosing(true);
     setTimeout(onClose, 200);
   };
@@ -299,7 +308,7 @@ function PaperViewer({ file, prev, next, onOpen, onClose, renderPreview }: {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close();
     document.addEventListener('keydown', onKey);
     const overflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    if (!inline) document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = overflow;
@@ -310,9 +319,10 @@ function PaperViewer({ file, prev, next, onOpen, onClose, renderPreview }: {
   const y = yearOf(file);
   const t = termOf(file);
 
-  return (
-    <div className={`pastq-viewer-backdrop ${closing ? 'is-closing' : ''}`} onMouseDown={(e) => e.target === e.currentTarget && close()}>
-      <div className="pastq-viewer" role="dialog" aria-modal="true" aria-label={titleOf(file)} tabIndex={-1} ref={panel}>
+  const view = (
+      <div className={`pastq-viewer ${sidebar ? 'has-side' : ''} ${inline ? 'is-inline' : ''}`} role={inline ? 'region' : 'dialog'} aria-modal={inline ? undefined : true} aria-label={titleOf(file)} tabIndex={-1} ref={panel}>
+        {/* Subject pages show these controls on their breadcrumb line instead. */}
+        {!inline && (
         <header className="pastq-viewer-head">
           <button className="icon-button" onClick={close} aria-label="Close and go back to the list" title="Close (Esc)"><X size={16} /></button>
           <div className="pastq-viewer-title">
@@ -332,8 +342,18 @@ function PaperViewer({ file, prev, next, onOpen, onClose, renderPreview }: {
             <a className="icon-button" href={file.url} target="_blank" rel="noreferrer" aria-label="Open in new tab" title="Open in new tab"><ExternalLink size={15} /></a>
           </div>
         </header>
-        <div className="pastq-viewer-body">{renderPreview(file)}</div>
+        )}
+        <div className="pastq-viewer-main">
+          {sidebar && <aside className="pastq-viewer-side" aria-label="Files in this subject" style={sidebarWidth !== undefined ? { width: sidebarWidth } : undefined}>{sidebar}</aside>}
+          {sidebar && resizer}
+          <div className="pastq-viewer-body">{renderPreview(file)}</div>
+        </div>
       </div>
+  );
+  if (inline) return view;
+  return (
+    <div className={`pastq-viewer-backdrop ${closing ? 'is-closing' : ''}`} onMouseDown={(e) => e.target === e.currentTarget && close()}>
+      {view}
     </div>
   );
 }
