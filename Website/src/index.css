@@ -1395,3 +1395,13 @@ button.share-pill svg { color: #b8860b; }
   overflow-wrap: anywhere;
 }
 
+/* "Helpful? 👍 👎" in the viewer's top bar. */
+.file-vote { display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; margin-left: 6px; }
+.file-vote-label { margin-right: 4px; font-size: 11.5px; color: var(--c-7d8b84); }
+.file-vote button { display: grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 8px; background: transparent; color: var(--c-5c6b64); cursor: pointer; transition: background .15s, color .15s; }
+.file-vote button:hover { background: var(--c-ebf0e8); color: #b8860b; }
+:root[data-theme="dark"] .file-vote button:hover { color: #f0c34a; }
+.file-vote-done { font-size: 11.5px; font-weight: 600; color: #1f7a50; }
+:root[data-theme="dark"] .file-vote-done { color: #6fd3a2; }
+@media (max-width: 760px) { .file-vote-label { display: none; } }
+

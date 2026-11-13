@@ -56,12 +56,42 @@ const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kathmandu
 const listeners = new Set<() => void>();
 
 /** Kinds of breakdown counters; each value is its own "site" (see breakdownSite). */
-export type Breakdown = 'section' | 'subject' | 'device' | 'source' | 'country';
+export type Breakdown = 'section' | 'subject' | 'device' | 'source' | 'country' | 'help';
 /** e.g. breakdownSite('section', 'notes') → "bece-notes-section-notes". */
 export const breakdownSite = (kind: Breakdown, key: string) => `${SITE}-${kind}-${key}`;
 
 /** The day the breakdown counters (sections, subjects, devices, sources) started. */
 export const BREAKDOWNS_SINCE = '29 October 2026';
+/** FNV-1a: the same 8 hex characters for the same text, every time (counter names stay short). */
+export function hash8(text: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+
+/** "Was this helpful?" votes: counters/bece-notes-help-<file hash>/up (or /down), once per file per browser. */
+export const helpCounter = (path: string) => breakdownSite('help', hash8(path));
+const VOTE_KEY = (path: string) => `bece-notes:vote:${hash8(path)}`;
+export function votedOnFile(path: string): 'up' | 'down' | null {
+  try {
+    const v = localStorage.getItem(VOTE_KEY(path));
+    return v === 'up' || v === 'down' ? v : null;
+  } catch {
+    return null;
+  }
+}
+export function voteOnFile(path: string, vote: 'up' | 'down') {
+  hitBreakdown('help', hash8(path), `${vote}${SUFFIX}`);
+  try {
+    localStorage.setItem(VOTE_KEY(path), vote);
+  } catch {
+    // Storage blocked: the vote still counts, it just isn't remembered.
+  }
+}
+
 /** The day the country counters started. */
 export const COUNTRIES_SINCE = '30 October 2026';
 

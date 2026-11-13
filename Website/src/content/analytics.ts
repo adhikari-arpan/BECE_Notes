@@ -1,5 +1,5 @@
-import { semesters, type Semester, type Subject } from '@/content/notes';
-import { COUNTRY_CODES, breakdownSite, type Breakdown } from '@/content/visits';
+import { pastQuestionCollections, semesters, type Semester, type Subject } from '@/content/notes';
+import { COUNTRY_CODES, breakdownSite, hash8, helpCounter, type Breakdown } from '@/content/visits';
 
 /**
  * Reading side of the visit counters, for the unlisted /analytics page. Every number is one
@@ -48,16 +48,6 @@ export const sectionFor = (page: string) => SECTION_OF_PAGE[page] ?? 'other';
  * Counter names may be at most 40 characters, which full subject names would pass.
  */
 export const subjectKey = (semester: Semester, subject: Subject) => `${semester.id}-${hash8(subject.slug)}`;
-
-/** FNV-1a: the same 8 hex characters for the same text, every time. */
-function hash8(text: string): string {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < text.length; i++) {
-    h ^= text.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return (h >>> 0).toString(16).padStart(8, '0');
-}
 
 export const DEVICES = [
   { key: 'mobile', label: 'Phone' },
@@ -190,3 +180,24 @@ export async function loadAnalytics(): Promise<AnalyticsData> {
     loadedAt: new Date(),
   };
 }
+
+export interface HelpRow { path: string; name: string; where: string; up: number; down: number }
+
+/**
+ * "Was this helpful?" votes for every note and past paper. Loaded separately from the rest of the
+ * page: it's two counters per file, so it takes a few seconds.
+ */
+export async function loadHelpfulness(): Promise<HelpRow[]> {
+  if (!DB_URL) return [];
+  const files = [
+    ...semesters.flatMap((sem) => sem.subjects.flatMap((sub) => sub.files.map((f) => ({ path: f.path, name: f.name, where: `${sub.name} · ${sem.label}` })))),
+    ...pastQuestionCollections.flatMap((c) => c.files.map((f) => ({ path: f.path, name: f.name, where: `Past paper · ${c.semester.label}` }))),
+  ];
+  const rows = await pool(files, 24, async (f) => {
+    const site = helpCounter(f.path);
+    const [up, down] = await Promise.all([read(site, 'up').catch(() => null), read(site, 'down').catch(() => null)]);
+    return { ...f, up: up ?? 0, down: down ?? 0 };
+  });
+  return rows.filter((r) => r.up + r.down > 0).sort((a, b) => b.up - a.up || a.down - b.down);
+}
+

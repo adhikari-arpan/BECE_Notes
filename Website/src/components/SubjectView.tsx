@@ -30,6 +30,7 @@ import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
 import { BackArrow } from '@/components/PageHero';
 import { ShareButton } from '@/components/ShareButton';
+import { FileVote } from '@/components/FileVote';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { syllabusPath } from '@/content/curriculum2025';
 import { PastQuestionsView } from '@/components/PastQuestionsView';
@@ -255,6 +256,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
                 )}
               </div>
             )}
+            {activeFile && <FileVote key={activeFile.path} path={activeFile.path} />}
             <ShareButton title={`${subject.name} notes`} />
           </div>
 

@@ -5,7 +5,7 @@ import { CountUp } from '@/components/CountUp';
 import { Loader } from '@/components/Loader';
 import { DownloadPitch } from '@/components/DownloadPitch';
 import { Link } from '@/components/Link';
-import { DB_HOST, loadAnalytics, nepalToday, rawCounterUrl, type AnalyticsData, type DayCount, type Row } from '@/content/analytics';
+import { DB_HOST, loadAnalytics, loadHelpfulness, type HelpRow, nepalToday, rawCounterUrl, type AnalyticsData, type DayCount, type Row } from '@/content/analytics';
 import { BREAKDOWNS_SINCE, COUNTING_SINCE, COUNTRIES_SINCE } from '@/content/visits';
 import { SITE_LIBRARY } from '@/content/sponsor';
 import './AnalyticsView.css';
@@ -149,6 +149,8 @@ function Dashboard({ data, loading, onRefresh }: { data: AnalyticsData; loading:
           <ShareBar rows={data.devices} unit="visitors" />
         </Panel>
       </div>
+
+      <HelpfulFiles />
 
       {/* For sponsors: what's on the site and who it's for */}
       <div className="an-grid an-grid-bottom">
@@ -480,3 +482,31 @@ function CopySummary({ data, avgDaily }: { data: AnalyticsData; avgDaily: number
   };
   return <button className="an-btn" onClick={copy}>{copied ? <Check size={14} /> : <Copy size={14} />} {copied ? 'Copied' : 'Copy summary'}</button>;
 }
+
+/** "Was this helpful?" votes, best first. Loads on its own, after the rest of the page. */
+function HelpfulFiles() {
+  const [rows, setRows] = useState<HelpRow[] | null>(null);
+  useEffect(() => {
+    loadHelpfulness().then(setRows, () => setRows([]));
+  }, []);
+  return (
+    <Panel title="Most helpful files" note="“Was this helpful?” votes on notes and past papers">
+      {rows === null ? (
+        <p className="an-empty">Counting votes…</p>
+      ) : rows.length ? (
+        <ol className="an-bars an-help">
+          {rows.slice(0, 15).map((r, i) => (
+            <li key={r.path} title={r.path}>
+              <span className="an-bar-rank">{i + 1}</span>
+              <span className="an-bar-label">{r.name.replace(/\.[a-z0-9]+$/i, '')} <small>{r.where}</small></span>
+              <span className="an-bar-value">👍 {r.up} <small>👎 {r.down}</small></span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="an-empty">No votes yet. They'll appear here as students rate files.</p>
+      )}
+    </Panel>
+  );
+}
+

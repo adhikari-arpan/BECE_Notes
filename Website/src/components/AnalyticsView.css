@@ -224,3 +224,6 @@ a.an-sponsor-mail:hover { text-decoration: underline; }
   body, .an-panel, .an-tile, .an-sponsor { background: #fff !important; box-shadow: none !important; }
   .an-panel, .an-tile, .an-sponsor { break-inside: avoid; }
 }
+.an-help .an-bar-label small { margin-left: 6px; color: var(--c-7d8b84); }
+.an-help li { grid-template-columns: 18px minmax(0, 1fr) auto; }
+

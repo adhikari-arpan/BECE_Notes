@@ -40,7 +40,8 @@ export function PrivacyView() {
               kind of site a visitor came from (for example Google or Facebook; the full address isn’t kept) and per
               country. The country is worked out by our host, Vercel, from the request; only the country is used, and your
               IP address isn’t stored. To avoid
-              double-counting, your browser remembers the time it was last counted. Visit counting always runs and is not
+              double-counting, your browser remembers the time it was last counted. “Was this helpful?” votes on files are counted the
+              same anonymous way, and your browser remembers which files you voted on so each file gets one vote from you. Visit counting always runs and is not
               affected by your cookie choice.
             </p>
           </div>
