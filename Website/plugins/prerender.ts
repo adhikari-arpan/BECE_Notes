@@ -131,6 +131,20 @@ const breadcrumbs = (opts: PrerenderOptions, items: [string, string][]) => ({
   })),
 });
 
+/** A page that lists other pages (a semester's subjects, a semester's past papers): CollectionPage + ItemList. */
+const collectionPage = (opts: PrerenderOptions, name: string, route: string, description: string, items: [string, string][]) => ({
+  '@type': 'CollectionPage',
+  name,
+  url: `${opts.siteUrl}${route}`,
+  description,
+  isPartOf: { '@id': `${opts.siteUrl}/#website` },
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: items.length,
+    itemListElement: items.map(([itemName, itemRoute], i) => ({ '@type': 'ListItem', position: i + 1, name: itemName, url: `${opts.siteUrl}${itemRoute}` })),
+  },
+});
+
 function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
   const { semesters } = data;
   const pages: Page[] = [];
@@ -157,7 +171,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
       index: allFiles.length > 0,
       lastmod: newest(allFiles),
       body: `<main><h1>${esc(semFull(sem))} notes — Pokhara University BE Computer Engineering</h1><p>${esc(semDesc)}</p><h2>Subjects</h2><ul>${rows}</ul>${nav}</main>`,
-      jsonLd: [breadcrumbs(opts, [[sem.label, semRoute]])],
+      jsonLd: [breadcrumbs(opts, [[sem.label, semRoute]]), collectionPage(opts, `${semFull(sem)} notes`, semRoute, semDesc, sem.subjects.filter((x) => !x.electiveSlot && x.files.length).map((x) => [x.name, `${semRoute}/${x.slug}`]))],
     });
 
     for (const sub of sem.subjects) {
@@ -239,7 +253,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
       lastmod: newest(files),
       body: `<main><h1>${esc(semFull(sem))} past questions — Pokhara University BE Computer Engineering</h1><p>${esc(desc)}</p>`
         + `${subjectLinks}${list || '<p>No papers yet: this collection is being built.</p>'}<p><a href="/past-questions">All semesters</a> · <a href="/${sem.slug}">${esc(sem.label)} notes</a></p>${nav}</main>`,
-      jsonLd: [breadcrumbs(opts, [['Past Questions', '/past-questions'], [sem.label, route]])],
+      jsonLd: [breadcrumbs(opts, [['Past Questions', '/past-questions'], [sem.label, route]]), collectionPage(opts, `${semFull(sem)} past questions`, route, desc, folders.map((f) => [`${f.name} past questions`, data.pastSubjectPath(sem as never, f.name)]))],
     });
   }
 
