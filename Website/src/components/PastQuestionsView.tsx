@@ -144,7 +144,7 @@ export function PastQuestionsView({ semester, subject, requestedFile, renderPrev
             {!inYearGroup && isAssessment(f) && <span className="pastq-tag">Assessment</span>}
           </span>
           <span className="pastq-paper-name">
-            <strong>{titleOf(f)}</strong>
+            <strong title={titleOf(f)}>{titleOf(f)}</strong>
             <small>{f.name} · {formatSize(f.size)}</small>
           </span>
           <FileText size={16} className="pastq-paper-icon" />

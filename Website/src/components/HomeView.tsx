@@ -65,10 +65,7 @@ export function HomeView() {
           <div className="eyebrow"><span className="eyebrow-line" /> <Link to="/pokhara-university" className="eyebrow-link" title="About Pokhara University">Pokhara University</Link> · BECE</div>
           <h1><span className="hero-title-lead">Computer Engineering notes,</span><em>in one place.</em></h1>
           <p className="hero-lede">Free, semester-wise notes for Pokhara University BE Computer Engineering: every lecture note, past question, lab report and syllabus across your BECE journey. Pick a semester to explore its subjects.</p>
-          <div className="hero-actions">
-            <Link to="/syllabus" className="hero-badge" title="See the PU BE Computer Engineering syllabus"><BadgeCheck size={15} /> Based on the new PU syllabus <ArrowRight size={13} className="hero-badge-arrow" /></Link>
-            <ShareButton title="Free notes and past papers for PU BE Computer Engineering" variant="pill" />
-          </div>
+          <Link to="/syllabus" className="hero-badge" title="See the PU BE Computer Engineering syllabus"><BadgeCheck size={15} /> Based on the new PU syllabus <ArrowRight size={13} className="hero-badge-arrow" /></Link>
           <div className="hero-stats">
             <div><strong><CountUp value={courseSemesters.length} pad={2} /></strong><span>Semesters</span></div>
             <div><strong><CountUp value={totalSubjects} /></strong><span>Subjects</span></div>
@@ -135,6 +132,12 @@ export function HomeView() {
           <Link to="/cgpa-calculator"><Calculator size={14} /> CGPA Calculator</Link>
           <Link to="/pu-grading-system"><GraduationCap size={14} /> Grading guide</Link>
         </p>
+      </section>
+
+      {/* Ask students to pass the site on: shares in class groups are how most new visitors arrive. */}
+      <section className="section-wrap home-share">
+        <p><strong>Know someone in BECE?</strong> Share BECE Vault with your class.</p>
+        <ShareButton title="Free notes and past papers for PU BE Computer Engineering" variant="pill" />
       </section>
 
       <section className="about-section section-wrap">

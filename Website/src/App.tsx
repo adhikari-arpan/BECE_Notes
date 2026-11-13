@@ -155,8 +155,8 @@ function App() {
               <span className="brand-name">BECE Vault</span>
             </div>
           </Link>
+          <SiteSearch />
           <nav className="top-actions">
-            <SiteSearch />
             {page !== 'home' && <Link to="/" className="text-button">Home</Link>}
             {page !== 'notes' && <Link to="/notes" className="text-button">Notes</Link>}
             {!page.startsWith('past-questions') && <Link to="/past-questions" className="text-button">Past Questions</Link>}
