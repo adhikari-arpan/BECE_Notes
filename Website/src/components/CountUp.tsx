@@ -18,7 +18,8 @@ const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
 /** Animates a number counting up from 0 (or from its previous value) to `value`. */
 export function CountUp({ value, pad = 0, decimals = 0, suffix = '', durationMs = 1400, whenVisible = false }: CountUpProps) {
-  const [shown, setShown] = useState(0);
+  // Search engines read the page mid-animation, so they (and reduced-motion users) get the final number at once.
+  const [shown, setShown] = useState(() => (typeof navigator !== 'undefined' && /bot|crawl|spider|slurp|lighthouse/i.test(navigator.userAgent) ? value ?? 0 : 0));
   const shownRef = useRef(0);
   const el = useRef<HTMLSpanElement>(null);
   const [visible, setVisible] = useState(!whenVisible);

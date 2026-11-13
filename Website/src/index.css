@@ -1341,7 +1341,10 @@ button.share-pill svg { color: #b8860b; }
 .subject-topline .crumbs ol { justify-content: flex-start; }
 
 /* Site-wide search: a field in the navbar with results dropping down below it. */
-.site-search { position: relative; flex: 0 1 400px; margin: 0 28px; }
+.site-search { position: relative; flex: 0 1 400px; min-width: 200px; margin: 0 24px; }
+/* The logo name and the menu links never wrap; the search field gives up space first. */
+.brand-name, .top-actions .text-button { white-space: nowrap; }
+.top-actions, .brand-lockup { flex-shrink: 0; }
 .site-search-toggle { display: none; }
 .site-search-field { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 8px 0 14px; border-radius: 12px; border: 1px solid var(--c-dfe4dd); background: var(--c-f6f7f2); color: #b8860b; transition: border-color .15s, background .15s, box-shadow .15s; }
 :root[data-theme="dark"] .site-search-field { color: #f0c34a; }
@@ -1374,8 +1377,8 @@ button.share-pill svg { color: #b8860b; }
 .search-hint button:hover { border-color: #e8c873; }
 @keyframes search-drop { from { opacity: 0; transform: translateY(-6px); } }
 @media (prefers-reduced-motion: reduce) { .site-search-panel { animation: none; } }
-/* Phones: a magnifier in the top bar; tapping it shows the field (and results) under the top bar. */
-@media (max-width: 760px) {
+/* Narrower screens: a magnifier in the top bar; tapping it shows the field (and results) under the top bar. */
+@media (max-width: 1100px) {
   .site-search { flex: 0 0 auto; margin: 0 6px 0 auto; position: static; }
   .site-search-toggle { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--c-dfe4dd); background: var(--c-fffdf7); color: var(--c-0b1f1a); cursor: pointer; }
   .site-search-field { display: none; }

@@ -251,6 +251,8 @@ function crawlableSummary(entries: ManifestEntry[]): string {
     subjects.set(subject, (subjects.get(subject) ?? 0) + 1);
     bySection.set(root, subjects);
   }
+  // Every semester gets a section and a link, also one without notes yet (e.g. Semester VII).
+  for (let n = 1; n <= 8; n++) if (!bySection.has(`Semester_${n}`)) bySection.set(`Semester_${n}`, new Map());
   const sections = [...bySection.entries()]
     // Semesters first (in order), then electives and other collections.
     .sort(([a], [b]) => Number(!a.startsWith('Semester_')) - Number(!b.startsWith('Semester_')) || a.localeCompare(b, undefined, { numeric: true }))
@@ -259,7 +261,9 @@ function crawlableSummary(entries: ManifestEntry[]): string {
       const title = n
         ? `Semester ${ROMAN[Number(n)] ?? n} notes: Pokhara University BE Computer Engineering`
         : root === 'Electives' ? 'Elective subject notes' : root === 'Past Question Collection' ? 'Past exam papers by semester' : `${root} notes`;
-      const items = [...subjects.entries()].map(([name, count]) => `<li>${escapeHtml(name)} (${count} ${count === 1 ? 'file' : 'files'})</li>`).join('');
+      const items = subjects.size
+        ? [...subjects.entries()].map(([name, count]) => `<li>${escapeHtml(name)} (${count} ${count === 1 ? 'file' : 'files'})</li>`).join('')
+        : '<li>Notes are being collected for this semester.</li>';
       const href = n ? `/semester-${n}` : root === 'Electives' ? '/electives' : root === 'Past Question Collection' ? '/past-questions' : '';
       const heading = href ? `<a href="${href}">${escapeHtml(title)}</a>` : escapeHtml(title);
       return `<section><h2>${heading}</h2><ul>${items}</ul></section>`;

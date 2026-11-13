@@ -442,10 +442,11 @@ async function pingIndexNow(urls: string[], opts: PrerenderOptions, log: (msg: s
 /**
  * The home page's first screen (navbar + hero) as static HTML, using the same classes as the React
  * components, so phones paint the headline straight away instead of waiting for the JavaScript. The
- * app replaces it with identical markup when it starts. Counters start at 0, as the count-up does.
+ * app replaces it with identical markup when it starts. The counters show the real numbers (as search
+ * engines read them); the app's count-up then animates them for visitors.
  * Keep in sync with App.tsx (topbar) and HomeView.tsx (hero).
  */
-function homeShell(): string {
+function homeShell(stats: { semesters: number; subjects: number; files: number }): string {
   const logo = '<img src="/images/logo-small.webp" srcset="/images/logo-120.webp 120w, /images/logo-180.webp 180w, /images/logo-small.webp 240w" sizes="80px" alt="BECE Vault logo" width="240" height="169" class="logo " draggable="false" fetchpriority="high" />';
   const badge = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-badge-check"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>';
   return '<div class="app-shell "><header class="topbar"><div class="topbar-inner">'
@@ -456,7 +457,7 @@ function homeShell(): string {
     + '<h1><span class="hero-title-lead">Computer Engineering notes,</span><em>in one place.</em></h1>'
     + '<p class="hero-lede">Free, semester-wise notes for Pokhara University BE Computer Engineering: every lecture note, past question, lab report and syllabus across your BECE journey. Pick a semester to explore its subjects.</p>'
     + `<a href="/syllabus" class="hero-badge">${badge} Based on the new PU syllabus</a>`
-    + '<div class="hero-stats"><div><strong>00</strong><span>Semesters</span></div><div><strong>0</strong><span>Subjects</span></div><div><strong>0</strong><span>Note Files</span></div></div>'
+    + `<div class="hero-stats"><div><strong>${String(stats.semesters).padStart(2, '0')}</strong><span>Semesters</span></div><div><strong>${stats.subjects}</strong><span>Subjects</span></div><div><strong>${stats.files.toLocaleString('en-US')}</strong><span>Note Files</span></div></div>`
     + '</div><div class="hero-visual" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>'
     + '<div class="hero-card hero-card-back"><span>BECE VAULT</span><ul class="hero-card-list"><li>Notes</li><li>Past questions</li><li>Syllabus</li><li>Labs</li></ul><b>Study smarter.</b></div>'
     + `<div class="hero-card hero-card-front"><div class="mini-icon">${logo.replace(' fetchpriority="high"', '')}</div><span>THE LIBRARY</span><strong>Notes that<br>move with you.</strong><div class="card-footer"><span>PU</span><span>●</span></div></div>`
@@ -501,7 +502,14 @@ export function prerenderPlugin(opts: PrerenderOptions): Plugin {
         .replace('</head>', `    <script type="application/ld+json">${JSON.stringify(faqLd)}</script>\n  </head>`)
         .replace(/(<div class="prerender-summary">[\s\S]*?)(<\/div><\/div>)/, `$1${faqHtml}$2`);
       // On the home page, the loading screen is replaced by the real first screen (see homeShell).
-      fs.writeFileSync(path.join(outDir, 'index.html'), home.replace(/<div class="boot"[\s\S]*?<\/div>/, () => homeShell()));
+      // Same numbers as the hero in HomeView.tsx: course semesters, their course subjects, every note file.
+      const courseSems = semesters.filter((s) => /^semester-\d+$/.test(s.slug));
+      const stats = {
+        semesters: courseSems.length,
+        subjects: courseSems.flatMap((s) => s.subjects).filter((s) => s.kind === 'course').length,
+        files: semesters.reduce((t, s) => t + s.subjects.reduce((u, x) => u + x.files.length, 0), 0),
+      };
+      fs.writeFileSync(path.join(outDir, 'index.html'), home.replace(/<div class="boot"[\s\S]*?<\/div>/, () => homeShell(stats)));
 
       // 404.html: Vercel serves it for any address that matches nothing, so visitors always get the
       // site's own "page not found" (the app shows it for unknown routes), never Vercel's.
