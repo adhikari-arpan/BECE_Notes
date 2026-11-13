@@ -4,12 +4,17 @@ import { STRUCTURE_LABELS, setStructure, useStructure, type Structure } from '@/
 export function StructureToggle() {
   const structure = useStructure();
   return (
+    <div className="structure-switch">
+    <span className="structure-showing" aria-live="polite">
+      Showing: <strong>{structure === '2025' ? '2025 batch onwards' : 'Before 2025 batch'}</strong> curriculum
+    </span>
     <div className="structure-toggle" role="radiogroup" aria-label="Curriculum structure">
       {(Object.keys(STRUCTURE_LABELS) as Structure[]).map((s) => (
         <button key={s} role="radio" aria-checked={structure === s} onClick={() => setStructure(s)}>
           {STRUCTURE_LABELS[s]}
         </button>
       ))}
+    </div>
     </div>
   );
 }
