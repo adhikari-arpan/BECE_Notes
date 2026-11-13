@@ -152,8 +152,6 @@ function App() {
             <div className="brand-mark"><Logo /></div>
             <div>
               <span className="brand-name">BECE Vault</span>
-              <span className="brand-divider">/</span>
-              <span className="brand-context">Notes library</span>
             </div>
           </Link>
           <nav className="top-actions">

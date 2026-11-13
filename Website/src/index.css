@@ -225,8 +225,6 @@ button { cursor: pointer; }
 .brand-mark .logo { height: 100%; width: auto; display: block; }
 /* The wordmark: Cinzel, a carved-capitals serif that suits a "vault" and the gold logo. */
 .brand-name { font-family: 'Cinzel', 'Playfair Display', serif; font-weight: 700; letter-spacing: .03em; font-size: 17px; }
-.brand-divider { color: var(--c-aeb9b1); margin: 0 8px; }
-.brand-context { color: var(--c-5c6b64); font-size: 13px; }
 .top-actions { display: flex; gap: 20px; align-items: center; }
 .text-button { border: 0; background: transparent; color: var(--c-4c5b54); display: inline-flex; align-items: center; gap: 7px; font-size: 13px; }
 .theme-toggle { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--c-dfe4dd); border-radius: 9px; background: var(--c-fffdf7); color: var(--c-0b1f1a); transition: background .18s, border-color .18s, transform .18s; }
@@ -781,7 +779,7 @@ a.footer-author:hover { color: #f7d77a; }
   .topbar-inner, .section-wrap { width: min(100% - 32px, 520px); }
   .footer-inner { width: min(100% - 32px, 520px); }
   .topbar { height: 62px; }
-  .brand-context, .top-actions .text-button { display: none; }
+  .top-actions .text-button { display: none; }
   .hero { min-height: auto; padding: 57px 0 65px; display: block; }
   h1 { font-size: 57px; }
   .hero-lede { font-size: 14px; margin-top: 22px; }
