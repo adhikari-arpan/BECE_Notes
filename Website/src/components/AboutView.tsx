@@ -1,7 +1,8 @@
-import { Coffee, FolderOpen, GraduationCap, Handshake, Mail, Shield, Sparkles, UserRound, Users } from 'lucide-react';
+import { CalendarClock, Coffee, FolderOpen, GraduationCap, Handshake, Mail, MessageSquareWarning, Shield, Sparkles, Upload, UserRound, Users } from 'lucide-react';
+import { Link } from '@/components/Link';
 import { PageHero } from '@/components/PageHero';
 import { FounderIntro } from '@/components/FounderCard';
-import { allFiles, semesters } from '@/content/notes';
+import { allFiles, pastQuestionCollections, semesters } from '@/content/notes';
 import { openTipJar } from '@/content/tipJar';
 
 const CONTACT_EMAIL = 'adhikariarpan2063@gmail.com';
@@ -11,6 +12,13 @@ const semestersWithNotes = semesters.filter((s) => /^\d+$/.test(s.id) && s.subje
 const coverage = semestersWithNotes.length
   ? `${semestersWithNotes[0].label} to ${semestersWithNotes[semestersWithNotes.length - 1].label.replace(/^Semester\s+/, '')}`
   : 'every semester';
+
+// How fresh the library is, from each file's last commit date (so it's always current).
+const libraryFiles = [...allFiles, ...pastQuestionCollections.flatMap((c) => c.files)];
+const updatedDates = libraryFiles.map((f) => (f.updated ? Date.parse(f.updated) : NaN)).filter((d) => !Number.isNaN(d));
+const lastUpdate = updatedDates.length ? new Date(Math.max(...updatedDates)) : null;
+const changedThisMonth = updatedDates.filter((d) => Date.now() - d < 30 * 24 * 60 * 60 * 1000).length;
+const REPO_URL = 'https://github.com/adhikari-arpan/BECE_Notes';
 
 export function AboutView() {
   return (
@@ -66,6 +74,50 @@ export function AboutView() {
               <a href={`mailto:${CONTACT_EMAIL}?subject=BECE%20Notes%20-%20Credit%20or%20removal%20request`}>{CONTACT_EMAIL}</a>{' '}
               with the file name or link and something confirming it's yours. I'll sort it out promptly.
             </div>
+          </div>
+
+          <div className="content-page-section">
+            <h3><Upload size={18} /> How files are added</h3>
+            <p>
+              New material reaches the library in two ways: students send it in a pull request on{' '}
+              <a href={REPO_URL} target="_blank" rel="noreferrer">GitHub</a>, or email it to me. Before anything goes live I
+              check that it's in the right semester and subject, that it's readable, and that it isn't a duplicate of
+              something already here. Files are then named the same way across the library (past papers as year, term and
+              subject, like <em>2024_Fall_DBMS</em>) and get a small BECE Vault watermark with a link back to the site.
+            </p>
+            <p>
+              Most of the notes come from students at NCIT, but the library is for every Pokhara University college:
+              contributions from any PU-affiliated college are welcome, and everyone who adds files is credited on the{' '}
+              <Link to="/contributors">Contributors</Link> page. See <Link to="/contributing">how to contribute</Link>.
+            </p>
+          </div>
+
+          <div className="content-page-section">
+            <h3><CalendarClock size={18} /> How often it's updated</h3>
+            <p>
+              Files are added whenever students send them, often in batches around exams.
+              {lastUpdate && (
+                <> The library was last updated on <strong>{lastUpdate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</strong>
+                {changedThisMonth > 0 && <>, and <strong>{changedThisMonth.toLocaleString('en-US')} files</strong> were added or updated in the last 30 days</>}.</>
+              )}{' '}
+              Every file shows its own last-updated date in the file list, and the syllabus pages follow the current
+              Pokhara University curriculum, for both the before-2025 and the 2025-onwards batches.
+            </p>
+          </div>
+
+          <div className="content-page-section">
+            <h3><MessageSquareWarning size={18} /> Corrections and removals</h3>
+            <p>
+              Found a mistake, like a file in the wrong subject, a past paper with the wrong year, or a page that's
+              blurry or missing? Tell me through the <Link to="/feedback">feedback form</Link> (no sign-up needed), by email
+              at <a href={`mailto:${CONTACT_EMAIL}?subject=BECE%20Vault%20-%20Correction`}>{CONTACT_EMAIL}</a>, or by opening an
+              issue on <a href={`${REPO_URL}/issues`} target="_blank" rel="noreferrer">GitHub</a>. Corrections are made as soon
+              as possible.
+            </p>
+            <p>
+              If you wrote something that's here and want it credited differently or taken down, email me with the file
+              name or link and something that shows it's yours, and it will be updated or removed.
+            </p>
           </div>
 
           <div className="content-page-section">

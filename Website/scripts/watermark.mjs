@@ -53,7 +53,24 @@ async function isStampedPdf(bytes) {
   }
 }
 
-async function stampPdf(bytes, logoBytes) {
+/**
+ * The title shown in a PDF's properties (and by Google when it lists PDFs), from where the file is:
+ *   Semester_3/Database Management System/Unit 3_SQL/SQL Note.pdf → "Database Management System – SQL Note | BECE Vault"
+ *   Past Question Collection/Semester_3/Database Management System/2024_Fall_DBMS.pdf → "Database Management System 2024 Fall Question Paper | BECE Vault"
+ */
+export function pdfTitle(rel) {
+  const parts = rel.split('/');
+  const stem = parts[parts.length - 1].replace(/\.pdf$/i, '').replace(/_+/g, ' ').trim();
+  if (parts[0] === 'Past Question Collection') {
+    const subject = (parts[2] ?? '').replace(/_+/g, ' ');
+    const m = /^(\d{4}) (Spring|Fall)\b/i.exec(stem);
+    return m ? `${subject} ${m[1]} ${m[2]} Question Paper | BECE Vault` : `${subject} – ${stem} | BECE Vault`;
+  }
+  const subject = (parts[1] ?? '').replace(/^_+/, '').replace(/_+/g, ' ');
+  return stem.toLowerCase().includes(subject.toLowerCase()) ? `${stem} | BECE Vault` : `${subject} – ${stem} | BECE Vault`;
+}
+
+async function stampPdf(bytes, logoBytes, rel = '') {
   const pdf = await PDFDocument.load(bytes, { ignoreEncryption: true, updateMetadata: false });
   if (pdf.getInfoDict().has(PDFName.of(MARK_KEY))) return null;
   const font = await pdf.embedFont(StandardFonts.Helvetica);
@@ -128,6 +145,7 @@ async function stampPdf(bytes, logoBytes) {
     mergeContents(pdf, page);
   }
 
+  if (rel) pdf.setTitle(pdfTitle(rel), { showInWindowTitleBar: true });
   pdf.setAuthor('BECE Vault');
   pdf.setCreator(`BECE Vault (${SITE_URL})`);
   pdf.setSubject(TEXT);
@@ -252,7 +270,7 @@ async function main() {
         if (await needsStamp(file)) pending.push(file);
         continue;
       }
-      const out = PDF.test(file) ? await stampPdf(fs.readFileSync(file), logoBytes) : await stampImage(file, logoBytes);
+      const out = PDF.test(file) ? await stampPdf(fs.readFileSync(file), logoBytes, rel) : await stampImage(file, logoBytes);
       if (!out) { skipped++; continue; }
       const dest = outDir ? path.join(outDir, rel) : file;
       fs.mkdirSync(path.dirname(dest), { recursive: true });
