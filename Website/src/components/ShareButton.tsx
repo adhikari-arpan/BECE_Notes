@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, Facebook, Link2, MessageCircle, Send, Share2 } from 'lucide-react';
+import { Check, Facebook, Instagram, Link2, MessageCircle, Send, Share2 } from 'lucide-react';
 
 /**
  * "Share" for a page: on phones the phone's own share sheet (WhatsApp, Messenger, Instagram…), on
@@ -8,7 +8,7 @@ import { Check, Facebook, Link2, MessageCircle, Send, Share2 } from 'lucide-reac
  */
 export function ShareButton({ title, variant = 'icon' }: { title: string; variant?: 'icon' | 'round' | 'pill' }) {
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<false | 'link' | 'instagram'>(false);
   const box = useRef<HTMLDivElement>(null);
 
   // The page being shared, with an open file kept (?file=…) and any old tracking tag dropped.
@@ -43,9 +43,17 @@ export function ShareButton({ title, variant = 'icon' }: { title: string; varian
   };
   const copy = () => {
     void navigator.clipboard?.writeText(link()).then(() => {
-      setCopied(true);
+      setCopied('link');
       window.setTimeout(() => setCopied(false), 1600);
     });
+  };
+  // Instagram can't be pre-filled from a website: copy the link, then open Instagram's messages to paste it.
+  const instagram = () => {
+    void navigator.clipboard?.writeText(`${text}: ${link('instagram')}`).then(() => {
+      setCopied('instagram');
+      window.setTimeout(() => setCopied(false), 2400);
+    });
+    window.open('https://www.instagram.com/direct/inbox/', '_blank', 'noopener,noreferrer');
   };
   const go = (href: string) => {
     window.open(href, '_blank', 'noopener,noreferrer');
@@ -74,11 +82,14 @@ export function ShareButton({ title, variant = 'icon' }: { title: string; varian
           <button role="menuitem" onClick={() => go(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link('facebook'))}`)}>
             <Facebook size={15} /> Facebook
           </button>
+          <button role="menuitem" onClick={instagram}>
+            {copied === 'instagram' ? <Check size={15} /> : <Instagram size={15} />} {copied === 'instagram' ? 'Link copied, paste it in Instagram' : 'Instagram'}
+          </button>
           <button role="menuitem" onClick={() => go(`https://t.me/share/url?url=${encodeURIComponent(link('telegram'))}&text=${encodeURIComponent(text)}`)}>
             <Send size={15} /> Telegram
           </button>
           <button role="menuitem" onClick={copy}>
-            {copied ? <Check size={15} /> : <Link2 size={15} />} {copied ? 'Link copied' : 'Copy link'}
+            {copied === 'link' ? <Check size={15} /> : <Link2 size={15} />} {copied === 'link' ? 'Link copied' : 'Copy link'}
           </button>
         </div>
       )}

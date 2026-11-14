@@ -135,9 +135,11 @@ export function HomeView() {
       </section>
 
       {/* Ask students to pass the site on: shares in class groups are how most new visitors arrive. */}
-      <section className="section-wrap home-share">
-        <p><strong>Know someone in BECE?</strong> Share BECE Vault with your class.</p>
-        <ShareButton title="Free notes and past papers for PU BE Computer Engineering" variant="pill" />
+      <section className="section-wrap home-share-wrap">
+        <div className="home-share">
+          <p><strong>Know someone in BECE?</strong> Share BECE Vault with your class.</p>
+          <ShareButton title="Free notes and past papers for PU BE Computer Engineering" variant="pill" />
+        </div>
       </section>
 
       <section className="about-section section-wrap">

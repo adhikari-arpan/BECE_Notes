@@ -357,7 +357,7 @@ h2 { font-size: 28px; line-height: 1.1; letter-spacing: -.045em; margin: 8px 0 0
 .about-card-cta { margin-top: 4px; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font: 700 13px 'DM Sans', sans-serif; color: #0b1f1a; background: #f0c34a; padding: 10px 16px; border-radius: 99px; transition: gap .2s, background .2s; }
 .about-card-feature:hover .about-card-cta { gap: 12px; background: #ffd35a; }
 /* Contribute card: warm gold tint. */
-.about-card-gold { background: linear-gradient(160deg, var(--c-fffdf0) 50%, var(--c-fbf8ec)); border-color: #efd98f; }
+.about-card-gold { background: linear-gradient(160deg, var(--c-fffdf0) 50%, var(--c-fbf8ec)); }
 .about-card-gold .about-card-icon { background: linear-gradient(145deg, #fbefc8, #f7e3a6); color: #b8860b; }
 .about-card-gold .about-card-pill { background: #fbefc8; color: #6d5410; }
 .semester-page-header { padding: 40px 0 22px; }
@@ -718,9 +718,9 @@ a.stat-card-link:hover { border-color: #e8c873; transform: translateY(-2px); }
 .content-page-lead { font: 600 20px/1.4 'Playfair Display', serif !important; color: var(--c-0b1f1a) !important; margin-bottom: 14px !important; }
 .content-page-callout { margin-top: 14px; padding: 14px 16px; border-radius: 12px; background: var(--c-fffdf0); border: 1px solid #efd98f; border-left: 4px solid #f0c34a; font-size: 14px; line-height: 1.65; color: var(--c-1d3f35); }
 .content-page-callout strong { color: var(--c-0b1f1a); }
-.content-page-callout a { color: var(--c-467568); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; word-break: break-word; }
-.content-page-section a { color: var(--c-467568); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; word-break: break-word; }
-.content-page-section a:hover { color: var(--c-0b1f1a); }
+.content-page-callout a { color: var(--c-467568); font-weight: 600; text-decoration: none; text-underline-offset: 3px; word-break: break-word; }
+.content-page-section a { color: var(--c-467568); font-weight: 600; text-decoration: none; text-underline-offset: 3px; word-break: break-word; }
+.content-page-section a:hover, .content-page-callout a:hover { color: var(--c-0b1f1a); text-decoration: underline; }
 .content-page-section code { font: 500 12px 'DM Mono', monospace; background: var(--c-eef3ee); color: var(--c-1d3f35); padding: 2px 7px; border-radius: 5px; }
 .site-footer { background: #173f37; color: #c8d8cf; padding: 50px 0 30px; margin-top: auto; }
 .footer-inner { width: min(1180px, calc(100% - 64px)); margin: 0 auto; }
@@ -1320,11 +1320,13 @@ button.share-round:hover { border-color: #e8c873; background: #fff4cf; }
   button.share-round { width: 38px; height: 38px; }
 }
 
-/* Home: the centred "Share BECE Vault with your class" strip. */
-.home-share { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 18px; margin-top: 8px; padding: 22px 20px; border-radius: 18px; border: 1px dashed #e8c873; background: var(--c-fffdf0); text-align: center; }
+/* Home: a compact, centred "Share BECE Vault with your class" strip, with room before the next section. */
+.home-share-wrap { display: flex; justify-content: center; padding: 6px 0 46px; }
+.home-share { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 16px; padding: 10px 12px 10px 20px; border-radius: 99px; border: 1px dashed #e8c873; background: var(--c-fffdf0); }
 :root[data-theme="dark"] .home-share { border-color: rgba(240, 195, 74, .4); background: rgba(240, 195, 74, .06); }
-.home-share p { margin: 0; font-size: 15px; color: var(--c-4c5b54); }
+.home-share p { margin: 0; font-size: 14px; color: var(--c-4c5b54); }
 .home-share strong { color: var(--c-0b1f1a); }
+@media (max-width: 560px) { .home-share { border-radius: 16px; padding: 12px 16px; text-align: center; } }
 button.share-pill { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 99px; border: 1px solid var(--c-dde3dc); background: transparent; color: var(--c-1d3f35); font: 600 13px 'DM Sans', sans-serif; cursor: pointer; transition: border-color .15s, background .15s; }
 button.share-pill:hover { border-color: #e8c873; background: var(--c-fffdf0); }
 button.share-pill svg { color: #b8860b; }
