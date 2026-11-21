@@ -2,9 +2,10 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Plugin, ViteDevServer } from 'vite';
+import { PAST_QUESTIONS_FOLDER, SUBJECTS_ROOT, curriculum, electiveCourses, subjectFolder, type CourseInfo } from '../src/content/curriculumData';
 
 /**
- * Scans the notes folders in the repository root (Semester_*, Electives, ...)
+ * Scans the notes folders in the repository root (Subjects, Past Question Collection, ...)
  * and exposes them to the app as `virtual:notes-manifest`.
  *
  * - Dev server: files are served straight from the repo at `/notes/<repo path>`.
@@ -23,7 +24,7 @@ export interface NotesPluginOptions {
 }
 
 export interface ManifestEntry {
-  /** Repo-relative path with forward slashes, e.g. `Semester_1/Calculus-I/Notes.pdf`. */
+  /** Repo-relative path with forward slashes, e.g. `Subjects/Calculus I/Notes.pdf`. */
   path: string;
   size: number;
   /** ISO date of the last commit touching the file (falls back to mtime). */
@@ -36,7 +37,11 @@ const VIRTUAL_ID = 'virtual:notes-manifest';
 const RESOLVED_ID = '\0' + VIRTUAL_ID;
 const URL_PREFIX = '/notes/';
 
-const ROOT_DIR_PATTERN = /^(Semester_\d+|Electives|Engineering Entrance Preparation|Past Question Collection)$/;
+const ROOT_DIR_PATTERN = /^(Subjects|Engineering Entrance Preparation|Past Question Collection)$/;
+/** Where notes were before they moved to Subjects/ (November 2026): history is still read through them. */
+const LEGACY_ROOTS = ['Semester_1', 'Semester_2', 'Semester_3', 'Semester_4', 'Semester_5', 'Semester_6', 'Semester_7', 'Semester_8', 'Electives'];
+/** git options for reading history across folder moves (one commit can rename thousands of files). */
+const RENAMES = ['-c', 'diff.renameLimit=100000'];
 const IGNORED_NAMES = new Set(['desktop.ini', 'Thumbs.db', '.DS_Store']);
 
 const MIME_TYPES: Record<string, string> = {
@@ -93,14 +98,28 @@ function git(repoRoot: string, args: string[], input?: string): string | null {
   }
 }
 
-/** Map of path -> ISO date of the most recent commit touching it, from a single `git log` pass. */
-function lastCommitDates(repoRoot: string, roots: string[]): Map<string, string> {
+/**
+ * Map of path -> ISO date of the most recent commit that changed the file, from a single `git log` pass.
+ * Moving or renaming a file (same content) doesn't count as a change: its date comes from before the move.
+ */
+function lastCommitDates(repoRoot: string, roots: string[], files: string[]): Map<string, string> {
   const dates = new Map<string, string>();
-  const log = git(repoRoot, ['log', '--no-renames', '--name-only', '--format=%x1e%cI', 'HEAD', '--', ...roots]);
+  const log = git(repoRoot, [...RENAMES, 'log', '-M', '--name-status', '--format=%x1e%cI', 'HEAD', '--', ...roots, ...LEGACY_ROOTS]);
   if (!log) return dates;
+  // Newest commit first. `at` maps each path, as it was at that point in history, to the file it is today.
+  const at = new Map(files.map((f) => [f, f]));
   for (const record of log.split('\x1e')) {
-    const [date, ...files] = record.split('\n');
-    for (const file of files) if (file && !dates.has(file)) dates.set(file, date.trim());
+    const [date, ...lines] = record.split('\n');
+    for (const line of lines) {
+      const [status, from, to] = line.split('\t');
+      if (!status || !from) continue;
+      const file = status[0] === 'R' || status[0] === 'C' ? to : from;
+      const current = at.get(file);
+      if (current === undefined) continue;
+      at.delete(file);
+      if (status === 'R100') at.set(from, current); // only moved: keep looking under the old path
+      else if (status[0] !== 'D') dates.set(current, date.trim());
+    }
   }
   return dates;
 }
@@ -150,7 +169,7 @@ function countAuthors(repoRoot: string, files: string[]): AuthorCount[] {
   if (git(repoRoot, ['rev-parse', '--is-shallow-repository'])?.trim() === 'true') {
     git(repoRoot, ['fetch', '--unshallow', '--filter=blob:none', '--quiet']);
   }
-  const log = git(repoRoot, ['log', '--reverse', '-M', '--name-status', '--format=%x1e%an%x1f%ae', 'HEAD', '--', ...roots]);
+  const log = git(repoRoot, [...RENAMES, 'log', '--reverse', '-M', '--name-status', '--format=%x1e%an%x1f%ae', 'HEAD', '--', ...roots, ...LEGACY_ROOTS]);
   if (!log) return [];
   const owner = new Map<string, string>();
   for (const record of log.split('\x1e')) {
@@ -195,7 +214,7 @@ export function buildManifest(repoRoot: string, trackedOnly: boolean): ManifestE
     }
   }
 
-  const dates = lastCommitDates(repoRoot, roots);
+  const dates = lastCommitDates(repoRoot, roots, files);
   const lfs = lfsPaths(repoRoot, roots);
 
   return files
@@ -241,34 +260,28 @@ const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
  * read real text immediately; React replaces it as soon as the app mounts.
  */
 function crawlableSummary(entries: ManifestEntry[]): string {
-  const bySection = new Map<string, Map<string, number>>();
+  // Files per folder: `Subjects/<Subject>` and `Past Question Collection/<Subject>`.
+  const filesIn = new Map<string, number>();
   for (const { path: file } of entries) {
-    const [root, folder] = file.split('/');
-    const subject = root === 'Past Question Collection'
-      ? folder.replace(/_/g, ' ')
-      : file.split('/').length > 2 ? folder.replace(/^_+/, '') : 'General resources';
-    const subjects = bySection.get(root) ?? new Map<string, number>();
-    subjects.set(subject, (subjects.get(subject) ?? 0) + 1);
-    bySection.set(root, subjects);
+    const parts = file.split('/');
+    if (parts.length < 3) continue;
+    const key = `${parts[0]}/${parts[1]}`;
+    filesIn.set(key, (filesIn.get(key) ?? 0) + 1);
   }
-  // Every semester gets a section and a link, also one without notes yet (e.g. Semester VII).
-  for (let n = 1; n <= 8; n++) if (!bySection.has(`Semester_${n}`)) bySection.set(`Semester_${n}`, new Map());
-  const sections = [...bySection.entries()]
-    // Semesters first (in order), then electives and other collections.
-    .sort(([a], [b]) => Number(!a.startsWith('Semester_')) - Number(!b.startsWith('Semester_')) || a.localeCompare(b, undefined, { numeric: true }))
-    .map(([root, subjects]) => {
-      const n = /^Semester_(\d+)$/.exec(root)?.[1];
-      const title = n
-        ? `Semester ${ROMAN[Number(n)] ?? n} notes: Pokhara University BE Computer Engineering`
-        : root === 'Electives' ? 'Elective subject notes' : root === 'Past Question Collection' ? 'Past exam papers by semester' : `${root} notes`;
-      const items = subjects.size
-        ? [...subjects.entries()].map(([name, count]) => `<li>${escapeHtml(name)} (${count} ${count === 1 ? 'file' : 'files'})</li>`).join('')
-        : '<li>Notes are being collected for this semester.</li>';
-      const href = n ? `/semester-${n}` : root === 'Electives' ? '/electives' : root === 'Past Question Collection' ? '/past-questions' : '';
-      const heading = href ? `<a href="${href}">${escapeHtml(title)}</a>` : escapeHtml(title);
-      return `<section><h2>${heading}</h2><ul>${items}</ul></section>`;
-    })
-    .join('');
+  const list = (items: [string, number][], empty: string) =>
+    items.length ? items.map(([name, count]) => `<li>${escapeHtml(name)} (${count} ${count === 1 ? 'file' : 'files'})</li>`).join('') : `<li>${empty}</li>`;
+  const notesOf = (courses: CourseInfo[]) =>
+    courses.map((c): [string, number] => [c.name, filesIn.get(`${SUBJECTS_ROOT}/${subjectFolder(c)}`) ?? 0]).filter(([, n]) => n > 0);
+  const section = (href: string, title: string, items: string) => `<section><h2><a href="${href}">${escapeHtml(title)}</a></h2><ul>${items}</ul></section>`;
+  // Every semester gets a section and a link, also one without notes yet.
+  const sections = [
+    ...curriculum.map((s) => section(`/semester-${s.id}`, `Semester ${ROMAN[s.id] ?? s.id} notes: Pokhara University BE Computer Engineering`, list(notesOf(s.courses), 'Notes are being collected for this semester.'))),
+    section('/electives', 'Elective subject notes', list(notesOf(electiveCourses), 'Notes are being collected for the electives.')),
+    section('/past-questions', 'Past exam papers by subject', list(
+      [...filesIn].filter(([k]) => k.startsWith(PAST_QUESTIONS_FOLDER + '/')).map(([k, n]): [string, number] => [k.slice(PAST_QUESTIONS_FOLDER.length + 1), n]),
+      'Papers are being collected.',
+    )),
+  ].join('');
   return `<main><h1>BECE Notes: Pokhara University BE Computer Engineering notes (BECE Vault)</h1>` +
     `<p>Free semester-wise study notes for the Bachelor of Engineering in Computer Engineering (BECE) program under Pokhara University, Nepal: ` +
     `lecture notes, handwritten notes, question collections, past exam questions, lab reports and syllabus. ${entries.length} files in total.</p>` +

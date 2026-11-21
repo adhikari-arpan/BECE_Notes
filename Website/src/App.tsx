@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { findPastSubject, findSemester, findSubject, fileKey, pastQuestionCollections } from '@/content/notes';
+import { findPastSubject, findSemester, findSubject, fileKey, pastKey, pastQuestionCollections } from '@/content/notes';
 import { HomeView } from '@/components/HomeView';
 import { SemesterView } from '@/components/SemesterView';
 import { Loader } from '@/components/Loader';
@@ -75,7 +75,7 @@ function App() {
 
   const requestedFile = params.get('file');
   const initialFile = subject && requestedFile ? subject.files.find((f) => fileKey(subject, f) === requestedFile) : undefined;
-  const initialPaper = pastQuestions && requestedFile ? pastQuestions.files.find((f) => f.path === `${pastQuestions.folder}/${requestedFile}`) : undefined;
+  const initialPaper = pastQuestions && requestedFile ? pastQuestions.files.find((f) => pastKey(f) === requestedFile) : undefined;
 
   // Opening another page starts at the top, not mid-scroll (switching files within a subject doesn't).
   useEffect(() => {

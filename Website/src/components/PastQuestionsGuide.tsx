@@ -9,11 +9,11 @@ const REPO_URL = 'https://github.com/adhikari-arpan/BECE_Notes';
 /**
  * How to add papers to a semester's Past Question Collection: the folder for each subject, the file
  * name format and how many papers each subject has so far. Shown on the collection's page, which
- * appears even while it's empty so students can help fill it. In the 2025 view a subject's folder
- * can be in another semester's collection, so the list says where.
+ * appears even while it's empty so students can help fill it. Papers are filed by subject, so the
+ * folders are the same in either curriculum order.
  */
 export function PastQuestionsGuide({ semester, subjects: folders }: { semester: Semester; subjects: PastQuestionSubject[] }) {
-  const folderUrl = `${REPO_URL}/tree/main/${encodeURIComponent(PAST_QUESTIONS_FOLDER)}/${encodeURIComponent(`Semester_${semester.id}`)}`;
+  const folderUrl = `${REPO_URL}/tree/main/${encodeURIComponent(PAST_QUESTIONS_FOLDER)}`;
   const term = Number(semester.id) % 2 ? 'Fall' : 'Spring';
   const total = folders.reduce((a, f) => a + f.papers, 0);
 
@@ -46,7 +46,6 @@ export function PastQuestionsGuide({ semester, subjects: folders }: { semester: 
           <li key={f.folder}>
             <FolderTree size={14} />
             <span className="pastq-name">
-              {f.home !== semester && <small className="pastq-home">Semester_{f.home.id}/</small>}
               {f.folder}/ <b className="pastq-short">{f.short ?? 'elective short form'}</b>
             </span>
             <code className="pastq-example">{f.example}</code>
@@ -59,7 +58,7 @@ export function PastQuestionsGuide({ semester, subjects: folders }: { semester: 
         <BookOpenCheck size={14} />
         <span>
           Put each paper directly in its subject’s folder. Electives use their own short form (e.g. <code>BDT</code> for
-          Big Data Technologies). College assessments go in <code>College Assessments/2024_College_Assessments/</code>, one
+          Big Data Technologies). College assessments go in <code>College Assessments/Semester_{semester.id}/2024_College_Assessments/</code>, one
           folder per year, with each file named after its subject.
         </span>
       </p>

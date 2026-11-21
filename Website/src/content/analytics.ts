@@ -190,8 +190,8 @@ export interface HelpRow { path: string; name: string; where: string; up: number
 export async function loadHelpfulness(): Promise<HelpRow[]> {
   if (!DB_URL) return [];
   const files = [
-    ...semesters.flatMap((sem) => sem.subjects.flatMap((sub) => sub.files.map((f) => ({ path: f.path, name: f.name, where: `${sub.name} · ${sem.label}` })))),
-    ...pastQuestionCollections.flatMap((c) => c.files.map((f) => ({ path: f.path, name: f.name, where: `Past paper · ${c.semester.label}` }))),
+    ...semesters.flatMap((sem) => sem.subjects.flatMap((sub) => sub.files.map((f) => ({ path: f.id, name: f.name, where: `${sub.name} · ${sem.label}` })))),
+    ...pastQuestionCollections.flatMap((c) => c.files.map((f) => ({ path: f.id, name: f.name, where: `Past paper · ${c.semester.label}` }))),
   ];
   const rows = await pool(files, 24, async (f) => {
     const site = helpCounter(f.path);

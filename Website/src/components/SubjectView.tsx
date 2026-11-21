@@ -140,7 +140,7 @@ export function SubjectView({ semester, subject, requestedFile }: SubjectViewPro
               <button className="icon-button" onClick={() => at > 0 && openFile(order[at - 1])} disabled={at <= 0} aria-label="Previous file" title="Previous file"><ChevronLeft size={16} /></button>
               <button className="icon-button" onClick={() => at < order.length - 1 && openFile(order[at + 1])} disabled={at < 0 || at >= order.length - 1} aria-label="Next file" title="Next file"><ChevronRight size={16} /></button>
               <DownloadButton file={activeFile} className="icon-button"><Download size={15} /></DownloadButton>
-              <FileVote key={activeFile.path} path={activeFile.path} />
+              <FileVote key={activeFile.id} path={activeFile.id} />
               <ShareButton title={`${activeFile.name.replace(/\.[a-z0-9]+$/i, '')} · ${subject.name} notes`} />
               <a className="icon-button" href={activeFile.url} target="_blank" rel="noreferrer" aria-label="Open in new tab" title="Open in new tab"><ExternalLink size={15} /></a>
             </div>
@@ -196,7 +196,7 @@ function FilePreview({ file }: { file: NoteFile }) {
   } else if (file.kind === 'pdf') {
     body = (
       <Suspense fallback={<div className="pdf-loading"><Loader label="Loading viewer…" /></div>}>
-        <PdfViewer url={file.url} fileName={file.name} fileKey={file.path} onError={onError} />
+        <PdfViewer url={file.url} fileName={file.name} fileKey={file.id} onError={onError} />
       </Suspense>
     );
   } else if (file.kind === 'image') {

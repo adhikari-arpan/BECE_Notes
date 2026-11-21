@@ -1,13 +1,23 @@
 import { config, entries, type ManifestEntry } from 'virtual:notes-manifest';
 import { subjectDescriptions } from '@/content/descriptions';
 import { subjectUnits, type SubjectUnit } from '@/content/subjectUnits';
+import {
+  ASSESSMENTS_FOLDER,
+  PAST_QUESTIONS_FOLDER,
+  SUBJECTS_ROOT,
+  curriculum,
+  electiveCourses,
+  legacyFolder,
+  subjectFolder,
+  type CourseInfo,
+} from '@/content/curriculumData';
 
 export type FileKind = 'pdf' | 'doc' | 'slides' | 'sheet' | 'image' | 'markdown' | 'code' | 'text' | 'other';
 
 export interface NoteFile {
   id: string;
   name: string;
-  /** Repo-relative path, e.g. `Semester_3/DBMS/NCIT Notes/Unit 1.pdf`. */
+  /** Repo-relative path, e.g. `Subjects/Database Management System/NCIT Notes/Unit 1.pdf`. */
   path: string;
   /** Sub-folder inside the subject folder ('' for files at the subject root). */
   folder: string;
@@ -49,39 +59,6 @@ export interface Semester {
   label: string;
   subjects: Subject[];
 }
-
-interface CourseInfo {
-  code: string;
-  name: string;
-  credits: number | null;
-  icon: string;
-  /** Folder name used for this subject inside the semester folder. */
-  folder?: string;
-}
-
-const course = (code: string, name: string, credits: number | null, icon: string, folder?: string): CourseInfo => ({ code, name, credits, icon, folder });
-
-/** Pokhara University BECE curriculum. `folder` maps a course to its folder name in this repo. */
-const curriculum: { id: number; year: string; label: string; courses: CourseInfo[] }[] = [
-  { id: 1, year: 'Year I', label: 'Semester I', courses: [course('MTH 110', 'Calculus I', 3, '∫', 'Calculus-I'), course('ELX 110', 'Digital Logic', 3, '01', 'Digital Logic'), course('CMP 124', 'Programming in C', 3, '</>', 'Programming in C'), course('ELE 110', 'Basic Electrical Engineering', 3, '∿', 'Basic Electrical Engineering'), course('CMP 122', 'Computer Workshop', 1, '⌘'), course('ENG 110', 'Communication Technique', 2, 'Aa', 'Communication Technique'), course('ELX 111', 'Electronic Devices & Circuits', 3, '◈', 'Electronic Devices & Circuit')] },
-  { id: 2, year: 'Year I', label: 'Semester II', courses: [course('MTH 150', 'Algebra & Geometry', 3, '△'), course('PHY 110', 'Applied Physics', 3, '◉', 'Applied Physics'), course('CHM 110', 'Applied Chemistry', 2, '⚗', 'Applied Chemistry'), course('MEC 116', 'Basic Engineering Drawing', 1, '✎', 'Engineering Drawing'), course('CMP 162', 'Object Oriented Programming in C++', 3, '{}', 'OOP in C++'), course('CMP 165', 'Data Structure & Algorithm', 3, '[]', 'DSA'), course('ELE 172', 'Instrumentation', 3, '◌', 'Instrumentation')] },
-  { id: 3, year: 'Year II', label: 'Semester III', courses: [course('MTH 210', 'Calculus II', 3, '∫'), course('CMP 222', 'Database Management System', 3, 'DB', 'DBMS'), course('CMP 232', 'Operating Systems', 3, 'OS', 'Operating System'), course('CMP 224', 'Microprocessor & Assembly Language Programming', 3, 'µP', 'Microprocessor'), course('CMP 234', 'Computer Graphics', 3, '✦', 'Computer Graphics'), course('CMP 220', 'Data Communication', 3, '↔', 'Data Communication')] },
-  { id: 4, year: 'Year II', label: 'Semester IV', courses: [course('MTH 250', 'Applied Mathematics', 3, 'Σ', 'Applied Mathematics'), course('MTH 257', 'Numerical Methods', 2, '≈', 'Numerical Methods'), course('CMP 228', 'Advanced Programming with Java', 3, 'J', 'Java'), course('CMP 254', 'Theory of Computation', 3, 'λ', 'Theory of Computation'), course('CMP 262', 'Computer Architecture', 3, '▦', 'Computer Architecture'), course('CMP 270', 'Research Fundamentals', 2, '⌁', 'Research Fundamentals')] },
-  { id: 5, year: 'Year III', label: 'Semester V', courses: [course('MTH 216', 'Probability & Statistics', 2, 'σ', 'Probability and Statistics'), course('ELX 320', 'Embedded System', 2, '▣', 'Embedded System'), course('MGT 320', 'Engineering Management', 2, '↗', 'Engineering Management'), course('CMP 346', 'Artificial Intelligence', 3, 'AI', 'Artificial Intelligence'), course('CMM 344', 'Digital Signal Analysis & Processing', 3, 'DSP', 'DSAP'), course('CMP 340', 'Software Engineering', 3, 'SE', 'Software Engineering')] },
-  { id: 6, year: 'Year III', label: 'Semester VI', courses: [course('CMP 362', 'Image Processing & Pattern Recognition', 3, '▧'), course('CMP 364', 'Machine Learning', 3, 'ML'), course('CMP 344', 'Computer Networks', 3, '↯'), course('CMP 338', 'Simulation & Modeling', 3, '◌', 'Simulation and Modeling'), course('CMP 422', 'Compiler Design', 2, '⌘', 'Compiler Design'), course('ELEC I', 'Elective I', 3, '＋'), course('PRJ 360', 'Project I', 2, '↗')] },
-  { id: 7, year: 'Year IV', label: 'Semester VII', courses: [course('MGT 332', 'Entrepreneurship & Professional Practice', 2, '↗'), course('MGT 290', 'Engineering Economics', 3, '₨'), course('CMP 426', 'Network & Cyber Security', 3, '⌁'), course('CMP 424', 'Cloud Computing & Virtualization', 3, '☁'), course('CMP 360', 'Data Science & Analytics', 2, 'DS'), course('ELEC II', 'Elective II', 3, '＋')] },
-  { id: 8, year: 'Year IV', label: 'Semester VIII', courses: [course('ELEC III', 'Elective III', 3, '＋'), course('INT 492', 'Internship', 3, '▤'), course('PRJ 452', 'Project II', 3, '↗')] },
-];
-
-const electiveCourses: CourseInfo[] = [
-  course('CMP 438', 'Big Data Technologies', 3, 'BD', 'Big Data'),
-  course('CMP 459', 'Natural Language Processing', 3, 'NLP', 'Natural Language Processing'),
-  course('ELECTIVE', 'Cybersecurity', 3, '⌁', 'Cybersecurity'),
-  course('ELECTIVE', '.NET Technologies', 3, '#', 'Dot Net'),
-  course('ELECTIVE', 'Generative AI', 3, 'AI', 'Generative AI'),
-  course('ELECTIVE', 'Information System Audit', 3, '✓', 'Information System Audit'),
-  course('ELECTIVE', 'Mobile App Development', 3, '▯', 'Mobile App Development'),
-];
 
 /** The curriculum without notes: every semester's courses with codes and credits (used by the CGPA calculator). */
 export const curriculumSemesters = curriculum.map((s) => ({
@@ -153,6 +130,70 @@ const descriptionFor = (name: string) => descriptionsByName.get(normalizeName(na
 const unitsByName = new Map(Object.entries(subjectUnits).map(([name, units]) => [normalizeName(name), units]));
 const unitsFor = (name: string) => unitsByName.get(normalizeName(name));
 
+/* --------------------------- Subjects/ (notes) --------------------------- */
+
+/** True for a file inside a subject's own `_Syllabus` (or `Syllabus`) folder. */
+export const isSyllabusFolder = (folder: string) => normalizeName(folder.split('/')[0]) === 'syllabus';
+
+/** Name key for syllabus matching: ignores filler words and "syllabus"/"final"/"new" in file names. */
+const SYLLABUS_NOISE = new Set(['a', 'an', 'and', 'the', 'of', 'in', 'with', 'for', 'to', 'syllabus', 'final', 'new', 'detailed']);
+const syllabusKey = (s: string) =>
+  normalizeName(s.replace(/&/g, ' and ').split(/[^A-Za-z0-9]+/).filter((w) => w && !SYLLABUS_NOISE.has(w.toLowerCase())).join(''));
+
+
+const subjectGroups = groupByFolder(SUBJECTS_ROOT);
+const subjectFolderByName = new Map([...subjectGroups.keys()].filter(Boolean).map((f) => [normalizeName(f), f]));
+
+/** A subject's own syllabus: the file in its `_Syllabus` folder named after it, or the first one there. */
+function ownSyllabus(subject: Subject): NoteFile | undefined {
+  const files = subject.files.filter((f) => isSyllabusFolder(f.folder));
+  const name = syllabusKey(subject.name);
+  const keyed = files.map((f) => ({ f, base: syllabusKey(f.name.replace(/\.[^.]+$/, '')) }));
+  return (keyed.find((x) => x.base === name) ?? keyed.find((x) => x.base && (x.base.startsWith(name) || name.startsWith(x.base))))?.f ?? files[0];
+}
+
+/**
+ * The subjects of a semester (or of the electives) from the curriculum, each with its folder in Subjects/.
+ * `scope` (`Semester_3`, `Electives`) was the folder they were in before; it keeps subject ids and file
+ * ids as they were, so saved votes, highlights and reading positions still find their file.
+ */
+function courseSubjects(scope: string, courses: CourseInfo[], withSyllabus: boolean): Subject[] {
+  const subjects: Subject[] = courses.map((c) => {
+    const folder = subjectFolderByName.get(normalizeName(subjectFolder(c)));
+    const legacyRoot = folder ? `${scope}/${legacyFolder(folder)}` : '';
+    const files = folder ? (subjectGroups.get(folder) ?? []).map((f) => ({ ...f, id: `${legacyRoot}/${f.path.slice(SUBJECTS_ROOT.length + folder.length + 2)}` })) : [];
+    return {
+      id: `${slug(scope)}--${slug(c.code + '-' + c.name)}`,
+      slug: slug(c.name),
+      kind: 'course' as const,
+      code: c.code,
+      name: c.name,
+      description: descriptionFor(c.name),
+      units: unitsFor(c.name),
+      electiveSlot: /^ELEC\b/.test(c.code),
+      credits: c.credits,
+      icon: c.icon,
+      folder: folder ? `${SUBJECTS_ROOT}/${folder}` : null,
+      files,
+    };
+  });
+
+  // The semester's syllabus page lists each subject's own syllabus (the PDFs stay in the subject folders).
+  const syllabi = withSyllabus ? subjects.map(ownSyllabus).filter((f): f is NoteFile => !!f) : [];
+  if (syllabi.length) {
+    subjects.push({ id: `${slug(scope)}--syllabus`, slug: 'syllabus', kind: 'syllabus', code: 'SYLLABUS', name: 'Syllabus', credits: null, icon: '§', folder: null, files: syllabi });
+  }
+
+  // Two subjects can't share a URL within one semester: add the course code if they would.
+  const seen = new Set<string>();
+  for (const subject of subjects) {
+    if (seen.has(subject.slug)) subject.slug = `${subject.slug}-${slug(subject.code)}`;
+    seen.add(subject.slug);
+  }
+  return subjects;
+}
+
+/** Collections that are only folders, without a curriculum (Engineering Entrance Preparation). */
 function buildSubjects(root: string, courses: CourseInfo[], looseFilesName: string): Subject[] {
   const groups = groupByFolder(root);
   const folderByName = new Map([...groups.keys()].filter(Boolean).map((f) => [normalizeName(f), f]));
@@ -222,28 +263,28 @@ export const semesters: Semester[] = [
     badge: String(s.id).padStart(2, '0'),
     year: s.year,
     label: s.label,
-    subjects: buildSubjects(`Semester_${s.id}`, s.courses, 'General resources'),
+    subjects: courseSubjects(`Semester_${s.id}`, s.courses, true),
   })),
-  { id: 'electives', slug: 'electives', badge: 'EL', year: 'Year III–IV', label: 'Electives', subjects: buildSubjects('Electives', electiveCourses, 'General resources') },
+  { id: 'electives', slug: 'electives', badge: 'EL', year: 'Year III–IV', label: 'Electives', subjects: courseSubjects('Electives', electiveCourses, false) },
   { id: 'entrance', slug: 'entrance-preparation', badge: 'IOE', year: 'Before Year I', label: 'Entrance Preparation', subjects: buildSubjects('Engineering Entrance Preparation', [], 'Entrance question sets') },
   // Extra collections only show up once their folder has files.
 ].filter((s) => /^\d+$/.test(s.id) || s.subjects.some((subject) => subject.files.length > 0));
 
 /* ----------------------- Past Question Collection ----------------------- */
 
-/** Past exam papers, kept apart from the notes: `Past Question Collection/Semester_N/<Subject>/`. */
-export const PAST_QUESTIONS_FOLDER = 'Past Question Collection';
+/**
+ * Past exam papers, kept apart from the notes: `Past Question Collection/<Subject>/`, plus each semester's
+ * college assessments in `Past Question Collection/College Assessments/Semester_N/`.
+ */
+export { PAST_QUESTIONS_FOLDER };
 
 export interface PastQuestionCollection {
   semester: Semester;
-  /** Repo folder, e.g. `Past Question Collection/Semester_2`. */
+  /** Repo folder holding the papers. */
   folder: string;
-  /** Papers, with `folder` relative to the semester's folder (e.g. `Applied Physics`). */
+  /** Papers, with `folder` starting at the subject's folder (e.g. `Applied Physics`, `College Assessments/2024_College_Assessments`). */
   files: NoteFile[];
 }
-
-/** The README in each semester's folder (the naming guide on GitHub) isn't a paper: the website shows the same guide. */
-const isReadme = (f: NoteFile) => !f.folder && /^readme\.md$/i.test(f.name);
 
 /** One collection per semester, even before any paper is added, so students can see what's missing and send it. */
 /** Semesters without written exams (Semester VIII: internship, project and an elective) have no collection. */
@@ -252,26 +293,29 @@ const NO_PAST_QUESTIONS = new Set(['8']);
 export const pastQuestionCollections: PastQuestionCollection[] = semesters
   .filter((s) => /^\d+$/.test(s.id) && !NO_PAST_QUESTIONS.has(s.id))
   .map((semester) => {
-    const folder = `${PAST_QUESTIONS_FOLDER}/Semester_${semester.id}`;
-    const files = entries
-      .filter((e) => e.path.startsWith(folder + '/'))
-      .map((e) => toNoteFile(e, folder))
-      .filter((f) => !isReadme(f));
-    return { semester, folder, files };
+    // The semester's subjects (before-2025 order) and its assessments. Ids keep the path papers had
+    // before the move (`Past Question Collection/Semester_N/...`), so saved votes still match.
+    const own = new Set((curriculum.find((c) => String(c.id) === semester.id)?.courses ?? []).map((c) => normalizeName(subjectFolder(c))));
+    const assessments = `${PAST_QUESTIONS_FOLDER}/${ASSESSMENTS_FOLDER}/Semester_${semester.id}`;
+    const legacy = `${PAST_QUESTIONS_FOLDER}/Semester_${semester.id}`;
+    const files: NoteFile[] = [];
+    for (const e of entries) {
+      if (e.path.startsWith(assessments + '/')) {
+        const f = toNoteFile(e, assessments);
+        const folder = f.folder ? `${ASSESSMENTS_FOLDER}/${f.folder}` : ASSESSMENTS_FOLDER;
+        files.push({ ...f, folder, id: `${legacy}/${folder}/${f.name}` });
+      } else if (e.path.startsWith(PAST_QUESTIONS_FOLDER + '/')) {
+        const f = toNoteFile(e, PAST_QUESTIONS_FOLDER);
+        if (f.folder && own.has(normalizeName(f.folder.split('/')[0]))) files.push({ ...f, id: `${legacy}/${f.folder}/${f.name}` });
+      }
+    }
+    return { semester, folder: PAST_QUESTIONS_FOLDER, files };
   });
 
 export const pastQuestionsFor = (semester: Semester) => pastQuestionCollections.find((c) => c.semester === semester);
 
-/** True for a file inside a subject's own `_Syllabus` (or `Syllabus`) folder. */
-export const isSyllabusFolder = (folder: string) => normalizeName(folder.split('/')[0]) === 'syllabus';
-
 /** Everything except the syllabus counts as a subject in totals and lists. */
 export const isSyllabus = (s: Subject) => s.kind === 'syllabus';
-
-/** Name key for syllabus matching: ignores filler words and "syllabus"/"final"/"new" in file names. */
-const SYLLABUS_NOISE = new Set(['a', 'an', 'and', 'the', 'of', 'in', 'with', 'for', 'to', 'syllabus', 'final', 'new', 'detailed']);
-const syllabusKey = (s: string) =>
-  normalizeName(s.replace(/&/g, ' and ').split(/[^A-Za-z0-9]+/).filter((w) => w && !SYLLABUS_NOISE.has(w.toLowerCase())).join(''));
 
 /**
  * The file in the semester's syllabus folder that belongs to `subject`, matched loosely by name
@@ -385,8 +429,14 @@ export function pastQuestionFolders(semester: Semester): PastQuestionFolder[] {
 export const semesterPath = (semester: Semester) => `/${semester.slug}`;
 
 /** A file's path relative to its subject folder — used in `?file=` so links stay short. */
-export const fileKey = (subject: Subject, file: NoteFile) =>
-  subject.folder && file.path.startsWith(subject.folder + '/') ? file.path.slice(subject.folder.length + 1) : file.path;
+export const fileKey = (subject: Subject, file: NoteFile) => {
+  if (subject.folder && file.path.startsWith(subject.folder + '/')) return file.path.slice(subject.folder.length + 1);
+  // A semester's syllabus list gathers files from several subject folders: the file name is enough.
+  return subject.files.filter((f) => f.name === file.name).length === 1 ? file.name : file.path;
+};
+
+/** A paper's key in `?file=`: its path from the subject's folder (`Applied Physics/2024_Fall_AP.pdf`). */
+export const pastKey = (file: NoteFile) => (file.folder ? `${file.folder}/${file.name}` : file.name);
 
 export const subjectPath = (semester: Semester, subject: Subject, file?: NoteFile) =>
   `/${semester.slug}/${subject.slug}${file ? `?file=${encodeURIComponent(fileKey(subject, file))}` : ''}`;
@@ -398,7 +448,7 @@ export const findPastSubject = (semester: Semester, subjectSlug: string) => past
 /** /past-questions, or one semester's papers at /past-questions/semester-N (?file= opens a paper). */
 export const pastQuestionsPath = (semester?: Semester, file?: NoteFile) => {
   if (!semester) return '/past-questions';
-  const key = file ? file.path.slice(`${PAST_QUESTIONS_FOLDER}/Semester_${semester.id}/`.length) : '';
+  const key = file ? pastKey(file) : '';
   return `/past-questions/${semester.slug}${key ? `?file=${encodeURIComponent(key)}` : ''}`;
 };
 
@@ -410,7 +460,15 @@ export function findSubject(semester: Semester, slugPart: string) {
   return semester.subjects.find((s) => s.slug === slugPart.toLowerCase());
 }
 
-export const allFiles = semesters.flatMap((semester) => semester.subjects.flatMap((item) => item.files));
+/** Every note file once (a semester's syllabus list only repeats files from its subjects). */
+export const allFiles = semesters.flatMap((semester) => semester.subjects.filter((item) => item.kind !== 'syllabus').flatMap((item) => item.files));
+
+// A folder in Subjects/ that no curriculum entry names would never be shown: say so in the build log.
+if (typeof window === 'undefined') {
+  const shown = new Set(semesters.flatMap((s) => s.subjects).map((s) => s.folder));
+  const hidden = [...subjectGroups.keys()].filter((f) => f && !shown.has(`${SUBJECTS_ROOT}/${f}`));
+  if (hidden.length) console.warn(`[notes] Folders in ${SUBJECTS_ROOT}/ not in the curriculum (not shown on the site): ${hidden.join(', ')}`);
+}
 
 export const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 

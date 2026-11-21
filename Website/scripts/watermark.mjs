@@ -37,7 +37,7 @@ const REPO = path.resolve(here, '../..');
 /** A small copy of the logo (≈300 px): it's embedded once per file, so it stays light. */
 const LOGO = path.join(here, 'watermark-logo.png');
 /** The library's top-level folders (the same ones the website reads). */
-const ROOTS = /^(Semester_\d+|Electives|Engineering Entrance Preparation|Past Question Collection)\//;
+const ROOTS = /^(Subjects|Engineering Entrance Preparation|Past Question Collection)\//;
 
 const PDF = /\.pdf$/i;
 const IMAGE = /\.(jpe?g|png)$/i;
@@ -55,14 +55,15 @@ async function isStampedPdf(bytes) {
 
 /**
  * The title shown in a PDF's properties (and by Google when it lists PDFs), from where the file is:
- *   Semester_3/Database Management System/Unit 3_SQL/SQL Note.pdf → "Database Management System – SQL Note | BECE Vault"
- *   Past Question Collection/Semester_3/Database Management System/2024_Fall_DBMS.pdf → "Database Management System 2024 Fall Question Paper | BECE Vault"
+ *   Subjects/Database Management System/Unit 3_SQL/SQL Note.pdf → "Database Management System – SQL Note | BECE Vault"
+ *   Past Question Collection/Database Management System/2024_Fall_DBMS.pdf → "Database Management System 2024 Fall Question Paper | BECE Vault"
+ * (Paths from before the move to Subjects/, `Semester_3/…` and `Past Question Collection/Semester_3/…`, give the same titles.)
  */
 export function pdfTitle(rel) {
   const parts = rel.split('/');
   const stem = parts[parts.length - 1].replace(/\.pdf$/i, '').replace(/_+/g, ' ').trim();
   if (parts[0] === 'Past Question Collection') {
-    const subject = (parts[2] ?? '').replace(/_+/g, ' ');
+    const subject = (/^Semester_\d+$/.test(parts[1] ?? '') ? parts[2] ?? '' : parts[1] ?? '').replace(/_+/g, ' ');
     const m = /^(\d{4}) (Spring|Fall)\b/i.exec(stem);
     return m ? `${subject} ${m[1]} ${m[2]} Question Paper | BECE Vault` : `${subject} – ${stem} | BECE Vault`;
   }

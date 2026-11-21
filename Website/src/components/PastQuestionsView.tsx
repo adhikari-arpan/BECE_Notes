@@ -337,7 +337,7 @@ export function PaperViewer({ file, prev, next, onOpen, onClose, renderPreview, 
             <button className="icon-button" onClick={() => prev && onOpen(prev)} disabled={!prev} aria-label="Previous paper" title="Previous paper"><ChevronLeft size={16} /></button>
             <button className="icon-button" onClick={() => next && onOpen(next)} disabled={!next} aria-label="Next paper" title="Next paper"><ChevronRight size={16} /></button>
             <DownloadButton file={file} className="icon-button"><Download size={15} /></DownloadButton>
-            <FileVote key={file.path} path={file.path} />
+            <FileVote key={file.id} path={file.id} />
             <ShareButton title={`${titleOf(file)} past question paper`} />
             <a className="icon-button" href={file.url} target="_blank" rel="noreferrer" aria-label="Open in new tab" title="Open in new tab"><ExternalLink size={15} /></a>
           </div>

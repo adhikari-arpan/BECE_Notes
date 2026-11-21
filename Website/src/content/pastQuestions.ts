@@ -3,12 +3,12 @@ import { semesters2025 } from '@/content/curriculum2025';
 import type { Structure } from '@/content/structure';
 
 /**
- * The subjects of a semester's Past Question Collection, for either curriculum order. Papers stay
- * filed by the before-2025 semesters, so in the 2025 view each subject's papers come from the
- * collection of the semester that holds its folder (e.g. 2025 Semester I's Applied Physics → Semester II).
+ * The subjects of a semester's Past Question Collection, for either curriculum order. Papers are filed
+ * by subject; each before-2025 semester's collection lists its own subjects, so in the 2025 view a
+ * subject's papers come from its before-2025 semester (e.g. 2025 Semester I's Applied Physics → Semester II).
  */
 export interface PastQuestionSubject extends PastQuestionFolder {
-  /** The semester whose folder (`Past Question Collection/Semester_N`) holds this subject's papers. */
+  /** The before-2025 semester whose collection lists this subject's papers. */
   home: Semester;
   files: NoteFile[];
 }
