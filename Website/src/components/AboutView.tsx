@@ -81,7 +81,7 @@ export function AboutView() {
             <p>
               New material reaches the library in two ways: students send it in a pull request on{' '}
               <a href={REPO_URL} target="_blank" rel="noreferrer">GitHub</a>, or email it to me. Before anything goes live I
-              check that it's in the right semester and subject, that it's readable, and that it isn't a duplicate of
+              check that it's in the right subject folder, that it's readable, and that it isn't a duplicate of
               something already here. Files are then named the same way across the library (past papers as year, term and
               subject, like <em>2024_Fall_DBMS</em>) and get a small BECE Vault watermark with a link back to the site.
             </p>

@@ -9,7 +9,7 @@ Full guide: https://github.com/adhikari-arpan/BECE_Notes/blob/main/CONTRIBUTING.
 <!-- One or two lines on what this pull request adds. -->
 
 ## Files added
-<!-- List the files or folders, e.g. Semester_3/Database Management System/Unit 3_Normalization/Unit 3_Normalization.pdf -->
+<!-- List the files or folders, e.g. Subjects/Database Management System/Unit 3_Normalization/Unit 3_Normalization.pdf -->
 -
 
 ## Source
@@ -17,7 +17,7 @@ Full guide: https://github.com/adhikari-arpan/BECE_Notes/blob/main/CONTRIBUTING.
 - [ ] Made by someone else, shared with permission: <!-- name, college -->
 
 ## Checklist
-- [ ] Files are in the correct semester / subject / unit folder
+- [ ] Files are in the correct subject / unit folder
 - [ ] Notes are properly scanned (upright, cropped, readable, one PDF per unit)
 - [ ] This content doesn't already exist in the subject (no duplicates)
 - [ ] No published books, paid material or personal information

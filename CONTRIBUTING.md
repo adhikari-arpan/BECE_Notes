@@ -51,14 +51,15 @@ Thank you for helping Pokhara University BE Computer Engineering students study 
 
 ## 3. Folder structure
 
-Every semester and subject follows the same layout, so students always know where to look. Past exam papers
-are kept separately, in the top-level `Past Question Collection/` folder ([see below](#past-question-papers)).
+Every subject has **one folder in `Subjects/`**, whichever semester it's taught in. The website arranges the
+subjects by semester (for both the before-2025 and the 2025 curriculum), so you never need to think about
+semesters when adding notes. Past exam papers are kept separately, in the top-level `Past Question Collection/`
+folder ([see below](#past-question-papers)).
 
 ```text
-Semester_N/
-├── _Syllabus/                     ← syllabus files of all subjects in this semester
+Subjects/
 ├── Subject Name/
-│   ├── _Syllabus/                 ← syllabus of this subject only
+│   ├── _Syllabus/                 ← this subject's syllabus
 │   ├── Unit 1_Unit Name/          ← one folder per unit (lesson)
 │   ├── Unit 2_Unit Name/
 │   ├── ...
@@ -73,10 +74,10 @@ Semester_N/
 
 **Naming rules:**
 
-- 📁 **Semesters:** `Semester_1` … `Semester_8`
-  - Electives go in `Electives/<Elective Name>/`, with the same inside layout.
-- 📘 **Subjects:** the full subject name.
-  - Examples: `Database Management System`, `Programming in C`
+- 📘 **Subjects:** `Subjects/<Subject Name>/`, using the subject's full name, with `and` instead of `&`.
+  - Examples: `Database Management System`, `Programming in C`, `Algebra and Geometry`
+  - Electives, projects and the internship are subjects too: `Subjects/Big Data Technologies/`, `Subjects/Project I/`.
+  - A new subject folder only shows on the website once it's in the curriculum list; mention it in your pull request.
 - 🔢 **Units:** `Unit <number>_<Unit Name>`
   - Example: `Unit 3_Normalization`
 - 🏫 **College-specific folders** start with the college name.
@@ -104,33 +105,35 @@ Semester_N/
 
 We're building a collection of **Pokhara University past exam papers** for every subject, and it's still small, so
 these are especially welcome. They live in their own top-level folder, `Past Question Collection/`, with one folder
-per semester and one folder per subject inside it:
+per subject:
 
 ```text
-Past Question Collection/Semester_N/
-├── README.md                  ← each subject's folder, short form and an example file name
+Past Question Collection/
+├── README.md                  ← every subject's folder, short form and an example file name
 ├── Algebra and Geometry/
 │   ├── 2025_Spring_AG.pdf      ← exam papers, directly in the subject's folder
 │   └── 2024_Spring_AG.pdf
 └── College Assessments/
-    └── 2024_College_Assessments/  ← one folder per year: internal / all-college assessment papers
+    └── Semester_2/
+        └── 2024_College_Assessments/  ← one folder per year: internal / all-college assessment papers
 ```
 
 - 📝 **File name: `Year_Spring/Fall_ShortForm`**
   - Example: `2024_Spring_AG.pdf` (Algebra and Geometry, Spring 2024)
   - **Year** is when the exam was held, in AD.
   - **Spring** or **Fall** is the exam term.
-  - **ShortForm** is the subject's short form, listed in the folder's `README.md` and on the website (e.g. `C`, `DSA`, `DBMS`, `TOC`).
-- 📂 **Put the paper in its subject's folder** in the semester where that subject is taught. Folders follow the
-  before-2025 semester order; papers from the 2025 curriculum go in the same subject's folder.
+  - **ShortForm** is the subject's short form, listed in `Past Question Collection/README.md` and on the website (e.g. `C`, `DSA`, `DBMS`, `TOC`).
+- 📂 **Put the paper in its subject's folder.** Papers are filed by subject, so it's the same folder for both
+  the before-2025 and the 2025 curriculum.
 - 🎓 **Electives:** use the elective's short form, e.g. `2025_Spring_BDT.pdf` (Big Data Technologies) in `Elective II/`.
 - 🚫 **Semester VIII has no past question collection** (internship, project and an elective only).
 - 📄 **PDF or image** (`.pdf`, `.jpg`, `.png`), and keep it small: a PDF under **5 MB**, an image under **1 MB**.
   - Compress large scans before adding them, and scan clearly (see the scanning checklist above).
   - **One paper per file.** A paper photographed as several images: combine them into one PDF if you can,
     otherwise number them, e.g. `2024_Spring_AG_1.jpg`, `2024_Spring_AG_2.jpg`.
-- 🏫 **College assessments** (internal exams, all-college assessments) go in `College Assessments/<Year>_College_Assessments/`.
-  - Example: `College Assessments/2024_College_Assessments/DSA-internal-exam-all-clz.pdf`
+- 🏫 **College assessments** (internal exams, all-college assessments) cover a whole semester, so they go in
+  `College Assessments/Semester_N/<Year>_College_Assessments/` (the before-2025 semester number).
+  - Example: `College Assessments/Semester_2/2024_College_Assessments/DSA-internal-exam-all-clz.pdf`
   - Name each file after its subject. The website shows them in a College Assessments section, grouped by year.
 - 🔁 **Check first** that the same paper (year + term) isn't already there.
 
@@ -177,15 +180,15 @@ feat: Add a dark-mode toggle to the PDF viewer
 One or two lines on what this pull request adds.
 
 ## Files added
-- Semester_3/Database Management System/Unit 3_Normalization/Unit 3_Normalization.pdf
-- Semester_3/Database Management System/Unit 4_Transactions/Unit 4_Transactions.pdf
+- Subjects/Database Management System/Unit 3_Normalization/Unit 3_Normalization.pdf
+- Subjects/Database Management System/Unit 4_Transactions/Unit 4_Transactions.pdf
 
 ## Source
 - [ ] My own notes
 - [ ] Made by someone else, shared with permission: <name, college>
 
 ## Checklist
-- [ ] Files are in the correct semester / subject / unit folder
+- [ ] Files are in the correct subject / unit folder
 - [ ] Notes are properly scanned (upright, cropped, readable, one PDF per unit)
 - [ ] This content doesn't already exist in the subject (no duplicates)
 - [ ] No published books, paid material or personal information
