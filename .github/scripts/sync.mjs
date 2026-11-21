@@ -59,17 +59,42 @@ function commitsToReplay(repo, before, after) {
   }).filter((c) => c.ce !== BOT.email);
 }
 
-/** Files changed by a commit against its first parent: [status, path, newPath?]. */
+/** Files changed by a commit against its first parent: [status, path, newPath?, score?] (score 100 = unchanged content). */
 function changes(repo, sha) {
-  const out = git(repo, ['diff-tree', '-r', '-M', '--no-commit-id', '--name-status', '-z', '--root', sha]);
+  // A folder reorganisation renames thousands of files in one commit: lift git's rename-detection limit.
+  const out = git(repo, ['-c', 'diff.renameLimit=100000', 'diff-tree', '-r', '-M', '--no-commit-id', '--name-status', '-z', '--root', sha]);
   const parts = out.split('\0').filter((p, i, a) => i < a.length - 1 || p);
   const list = [];
   for (let i = 0; i < parts.length;) {
     const status = parts[i++];
-    if (status[0] === 'R' || status[0] === 'C') list.push([status[0], parts[i++], parts[i++]]);
+    if (status[0] === 'R' || status[0] === 'C') list.push([status[0], parts[i++], parts[i++], Number(status.slice(1))]);
     else list.push([status[0], parts[i++]]);
   }
   return list;
+}
+
+/**
+ * Pure renames (same content, new path) are applied in the destination's index only: its own copy of
+ * the file, already watermarked or clean as that repo keeps it, moves to the new path. Nothing is
+ * re-stamped or re-uploaded, so moving folders around costs no space. Returns the renames it couldn't
+ * apply (the old path isn't in the destination), which are then copied over as usual.
+ */
+function moveInIndex(repo, renames) {
+  if (!renames.length) return [];
+  const index = new Map();
+  for (const line of git(repo, ['ls-files', '-s', '-z']).split('\0')) {
+    const tab = line.indexOf('\t');
+    if (tab > 0) index.set(line.slice(tab + 1), line.slice(0, tab).split(' '));
+  }
+  const info = [], missed = [];
+  for (const [from, to] of renames) {
+    const entry = index.get(from);
+    if (!entry) { missed.push([from, to]); continue; }
+    const [mode, blob] = entry;
+    info.push(`0 ${'0'.repeat(40)}\t${from}`, `${mode} ${blob}\t${to}`);
+  }
+  if (info.length) git(repo, ['update-index', '--index-info'], { input: info.join('\n') + '\n' });
+  return missed;
 }
 
 function writeFrom(srcRepo, sha, file, destRepo, destFile = file) {
@@ -105,7 +130,11 @@ const BOT_ENV = () => ({ ...process.env, GIT_AUTHOR_NAME: BOT.name, GIT_AUTHOR_E
 /** Applies one commit's changes from `src` into `dest` (written and staged); `onMedia` handles PDFs/images. */
 function applyCommit(src, dest, c, onMedia) {
   const changed = [], removed = [];
-  for (const [status, a, b] of changes(src, c.sha)) {
+  const all = changes(src, c.sha);
+  const pure = all.filter(([status, , , score]) => status === 'R' && score === 100);
+  const missed = new Set(moveInIndex(dest, pure.map(([, a, b]) => [a, b])).map(([a]) => a));
+  for (const [status, a, b, score] of all) {
+    if (status === 'R' && score === 100 && !missed.has(a)) { fs.rmSync(path.join(dest, a), { force: true }); continue; }
     if (status === 'D') { fs.rmSync(path.join(dest, a), { force: true }); removed.push(a); continue; }
     if (status === 'R') { fs.rmSync(path.join(dest, a), { force: true }); removed.push(a); }
     const file = status === 'R' || status === 'C' ? b : a;
