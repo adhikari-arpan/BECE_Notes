@@ -64,4 +64,10 @@ export const subjectUnits: Record<string, readonly SubjectUnit[]> = {
   'Generative AI': [['Introduction to Generative AI and Python Fundamentals', 7], ['Foundations of Large Language Models', 6], ['Prompt Engineering Fundamentals', 8], ['LangChain Framework and Applications', 8], ['Retrieval Augmented Generation (RAG)', 8], ['Ethical and Responsible AI', 4], ['Advanced Topics in Generative AI', 4]],
   'Information System Audit': [['Overview of Systems Audit', 8], ['Hardware and Software Security Issues', 8], ['Information Systems Audit Requirements', 8], ['Conducting an Information Systems Audit', 10], ['Business Continuity and Disaster Recovery Plan', 6], ['Security Testing and Cloud Computing Audit', 5]],
   'Mobile App Development': [['Introduction to Mobile OSes'], ['Android Classes and Basics'], ['Android User Interface'], ['Advanced Topics'], ['Graphics and Multimedia'], ['APIs and Sensors'], ['Packaging and Monetizing']],
+
+  // Semester VII
+  'Entrepreneurship & Professional Practice': [['Introduction to Entrepreneurship', 4], ['Creativity, Innovation and MVP', 3], ['Startup Foundational Analysis', 8], ['Business Modeling, Planning and Pitching', 6], ['Ethics and Responsibilities for Professional Practice', 4], ['Legal Issues for Professional Practice', 5]],
+  'Data Science & Analytics': [['Data Analysis Pipeline', 3], ['Statistical Foundation', 8], ['Numeric Data', 9], ['Categorical and Mixed-type Data', 5], ['Time and Causality', 5]],
+  'Cloud Computing & Virtualization': [['Introduction', 8], ['Virtualization', 7], ['Storage in Cloud Computing', 5], ['Resource Management in Cloud Computing', 5], ['Security in Cloud Computing', 5]],
+  'Network & Cyber Security': [['Introduction to Network Security', 3], ['Symmetric Key Cryptography', 9], ['Asymmetric Key Cryptography', 9], ['Authentication System and Key Establishment', 9], ['Cyber (Web) Security', 9], ['Web Application Security: Standards and Practices', 6]],
 };
