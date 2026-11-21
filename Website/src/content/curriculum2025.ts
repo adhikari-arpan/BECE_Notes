@@ -4,7 +4,7 @@ import { findSyllabus, isSyllabus, normalizeName, semesters, subjectPath, type S
  * The 2025 BE Computer curriculum (Pokhara University Academic Council, 119th meeting, approved
  * 14 May 2025). Same subjects and credits as the earlier structure, taught in a different order.
  * The notes stay organised by the earlier order, so each course here points to the subject page
- * that already has its notes.
+ * that already has its notes. Course codes are the before-2025 ones for the same subject.
  */
 
 interface Course2025 {
@@ -21,7 +21,7 @@ const course = (code: string, name: string, credits: number, hours: [number, num
 
 const CURRICULUM_2025: { id: number; year: string; label: string; courses: Course2025[] }[] = [
   { id: 1, year: 'Year I', label: 'Semester I', courses: [
-    course('ELE 120', 'Basic Electrical Engineering', 3, [3, 1, 2]),
+    course('ELE 110', 'Basic Electrical Engineering', 3, [3, 1, 2]),
     course('MTH 110', 'Calculus I', 3, [3, 2, 0]),
     course('ENG 110', 'Communication Techniques', 2, [2, 2, 0], 'Communication Technique'),
     course('PHY 110', 'Applied Physics', 3, [3, 1, 2]),
@@ -32,8 +32,8 @@ const CURRICULUM_2025: { id: number; year: string; label: string; courses: Cours
     course('MTH 150', 'Algebra and Geometry', 3, [3, 2, 0]),
     course('CHM 110', 'Applied Chemistry', 2, [2, 1, 2]),
     course('MEC 116', 'Basic Engineering Drawing', 1, [0, 0, 3]),
-    course('ELX 120', 'Electronic Devices and Circuits', 3, [3, 1, 2], 'Electronic Devices & Circuits'),
-    course('CMP 160', 'Data Structure and Algorithms', 3, [3, 1, 3], 'Data Structure & Algorithm'),
+    course('ELX 111', 'Electronic Devices and Circuits', 3, [3, 1, 2], 'Electronic Devices & Circuits'),
+    course('CMP 165', 'Data Structure and Algorithms', 3, [3, 1, 3], 'Data Structure & Algorithm'),
     course('CMP 162', 'Object Oriented Programming in C++', 3, [3, 1, 3]),
   ] },
   { id: 3, year: 'Year II', label: 'Semester III', courses: [
@@ -48,22 +48,22 @@ const CURRICULUM_2025: { id: number; year: string; label: string; courses: Cours
     course('MTH 250', 'Applied Mathematics', 3, [3, 2, 0]),
     course('CMP 224', 'Microprocessor and ALP', 3, [3, 1, 2], 'Microprocessor & Assembly Language Programming'),
     course('ELE 172', 'Instrumentation', 3, [3, 1, 2]),
-    course('CMP 348', 'Software Engineering', 3, [3, 1, 2]),
-    course('CMM 220', 'Data Communication', 3, [3, 1, 2]),
-    course('CMP 264', 'Theory of Computation', 3, [3, 1, 0]),
+    course('CMP 340', 'Software Engineering', 3, [3, 1, 2]),
+    course('CMP 220', 'Data Communication', 3, [3, 1, 2]),
+    course('CMP 254', 'Theory of Computation', 3, [3, 1, 0]),
   ] },
   { id: 5, year: 'Year III', label: 'Semester V', courses: [
     course('CMP 346', 'Artificial Intelligence', 3, [3, 1, 3]),
     course('CMP 344', 'Computer Networks', 3, [3, 1, 2]),
     course('CMP 262', 'Computer Architecture', 3, [3, 1, 1]),
-    course('MTH 252', 'Numerical Methods', 2, [2, 1, 2]),
+    course('MTH 257', 'Numerical Methods', 2, [2, 1, 2]),
     course('MGT 320', 'Engineering Management', 2, [2, 1, 0]),
     course('CMP 338', 'Simulation and Modeling', 3, [3, 1, 2]),
     course('MTH 216', 'Probability and Statistics', 2, [2, 2, 0]),
   ] },
   { id: 6, year: 'Year III', label: 'Semester VI', courses: [
     course('CMP 270', 'Research Fundamentals', 2, [2, 0, 2]),
-    course('CMP 360', 'Compiler Design', 2, [2, 2, 2]),
+    course('CMP 422', 'Compiler Design', 2, [2, 2, 2]),
     course('CMM 344', 'Digital Signal Analysis and Processing', 3, [3, 1, 2]),
     course('CMP 426', 'Network and Cyber Security', 3, [3, 1, 2]),
     course('ELX 320', 'Embedded System', 2, [2, 1, 2]),
@@ -72,8 +72,8 @@ const CURRICULUM_2025: { id: number; year: string; label: string; courses: Cours
   ] },
   { id: 7, year: 'Year IV', label: 'Semester VII', courses: [
     course('CMP 424', 'Cloud Computing and Virtualization', 3, [3, 1, 2]),
-    course('CMP 422', 'Data Science and Analytics', 2, [2, 1, 2]),
-    course('MGT 250', 'Engineering Economics', 3, [3, 1, 0]),
+    course('CMP 360', 'Data Science and Analytics', 2, [2, 1, 2]),
+    course('MGT 290', 'Engineering Economics', 3, [3, 1, 0]),
     course('CMP 362', 'Image Processing and Pattern Recognition', 3, [3, 1, 2]),
     course('MGT 332', 'Entrepreneurship and Professional Practice', 2, [2, 1, 0]),
     course('ELEC II', 'Elective II', 3, [3, 1, 2]),
