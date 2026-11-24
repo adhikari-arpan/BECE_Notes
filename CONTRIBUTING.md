@@ -103,6 +103,10 @@ Subjects/
 
 ### Past question papers
 
+> 📤 **Easiest way: [send a paper on the website](https://notes.arpanadhikari7.com.np/send-paper).** No GitHub account
+> needed: pick the subject, year and term, add the PDF or photos, and it's named and filed for you. It goes live
+> after a quick check. The rest of this section is for adding papers through GitHub.
+
 We're building a collection of **Pokhara University past exam papers** for every subject, and it's still small, so
 these are especially welcome. They live in their own top-level folder, `Past Question Collection/`, with one folder
 per subject:

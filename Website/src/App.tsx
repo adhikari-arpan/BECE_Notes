@@ -31,6 +31,7 @@ const PastQuestionsIndexView = lazy(() => import('@/components/PastQuestionsInde
 const NotesIndexView = lazy(() => import('@/components/NotesIndexView').then((m) => ({ default: m.NotesIndexView })));
 const PokharaUniversityView = lazy(() => import('@/components/PokharaUniversityView').then((m) => ({ default: m.PokharaUniversityView })));
 const FeedbackView = lazy(() => import('@/components/FeedbackView').then((m) => ({ default: m.FeedbackView })));
+const SendPaperView = lazy(() => import('@/components/SendPaperView').then((m) => ({ default: m.SendPaperView })));
 const SponsorView = lazy(() => import('@/components/SponsorView').then((m) => ({ default: m.SponsorView })));
 const AnalyticsView = lazy(() => import('@/components/AnalyticsView').then((m) => ({ default: m.AnalyticsView })));
 const SyllabusView = lazy(() => import('@/components/SyllabusView').then((m) => ({ default: m.SyllabusView })));
@@ -47,6 +48,7 @@ let defaultDescription = '';
 /**
  * Routes:
  *   /                                 home
+ *   /send-paper                       send a past paper without GitHub (opens a pull request for review)
  *   /about, /contributors, /contributing, /privacy, /feedback, /notes, /past-questions, /pokhara-university, /cgpa-calculator, /pu-grading-system
  *   /syllabus, /syllabus/semester-1   the syllabus: all semesters, or one semester's courses (follows the structure switch)
  *   /past-questions/semester-1        a semester's past papers; ?file=<path in its folder> opens one
@@ -60,7 +62,7 @@ function App() {
   const { pathname, params } = useLocation();
   const [first, second, third] = pathname.split('/').filter(Boolean);
 
-  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'privacy' || first === 'feedback' || first === 'notes' || first === 'past-questions' || first === 'pokhara-university' || first === 'cgpa-calculator' || first === 'pu-grading-system' || first === 'syllabus' || first === 'analytics' || first === 'sponsor') ? first : null;
+  const staticPage = !second && (first === 'about' || first === 'contributors' || first === 'contributing' || first === 'send-paper' || first === 'privacy' || first === 'feedback' || first === 'notes' || first === 'past-questions' || first === 'pokhara-university' || first === 'cgpa-calculator' || first === 'pu-grading-system' || first === 'syllabus' || first === 'analytics' || first === 'sponsor') ? first : null;
   // /syllabus/semester-N
   const syllabusSemester = first === 'syllabus' && second ? semesters2025.find((s) => `semester-${s.id}` === second) : undefined;
   // /past-questions/semester-N
@@ -112,6 +114,8 @@ function App() {
               ? 'About Pokhara University (PU), Nepal: established 1997, its faculties, schools and affiliated colleges, with links to the BECE syllabus and PU grading guide.'
             : staticPage === 'past-questions'
               ? 'Pokhara University BE Computer Engineering past exam papers and college assessments for all 8 semesters, sorted by subject and year.'
+            : staticPage === 'send-paper'
+              ? 'Send a Pokhara University BE Computer Engineering past exam paper to BECE Vault, no GitHub needed: pick the subject, year and term, add the PDF or photos.'
             : staticPage === 'feedback'
               ? 'Send feedback about BECE Vault: report mistakes or missing notes, or suggest improvements. No email needed; you can stay anonymous.'
             : staticPage === 'syllabus'
@@ -134,7 +138,7 @@ function App() {
 
   // A title per page, for browser tabs, bookmarks and search results.
   useEffect(() => {
-    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'past-questions': 'Past Questions — Pokhara University BE Computer Engineering', 'pokhara-university': 'Pokhara University (PU) — About', notes: 'Semester-Wise Notes — Pokhara University BE Computer Engineering', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University', analytics: 'Site Analytics', sponsor: 'Sponsor BECE Vault' };
+    const titles: Record<string, string> = { about: 'About', contributors: 'Contributors', contributing: 'Contribute', 'send-paper': 'Send a Past Paper', privacy: 'Privacy Policy', feedback: 'Website Feedback', 'past-questions': 'Past Questions — Pokhara University BE Computer Engineering', 'pokhara-university': 'Pokhara University (PU) — About', notes: 'Semester-Wise Notes — Pokhara University BE Computer Engineering', 'cgpa-calculator': 'CGPA Calculator — Pokhara University BECE', 'pu-grading-system': PU_GUIDE_TITLE, syllabus: 'BE Computer Engineering Syllabus — Pokhara University', analytics: 'Site Analytics', sponsor: 'Sponsor BECE Vault' };
     document.title = page === 'home' ? SITE_TITLE
       : staticPage ? `${titles[staticPage]} | BECE Vault`
       : syllabusSemester ? `${syllabusSemester.label} Syllabus — PU BE Computer Engineering | BECE Vault`
@@ -180,6 +184,7 @@ function App() {
         {page === 'contributing' && <ContributingView />}
         {page === 'privacy' && <PrivacyView />}
         {page === 'feedback' && <FeedbackView />}
+        {page === 'send-paper' && <SendPaperView />}
         {page === 'past-questions' && <PastQuestionsIndexView />}
         {page === 'pokhara-university' && <PokharaUniversityView />}
         {page === 'notes' && <NotesIndexView />}

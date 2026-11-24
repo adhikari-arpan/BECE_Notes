@@ -169,12 +169,19 @@ function countAuthors(repoRoot: string, files: string[]): AuthorCount[] {
   if (git(repoRoot, ['rev-parse', '--is-shallow-repository'])?.trim() === 'true') {
     git(repoRoot, ['fetch', '--unshallow', '--filter=blob:none', '--quiet']);
   }
-  const log = git(repoRoot, [...RENAMES, 'log', '--reverse', '-M', '--name-status', '--format=%x1e%an%x1f%ae', 'HEAD', '--', ...roots, ...LEGACY_ROOTS]);
+  // Each commit: author name, email and message, then (after \x1d) its changed files.
+  const log = git(repoRoot, [...RENAMES, 'log', '--reverse', '-M', '--name-status', '--format=%x1e%an%x1f%ae%x1f%B%x1d', 'HEAD', '--', ...roots, ...LEGACY_ROOTS]);
   if (!log) return [];
   const owner = new Map<string, string>();
   for (const record of log.split('\x1e')) {
-    const [who, ...lines] = record.split('\n');
-    if (!who) continue;
+    const end = record.indexOf('\x1d');
+    if (end < 0) continue;
+    const [author, email, message = ''] = record.slice(0, end).split('\x1f');
+    // Papers sent from the website (/send-paper) are merged by the maintainer; the sender is named in
+    // the message ("Contributed-by: Name, College"), which wins over the commit's author.
+    const sender = /^\W*Contributed-by:\s*([^,\n]+)/im.exec(message)?.[1]?.trim();
+    const who = sender ? `${sender}\x1fwebsite-upload@notes.arpanadhikari7.com.np` : `${author}\x1f${email}`;
+    const lines = record.slice(end + 1).split('\n');
     for (const line of lines) {
       const [status, from, to] = line.split('\t');
       if (!status || !from) continue;

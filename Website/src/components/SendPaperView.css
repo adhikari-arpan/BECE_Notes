@@ -1,0 +1,19 @@
+/* /send-paper, on top of the feedback form styles (FeedbackView.css). */
+.feedback-field select { min-width: 0; width: 100%; box-sizing: border-box; padding: 10px 13px; border-radius: 12px; border: 1px solid var(--c-dde3dc); background: var(--c-fffdf7); color: var(--c-0b1f1a); font: 400 14px 'DM Sans', sans-serif; cursor: pointer; }
+.feedback-field select:focus { outline: none; border-color: #e8c873; box-shadow: 0 0 0 3px rgba(240, 195, 74, .2); }
+.feedback-field code { font: 500 11.5px 'DM Mono', monospace; color: var(--c-1d3f35); }
+.sendpaper-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.sendpaper-drop { position: relative; display: flex; align-items: center; gap: 10px; padding: 16px 14px; border-radius: 12px; border: 1.5px dashed var(--c-dde3dc); background: var(--c-f6f7f1); color: var(--c-4c5b54); font: 500 13.5px 'DM Sans', sans-serif; cursor: pointer; transition: border-color .15s, background .15s; }
+.sendpaper-drop:hover, .sendpaper-drop:focus-within { border-color: #e8c873; }
+.sendpaper-drop.has-file { border-style: solid; border-color: #e8c873; background: #fff9e6; color: var(--c-0b1f1a); }
+:root[data-theme="dark"] .sendpaper-drop.has-file { background: rgba(240, 195, 74, .1); }
+.sendpaper-drop svg { flex-shrink: 0; color: #e5a927; }
+.sendpaper-drop > span { min-width: 0; overflow-wrap: anywhere; }
+.sendpaper-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.sendpaper-clear { position: relative; z-index: 1; margin-left: auto; display: grid; place-items: center; width: 26px; height: 26px; border: 0; border-radius: 99px; background: transparent; color: var(--c-4c5b54); cursor: pointer; }
+.sendpaper-clear:hover { background: var(--c-ebf0e8); }
+.sendpaper-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.55; color: var(--c-4c5b54); cursor: pointer; }
+.sendpaper-consent input { margin-top: 3px; accent-color: #e5a927; }
+@media (max-width: 560px) {
+  .sendpaper-row { grid-template-columns: 1fr; }
+}

@@ -265,6 +265,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
     ['/notes', 'Semester-Wise Notes — Pokhara University BE Computer Engineering', `Free semester-wise notes for Pokhara University BE Computer Engineering (BECE) on ${opts.siteName}: lecture notes, handwritten notes, lab works and syllabus for every semester, sorted by subject.`],
     ['/pokhara-university', 'Pokhara University (PU) — About', `About Pokhara University (PU), Nepal: established 1997, faculties, schools and affiliated colleges, with BE Computer Engineering syllabus and grading guides on ${opts.siteName}.`],
     ['/past-questions', 'Past Questions — Pokhara University BE Computer Engineering', `Pokhara University BE Computer Engineering past exam papers and college assessments for all 8 semesters, sorted by subject and year, on ${opts.siteName}.`],
+    ['/send-paper', 'Send a Past Paper', `Send a Pokhara University BE Computer Engineering past exam paper to ${opts.siteName}, no GitHub needed: pick the subject, year and term, then add the PDF or photos of the pages.`],
     ['/feedback', 'Website Feedback', `Send feedback about ${opts.siteName}: report mistakes or missing notes, or suggest improvements. No email needed; you can stay anonymous.`],
     ['/privacy', 'Privacy Policy', `Privacy policy of ${opts.siteName}: what information is collected, cookies, analytics and advertising.`],
   ];

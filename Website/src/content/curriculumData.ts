@@ -68,3 +68,56 @@ const LEGACY_FOLDERS: Record<string, string> = {
   'Dot Net Technologies': 'Dot Net',
 };
 export const legacyFolder = (folder: string) => LEGACY_FOLDERS[folder] ?? folder;
+
+/** Short forms used in past paper file names (`2024_Spring_AG.pdf`), by subject folder name. */
+export const PAST_PAPER_SHORT: Record<string, string> = {
+  'Calculus I': 'CAL1',
+  'Digital Logic': 'DL',
+  'Programming in C': 'C',
+  'Basic Electrical Engineering': 'BEE',
+  'Computer Workshop': 'CW',
+  'Communication Technique': 'CT',
+  'Electronic Devices and Circuits': 'EDC',
+  'Algebra and Geometry': 'AG',
+  'Applied Physics': 'AP',
+  'Applied Chemistry': 'AC',
+  'Basic Engineering Drawing': 'BED',
+  'Object Oriented Programming in C++': 'OOP',
+  'Data Structure and Algorithm': 'DSA',
+  'Instrumentation': 'INST',
+  'Calculus II': 'CAL2',
+  'Database Management System': 'DBMS',
+  'Operating Systems': 'OS',
+  'Microprocessor and Assembly Language Programming': 'MP',
+  'Computer Graphics': 'CG',
+  'Data Communication': 'DC',
+  'Applied Mathematics': 'AM',
+  'Numerical Methods': 'NM',
+  'Advanced Programming with Java': 'JAVA',
+  'Theory of Computation': 'TOC',
+  'Computer Architecture': 'CA',
+  'Research Fundamentals': 'RF',
+  'Probability and Statistics': 'PNS',
+  'Embedded System': 'ES',
+  'Engineering Management': 'EM',
+  'Artificial Intelligence': 'AI',
+  'Digital Signal Analysis and Processing': 'DSAP',
+  'Software Engineering': 'SE',
+  'Image Processing and Pattern Recognition': 'IPPR',
+  'Machine Learning': 'ML',
+  'Computer Networks': 'CN',
+  'Simulation and Modeling': 'SM',
+  'Compiler Design': 'CD',
+  'Entrepreneurship and Professional Practice': 'EPP',
+  'Engineering Economics': 'EE',
+  'Network and Cyber Security': 'NCS',
+  'Cloud Computing and Virtualization': 'CCV',
+  'Data Science and Analytics': 'DSCA',
+};
+
+/** The subjects past papers can be sent for (exam subjects with a short form), by name. */
+export const pastPaperSubjects = curriculum
+  .flatMap((s) => s.courses.map((c) => ({ c, semester: s.id })))
+  .filter(({ c }) => !/^(PRJ|INT|ELEC)\b/.test(c.code) && PAST_PAPER_SHORT[subjectFolder(c)])
+  .map(({ c, semester }) => ({ name: c.name, folder: subjectFolder(c), short: PAST_PAPER_SHORT[subjectFolder(c)], semester }))
+  .sort((a, b) => a.name.localeCompare(b.name));

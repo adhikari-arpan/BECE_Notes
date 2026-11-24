@@ -1,4 +1,4 @@
-import { BookOpenCheck, FileUp, FolderTree, Github } from 'lucide-react';
+import { BookOpenCheck, FileUp, FolderTree, Github, Send } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { PAST_QUESTIONS_FOLDER, type Semester } from '@/content/notes';
 import type { PastQuestionSubject } from '@/content/pastQuestions';
@@ -64,7 +64,8 @@ export function PastQuestionsGuide({ semester, subjects: folders }: { semester: 
       </p>
 
       <div className="pastq-actions">
-        <Link to="/contributing#past-question-papers" className="pastq-primary">How to send papers</Link>
+        <Link to={folders.length === 1 ? `/send-paper?subject=${encodeURIComponent(folders[0].folder)}` : '/send-paper'} className="pastq-primary"><Send size={14} /> Send a paper</Link>
+        <Link to="/contributing#past-question-papers" className="pastq-secondary">How it works</Link>
         <a href={folderUrl} target="_blank" rel="noreferrer" className="pastq-secondary"><Github size={14} /> Open folder on GitHub</a>
       </div>
     </div>

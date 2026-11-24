@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { marked } from 'marked';
-import { Award, BookOpen, Code2, FileStack, FolderUp, GitCommitHorizontal, GitFork, Github, GitPullRequest, ListTree } from 'lucide-react';
+import { Award, BookOpen, Code2, FileStack, FolderUp, GitCommitHorizontal, GitFork, Github, GitPullRequest, ListTree, Send } from 'lucide-react';
+import { Link } from '@/components/Link';
 import { PageHero } from '@/components/PageHero';
 // The guide is written once, in the repository's CONTRIBUTING.md, and shown here as-is.
 import guide from '../../../CONTRIBUTING.md?raw';
@@ -119,7 +120,8 @@ export function ContributingView() {
           lead="Notes, past papers or a website fix: every contribution helps the next batch. Here’s the short version; the full guide is below."
         />
         <div className="contribute-actions">
-          <a className="cta-button" href={REPO_URL} target="_blank" rel="noreferrer"><Github size={16} /> Open on GitHub</a>
+          <Link to="/send-paper" className="cta-button"><Send size={16} /> Send a past paper, no GitHub needed</Link>
+          <a className="contribute-secondary" href={REPO_URL} target="_blank" rel="noreferrer"><Github size={16} /> Open on GitHub</a>
           <a className="contribute-secondary" href={`${REPO_URL}/fork`} target="_blank" rel="noreferrer"><GitPullRequest size={16} /> Fork &amp; start a pull request</a>
         </div>
       </section>
