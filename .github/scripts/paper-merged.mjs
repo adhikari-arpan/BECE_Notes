@@ -48,14 +48,33 @@ const text = [
   '',
   `BECE Vault · ${SITE}`,
 ].join('\n');
-const html = `<div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#0b1f1a;line-height:1.6">
-<p style="font-size:18px;font-weight:700;color:#b8860b;margin:0 0 16px">BECE Vault</p>
-<p>${esc(hi)}</p>
-<p>Good news: the <strong>${esc(notice.subject)}</strong> paper (${esc(notice.exam)}) you sent is now live on BECE Vault.</p>
-<p><a href="${esc(link)}" style="display:inline-block;padding:10px 18px;border-radius:99px;background:#f0c34a;color:#0b1f1a;font-weight:700;text-decoration:none">See your paper</a></p>
-<p>Thank you for helping the next batch prepare. Have another paper? <a href="${SITE}/send-paper" style="color:#b8860b">Send it here</a>.</p>
-<p style="margin-top:24px;font-size:12px;color:#5c6b64"><a href="${SITE}" style="color:#b8860b">notes.arpanadhikari7.com.np</a> · You got this email because you sent a paper on /send-paper.</p>
-</div>`;
+// Same look as the "received" email (mailLayout in Website/api/send-paper.ts).
+const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f3f1e8">
+<span style="display:none;max-height:0;overflow:hidden;opacity:0">Your paper is now on BECE Vault.</span>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f1e8;padding:28px 12px"><tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:540px;border-radius:18px;overflow:hidden;background:#ffffff;border:1px solid #e6e0c8;font-family:Arial,Helvetica,sans-serif;color:#0b1f1a">
+<tr><td align="center" style="background:#0f2a22;padding:26px 24px 20px">
+<a href="${SITE}" style="text-decoration:none"><img src="${SITE}/images/logo.png" width="110" alt="BECE Vault" style="display:block;width:110px;height:auto;border:0;margin:0 auto 10px"></a>
+<div style="font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:700;letter-spacing:.5px;color:#f0c34a">BECE Vault</div>
+<div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9fbfb2;margin-top:4px">Pokhara University BE Computer Engineering</div>
+</td></tr>
+<tr><td style="padding:28px 30px 8px">
+<span style="display:inline-block;padding:4px 12px;border-radius:99px;background:#dcf3e8;color:#1e6b4c;font-size:12px;font-weight:700">Live now</span>
+<h1 style="margin:14px 0 16px;font-family:Georgia,'Times New Roman',serif;font-size:26px;line-height:1.25;color:#0b1f1a">Your paper is live! 🎉</h1>
+<div style="font-size:15px;line-height:1.65;color:#2b3d36">
+<p style="margin:0 0 14px">${esc(hi)}</p>
+<p style="margin:0 0 14px">Good news: the <strong>${esc(notice.subject)}</strong> paper (${esc(notice.exam)}) you sent is now on BECE Vault, where every student can read and download it.</p>
+<p style="margin:0">Thank you for helping the next batch prepare. Have another paper? <a href="${SITE}/send-paper" style="color:#b8860b">Send it here</a>.</p>
+</div>
+</td></tr>
+<tr><td style="padding:22px 30px 6px"><a href="${esc(link)}" style="display:inline-block;padding:13px 26px;border-radius:99px;background:#f0c34a;color:#0b1f1a;font-size:15px;font-weight:700;text-decoration:none">See your paper</a></td></tr>
+<tr><td style="padding:26px 30px 28px"><div style="border-top:1px solid #eee8d3;padding-top:16px;font-size:12px;line-height:1.6;color:#7d8b84">
+You’re getting this because you sent a paper on <a href="${SITE}/send-paper" style="color:#b8860b">BECE Vault</a>. Only two emails are sent about each paper.<br>
+<a href="${SITE}" style="color:#b8860b;text-decoration:none">notes.arpanadhikari7.com.np</a>
+</div></td></tr>
+</table>
+</td></tr></table>
+</body></html>`;
 
 const res = await fetch('https://api.resend.com/emails', {
   method: 'POST',

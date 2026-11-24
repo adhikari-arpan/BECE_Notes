@@ -126,15 +126,46 @@ function receivedMail(n: Notice) {
     '',
     `BECE Vault · ${SITE}`,
   ].join('\n');
-  const html = `<div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#0b1f1a;line-height:1.6">
-<p style="font-size:18px;font-weight:700;color:#b8860b;margin:0 0 16px">BECE Vault</p>
-<p>${escapeHtml(hi)}</p>
-<p>Thank you for sending the <strong>${escapeHtml(n.subject)}</strong> paper (${escapeHtml(n.exam)}) to BECE Vault.</p>
-<p>It’s now waiting for a quick check. We’ll email you again as soon as it’s live on the site, usually within a few days.</p>
-<p>Every paper helps the next batch prepare.</p>
-<p style="margin-top:24px;font-size:12px;color:#5c6b64"><a href="${SITE}" style="color:#b8860b">notes.arpanadhikari7.com.np</a> · You got this email because you sent a paper on /send-paper.</p>
-</div>`;
+  const html = mailLayout({
+    preheader: 'Your paper is waiting for a quick check.',
+    badge: 'Received',
+    heading: 'We got your paper!',
+    body: `<p style="margin:0 0 14px">${escapeHtml(hi)}</p>
+<p style="margin:0 0 14px">Thank you for sending the <strong>${escapeHtml(n.subject)}</strong> paper (${escapeHtml(n.exam)}) to BECE Vault.</p>
+<p style="margin:0 0 14px">It’s now waiting for a quick check. We’ll email you again as soon as it’s live on the site, usually within a few days.</p>
+<p style="margin:0">Every paper helps the next batch prepare. 🙌</p>`,
+    button: { label: 'Browse past questions', href: `${SITE}/past-questions` },
+  });
   return { subject: `We got your paper: ${n.subject}, ${n.exam}`, text, html };
+}
+
+/**
+ * The emails' look (the same in .github/scripts/paper-merged.mjs): the logo on a dark green band, a white
+ * card, a gold button. Tables and inline styles, because that's what every email app shows reliably.
+ */
+function mailLayout(m: { preheader: string; badge: string; heading: string; body: string; button?: { label: string; href: string } }) {
+  return `<!doctype html><html><body style="margin:0;padding:0;background:#f3f1e8">
+<span style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(m.preheader)}</span>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f1e8;padding:28px 12px"><tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:540px;border-radius:18px;overflow:hidden;background:#ffffff;border:1px solid #e6e0c8;font-family:Arial,Helvetica,sans-serif;color:#0b1f1a">
+<tr><td align="center" style="background:#0f2a22;padding:26px 24px 20px">
+<a href="${SITE}" style="text-decoration:none"><img src="${SITE}/images/logo.png" width="110" alt="BECE Vault" style="display:block;width:110px;height:auto;border:0;margin:0 auto 10px"></a>
+<div style="font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:700;letter-spacing:.5px;color:#f0c34a">BECE Vault</div>
+<div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9fbfb2;margin-top:4px">Pokhara University BE Computer Engineering</div>
+</td></tr>
+<tr><td style="padding:28px 30px 8px">
+<span style="display:inline-block;padding:4px 12px;border-radius:99px;background:#fff4cf;color:#7a5a0c;font-size:12px;font-weight:700">${escapeHtml(m.badge)}</span>
+<h1 style="margin:14px 0 16px;font-family:Georgia,'Times New Roman',serif;font-size:26px;line-height:1.25;color:#0b1f1a">${escapeHtml(m.heading)}</h1>
+<div style="font-size:15px;line-height:1.65;color:#2b3d36">${m.body}</div>
+</td></tr>
+${m.button ? `<tr><td style="padding:22px 30px 6px"><a href="${m.button.href}" style="display:inline-block;padding:13px 26px;border-radius:99px;background:#f0c34a;color:#0b1f1a;font-size:15px;font-weight:700;text-decoration:none">${escapeHtml(m.button.label)}</a></td></tr>` : ''}
+<tr><td style="padding:26px 30px 28px"><div style="border-top:1px solid #eee8d3;padding-top:16px;font-size:12px;line-height:1.6;color:#7d8b84">
+You’re getting this because you sent a paper on <a href="${SITE}/send-paper" style="color:#b8860b">BECE Vault</a>. Only two emails are sent about each paper.<br>
+<a href="${SITE}" style="color:#b8860b;text-decoration:none">notes.arpanadhikari7.com.np</a>
+</div></td></tr>
+</table>
+</td></tr></table>
+</body></html>`;
 }
 
 export async function POST(request: Request): Promise<Response> {
