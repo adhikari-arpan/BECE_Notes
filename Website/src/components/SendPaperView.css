@@ -1,20 +1,45 @@
 /* /send-paper, on top of the feedback form styles (FeedbackView.css). */
-.feedback-field select, .feedback-field input[type="email"] { min-width: 0; width: 100%; box-sizing: border-box; padding: 10px 13px; border-radius: 12px; border: 1px solid var(--c-dde3dc); background: var(--c-fffdf7); color: var(--c-0b1f1a); font: 400 14px 'DM Sans', sans-serif; cursor: pointer; }
+.feedback-field select, .feedback-field input[type="email"] { min-width: 0; width: 100%; height: 44px; box-sizing: border-box; padding: 0 13px; border-radius: 12px; border: 1px solid var(--c-dde3dc); background: var(--c-fffdf7); color: var(--c-0b1f1a); font: 400 14px 'DM Sans', sans-serif; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
 .feedback-field input[type="email"] { cursor: text; }
 .feedback-field select:focus, .feedback-field input[type="email"]:focus { outline: none; border-color: #e8c873; box-shadow: 0 0 0 3px rgba(240, 195, 74, .2); }
 .feedback-field code { font: 500 11.5px 'DM Mono', monospace; color: var(--c-1d3f35); }
-.sendpaper-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.sendpaper-drop { position: relative; display: flex; align-items: center; gap: 10px; padding: 16px 14px; border-radius: 12px; border: 1.5px dashed var(--c-dde3dc); background: var(--c-f6f7f1); color: var(--c-4c5b54); font: 500 13.5px 'DM Sans', sans-serif; cursor: pointer; transition: border-color .15s, background .15s; }
-.sendpaper-drop:hover, .sendpaper-drop:focus-within { border-color: #e8c873; }
-.sendpaper-drop.has-file { border-style: solid; border-color: #e8c873; background: #fff9e6; color: var(--c-0b1f1a); }
-:root[data-theme="dark"] .sendpaper-drop.has-file { background: rgba(240, 195, 74, .1); }
-.sendpaper-drop svg { flex-shrink: 0; color: #e5a927; }
-.sendpaper-drop > span { min-width: 0; overflow-wrap: anywhere; }
-.sendpaper-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.sendpaper-clear { position: relative; z-index: 1; margin-left: auto; display: grid; place-items: center; width: 26px; height: 26px; border: 0; border-radius: 99px; background: transparent; color: var(--c-4c5b54); cursor: pointer; }
+.sendpaper-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+
+/* Spring / Fall: a two-button switch, the same height as the year box. */
+.sendpaper-terms { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sendpaper-term { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 44px; box-sizing: border-box; border-radius: 12px; border: 1px solid var(--c-dde3dc); background: var(--c-fffdf7); color: var(--c-1d3f35); font: 600 14px 'DM Sans', sans-serif; cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
+.sendpaper-term input { position: absolute; opacity: 0; pointer-events: none; }
+.sendpaper-term:hover { border-color: #e8c873; }
+.sendpaper-term:has(input:focus-visible) { outline: 2px solid #e5a927; outline-offset: 2px; }
+.sendpaper-term.is-active { background: #fff4cf; border-color: #e8c873; color: #0b1f1a; }
+:root[data-theme="dark"] .sendpaper-term.is-active { background: rgba(240, 195, 74, .16); border-color: rgba(240, 195, 74, .55); color: #f0c34a; }
+.sendpaper-term small { font: 500 9.5px 'DM Mono', monospace; letter-spacing: .02em; color: var(--c-7d8b84); line-height: 1.2; }
+.sendpaper-term.is-taken > span { line-height: 1.15; }
+.sendpaper-term.is-taken:not(.is-active) { opacity: .6; }
+
+/* Already in the collection. */
+.sendpaper-note { display: flex; align-items: flex-start; gap: 8px; margin: -4px 0 0; padding: 10px 12px; border-radius: 12px; background: #fff4cf; color: #5c4a12; font-size: 13px; line-height: 1.5; }
+.sendpaper-note svg { flex-shrink: 0; margin-top: 2px; }
+:root[data-theme="dark"] .sendpaper-note { background: rgba(240, 195, 74, .12); color: #f0d68a; }
+
+/* The upload box: a big area to click, or to drop a file on. */
+.feedback-field > .sendpaper-drop { position: relative; display: grid; justify-items: center; align-content: center; gap: 6px; min-height: 160px; padding: 24px 18px; box-sizing: border-box; border-radius: 14px; border: 1.5px dashed var(--c-dde3dc); background: var(--c-f6f7f1); text-align: center; cursor: pointer; transition: border-color .15s, background .15s; }
+.feedback-field > .sendpaper-drop:hover, .feedback-field > .sendpaper-drop:focus-within, .feedback-field > .sendpaper-drop.is-dragging { border-color: #e8c873; background: #fffaeb; }
+.feedback-field > .sendpaper-drop.has-file { border-style: solid; border-color: #e8c873; background: #fff9e6; }
+:root[data-theme="dark"] .feedback-field > .sendpaper-drop:hover,
+:root[data-theme="dark"] .feedback-field > .sendpaper-drop:focus-within,
+:root[data-theme="dark"] .feedback-field > .sendpaper-drop.is-dragging,
+:root[data-theme="dark"] .feedback-field > .sendpaper-drop.has-file { background: rgba(240, 195, 74, .07); }
+.sendpaper-drop input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.sendpaper-drop-icon { display: grid; place-items: center; width: 52px; height: 52px; margin-bottom: 4px; border-radius: 16px; background: rgba(240, 195, 74, .16); color: #e5a927; }
+.sendpaper-drop strong { max-width: 100%; font: 700 15px 'DM Sans', sans-serif; color: var(--c-0b1f1a); overflow-wrap: anywhere; }
+.sendpaper-drop small { max-width: 380px; font: 400 12.5px/1.5 'DM Sans', sans-serif; color: var(--c-7d8b84); }
+.sendpaper-clear { position: absolute; z-index: 1; top: 10px; right: 10px; display: grid; place-items: center; width: 30px; height: 30px; border: 0; border-radius: 99px; background: transparent; color: var(--c-4c5b54); cursor: pointer; }
 .sendpaper-clear:hover { background: var(--c-ebf0e8); }
+
 .sendpaper-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.55; color: var(--c-4c5b54); cursor: pointer; }
 .sendpaper-consent input { margin-top: 3px; accent-color: #e5a927; }
 @media (max-width: 560px) {
   .sendpaper-row { grid-template-columns: 1fr; }
+  .feedback-field > .sendpaper-drop { min-height: 140px; }
 }

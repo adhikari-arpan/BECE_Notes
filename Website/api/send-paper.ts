@@ -27,14 +27,11 @@ const REPO = 'adhikari-arpan/BECE_Notes';
 const SITE = 'https://notes.arpanadhikari7.com.np';
 const MAIL_FROM = process.env.MAIL_FROM || 'BECE Vault <papers@notes.arpanadhikari7.com.np>';
 const ROOT = 'Past Question Collection';
-/** Vercel accepts request bodies up to 4.5 MB; the files themselves may use 4 MB of it. */
+/** Vercel accepts request bodies up to 4.5 MB; the PDF itself may use 4 MB of it. */
 const MAX_BYTES = 4 * 1024 * 1024;
-const MAX_IMAGES = 8;
 /** At most this many website papers waiting for review at once (stops a flood). */
 const MAX_PENDING = 30;
 const BRANCH_PREFIX = 'paper/';
-
-type Kind = 'pdf' | 'jpg' | 'png';
 
 class Problem extends Error {
   constructor(public status: number, message: string) {
@@ -45,13 +42,8 @@ class Problem extends Error {
 const json = (status: number, body: Record<string, unknown>) =>
   Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } });
 
-/** What a file really is, from its first bytes (not its name). */
-function kindOf(bytes: Uint8Array): Kind | null {
-  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return 'pdf'; // %PDF
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return 'jpg';
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return 'png';
-  return null;
-}
+/** True if the file really is a PDF, from its first bytes ("%PDF"), not its name. */
+const isPdf = (bytes: Uint8Array) => bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46;
 
 /** One line of plain text from a form field: no line breaks or markup, trimmed and capped. */
 const clean = (v: FormDataEntryValue | null, max: number) =>
@@ -181,21 +173,14 @@ export async function POST(request: Request): Promise<Response> {
     if (!Number.isInteger(year) || year < 2000 || year > thisYear) throw new Problem(400, 'Please choose the year the exam was held.');
     if (term !== 'Spring' && term !== 'Fall') throw new Problem(400, 'Please choose Spring or Fall.');
 
-    // The files: one PDF, or up to 8 photos (the page already turns photos into JPEGs).
-    const files: { bytes: Uint8Array; kind: Kind }[] = [];
-    let total = 0;
-    for (const entry of form.getAll('file')) {
-      if (typeof entry === 'string') continue;
-      const bytes = new Uint8Array(await entry.arrayBuffer());
-      const kind = kindOf(bytes);
-      if (!kind) throw new Problem(400, 'Only PDF, JPG and PNG files can be sent.');
-      total += bytes.length;
-      files.push({ bytes, kind });
-    }
-    if (!files.length) throw new Problem(400, 'Please add the paper.');
-    if (total > MAX_BYTES) throw new Problem(413, 'That’s too big: the files can be 4 MB in total. Please compress the PDF and try again.');
-    if (files.some((f) => f.kind === 'pdf') && files.length > 1) throw new Problem(400, 'Send one PDF, or photos of the pages, but not both.');
-    if (files.length > MAX_IMAGES) throw new Problem(400, `Up to ${MAX_IMAGES} photos per paper. Combine them into one PDF if there are more pages.`);
+    // The paper: exactly one PDF.
+    const uploads = form.getAll('file').filter((entry): entry is File => typeof entry !== 'string');
+    if (!uploads.length) throw new Problem(400, 'Please add the paper.');
+    if (uploads.length > 1) throw new Problem(400, 'One PDF per paper, please.');
+    const pdf = new Uint8Array(await uploads[0].arrayBuffer());
+    if (!isPdf(pdf)) throw new Problem(400, 'Only PDF files can be sent. Scan the paper into one PDF first.');
+    if (pdf.length > MAX_BYTES) throw new Problem(413, 'That’s too big: the PDF can be 4 MB at most. Please compress it and try again.');
+    const files = [{ bytes: pdf }];
 
     // The subject's folder must exist, and its papers must use the same short form.
     const base = `${year}_${term}_${short}`;
@@ -214,7 +199,7 @@ export async function POST(request: Request): Promise<Response> {
     if (pending.some((r) => r.ref === `refs/heads/${branch}`)) throw new Problem(409, `Someone already sent the ${term} ${year} paper for this subject. It’s waiting for review.`);
     if (pending.length >= MAX_PENDING) throw new Problem(429, 'A lot of papers are waiting for review right now. Please try again in a day or two.');
 
-    const names = files.length === 1 ? [`${base}.${files[0].kind}`] : files.map((f, i) => `${base}_${i + 1}.${f.kind}`);
+    const names = [`${base}.pdf`];
 
     // Commit the files on a new branch from main, then open the pull request.
     const head = await must<{ object: { sha: string } }>(token, '/git/ref/heads/main');
