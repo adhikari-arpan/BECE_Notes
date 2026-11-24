@@ -151,7 +151,6 @@ function mailLayout(m: { preheader: string; badge: string; heading: string; body
 <tr><td align="center" style="background:#0f2a22;padding:26px 24px 20px">
 <a href="${SITE}" style="text-decoration:none"><img src="${SITE}/images/logo.png" width="110" alt="BECE Vault" style="display:block;width:110px;height:auto;border:0;margin:0 auto 10px"></a>
 <div style="font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:700;letter-spacing:.5px;color:#f0c34a">BECE Vault</div>
-<div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9fbfb2;margin-top:4px">Pokhara University BE Computer Engineering</div>
 </td></tr>
 <tr><td style="padding:28px 30px 8px">
 <span style="display:inline-block;padding:4px 12px;border-radius:99px;background:#fff4cf;color:#7a5a0c;font-size:12px;font-weight:700">${escapeHtml(m.badge)}</span>
@@ -160,7 +159,7 @@ function mailLayout(m: { preheader: string; badge: string; heading: string; body
 </td></tr>
 ${m.button ? `<tr><td style="padding:22px 30px 6px"><a href="${m.button.href}" style="display:inline-block;padding:13px 26px;border-radius:99px;background:#f0c34a;color:#0b1f1a;font-size:15px;font-weight:700;text-decoration:none">${escapeHtml(m.button.label)}</a></td></tr>` : ''}
 <tr><td style="padding:26px 30px 28px"><div style="border-top:1px solid #eee8d3;padding-top:16px;font-size:12px;line-height:1.6;color:#7d8b84">
-You’re getting this because you sent a paper on <a href="${SITE}/send-paper" style="color:#b8860b">BECE Vault</a>. Only two emails are sent about each paper.<br>
+You’re getting this because you sent a paper on <a href="${SITE}/send-paper" style="color:#b8860b">BECE Vault</a>. <br>
 <a href="${SITE}" style="color:#b8860b;text-decoration:none">notes.arpanadhikari7.com.np</a>
 </div></td></tr>
 </table>
