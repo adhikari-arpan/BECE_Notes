@@ -16,6 +16,8 @@ import {
   ScrollText,
   Calculator,
   GraduationCap,
+  FileUp,
+  Send,
 } from 'lucide-react';
 import { allFiles, isSyllabus, pastQuestionCollections, plural, semesters } from '@/content/notes';
 import { COUNTING_SINCE, useSiteStats } from '@/content/visits';
@@ -132,6 +134,20 @@ export function HomeView() {
           <Link to="/cgpa-calculator"><Calculator size={14} /> CGPA Calculator</Link>
           <Link to="/pu-grading-system"><GraduationCap size={14} /> Grading guide</Link>
         </p>
+
+        {/* The easiest way to help: send a past paper from the site (/send-paper), no GitHub needed. */}
+        <Link to="/send-paper" className="home-sendpaper">
+          <span className="home-sendpaper-icon" aria-hidden="true"><FileUp size={24} /></span>
+          <span className="home-sendpaper-text">
+            <span className="home-sendpaper-kicker">Help the next batch</span>
+            <strong>Have a past paper? <em>Add it to the vault.</em></strong>
+            <span>Scan your Pokhara University exam paper and send the PDF here. No GitHub or sign-up, and you’re credited by name.</span>
+          </span>
+          <span className="home-sendpaper-side">
+            <span className="home-sendpaper-cta"><Send size={15} /> Send a paper</span>
+            <small>{questionPapers.toLocaleString('en-US')} papers so far · takes a minute</small>
+          </span>
+        </Link>
       </section>
 
       {/* Ask students to pass the site on: shares in class groups are how most new visitors arrive. */}
@@ -192,7 +208,7 @@ export function HomeView() {
               <span className="about-card-icon"><Heart size={20} /></span>
             </span>
             <h3>Contribute</h3>
-            <p>Share your notes with fellow students. Contribute 10+ note files to get your name on the contributors list.</p>
+            <p>Send a past paper right from the site, or share your notes. Contribute 10+ files to get your name on the contributors list.</p>
             <span className="about-card-foot">
               <span className="about-card-pill">How to contribute</span>
               <span className="about-card-go"><ArrowRight size={15} /></span>
