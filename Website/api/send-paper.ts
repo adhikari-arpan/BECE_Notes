@@ -7,14 +7,25 @@
  * the pull request is merged. The sender's name (if given) is kept in a `Contributed-by:` line, which
  * the Contributors page counts.
  *
- * Needs GITHUB_CONTRIB_TOKEN (Vercel environment variable): a fine-grained token for
- * adhikari-arpan/BECE_Notes with "Contents" and "Pull requests" set to read and write.
+ * Emails (optional, if the sender gives an address): "we got your paper" is sent from here, and "it's
+ * live" by .github/workflows/paper-merged.yml when the pull request is merged. The pull request is
+ * public, so the address is stored in it encrypted (a hidden `<!-- notify:… -->` comment) that only
+ * NOTIFY_KEY can open; it isn't kept anywhere else.
+ *
+ * Vercel environment variables:
+ *   GITHUB_CONTRIB_TOKEN  fine-grained token for adhikari-arpan/BECE_Notes: "Contents" and "Pull requests" read and write
+ *   RESEND_API_KEY        Resend API key (emails); without it no emails are sent
+ *   NOTIFY_KEY            32 random bytes, base64: the same value as the GitHub secret of that name
+ *   MAIL_FROM             optional, default "BECE Vault <papers@notes.arpanadhikari7.com.np>"
  *
  * Self-contained on purpose (no imports from the site): the subject folder and its short form are
  * checked against the repository itself.
  */
+import { createCipheriv, randomBytes } from 'node:crypto';
 
 const REPO = 'adhikari-arpan/BECE_Notes';
+const SITE = 'https://notes.arpanadhikari7.com.np';
+const MAIL_FROM = process.env.MAIL_FROM || 'BECE Vault <papers@notes.arpanadhikari7.com.np>';
 const ROOT = 'Past Question Collection';
 /** Vercel accepts request bodies up to 4.5 MB; the files themselves may use 4 MB of it. */
 const MAX_BYTES = 4 * 1024 * 1024;
@@ -74,6 +85,66 @@ async function must<T = unknown>(token: string, path: string, init?: RequestInit
 
 const encode = (p: string) => p.split('/').map(encodeURIComponent).join('/');
 
+/** What the "it's live" email needs, sealed with AES-256-GCM so it can sit in the public pull request. */
+interface Notice {
+  email: string;
+  name: string;
+  subject: string;
+  exam: string;
+  link: string;
+}
+
+function seal(notice: Notice): string | null {
+  const key = Buffer.from(process.env.NOTIFY_KEY ?? '', 'base64');
+  if (key.length !== 32) return null;
+  const iv = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', key, iv);
+  const data = Buffer.concat([cipher.update(JSON.stringify(notice), 'utf8'), cipher.final()]);
+  return Buffer.concat([iv, cipher.getAuthTag(), data]).toString('base64url');
+}
+
+const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/** Sends one email through Resend. A failed email never fails the submission. */
+async function sendMail(to: string, subject: string, text: string, html: string) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return;
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: MAIL_FROM, to: [to], subject, text, html }),
+    });
+    if (!res.ok) console.error('Resend', res.status, (await res.text()).slice(0, 300));
+  } catch (err) {
+    console.error('Resend', err);
+  }
+}
+
+/** "We got your paper": plain and simple, in the site's colours. */
+function receivedMail(n: Notice) {
+  const hi = n.name ? `Hi ${n.name},` : 'Hi,';
+  const text = [
+    hi,
+    '',
+    `Thank you for sending the ${n.subject} paper (${n.exam}) to BECE Vault.`,
+    'It’s now waiting for a quick check. We’ll email you again as soon as it’s live on the site, usually within a few days.',
+    '',
+    'Every paper helps the next batch prepare.',
+    '',
+    `BECE Vault · ${SITE}`,
+  ].join('\n');
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#0b1f1a;line-height:1.6">
+<p style="font-size:18px;font-weight:700;color:#b8860b;margin:0 0 16px">BECE Vault</p>
+<p>${escapeHtml(hi)}</p>
+<p>Thank you for sending the <strong>${escapeHtml(n.subject)}</strong> paper (${escapeHtml(n.exam)}) to BECE Vault.</p>
+<p>It’s now waiting for a quick check. We’ll email you again as soon as it’s live on the site, usually within a few days.</p>
+<p>Every paper helps the next batch prepare.</p>
+<p style="margin-top:24px;font-size:12px;color:#5c6b64"><a href="${SITE}" style="color:#b8860b">notes.arpanadhikari7.com.np</a> · You got this email because you sent a paper on /send-paper.</p>
+</div>`;
+  return { subject: `We got your paper: ${n.subject}, ${n.exam}`, text, html };
+}
+
 export async function POST(request: Request): Promise<Response> {
   const token = process.env.GITHUB_CONTRIB_TOKEN;
   if (!token) return json(503, { error: 'Sending papers from the website isn’t switched on yet. Please use GitHub for now.' });
@@ -99,6 +170,11 @@ export async function POST(request: Request): Promise<Response> {
     const term = clean(form.get('term'), 6);
     const name = clean(form.get('name'), 60);
     const college = clean(form.get('college'), 60);
+    const email = clean(form.get('email'), 120);
+    if (email && !/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(email)) throw new Problem(400, 'That email address doesn’t look right.');
+    // The subject's past questions page, for the "it's live" email.
+    const page = clean(form.get('page'), 160);
+    const link = /^\/past-questions\/[a-z0-9/-]+$/.test(page) ? `${SITE}${page}` : `${SITE}/past-questions`;
     const thisYear = new Date().getFullYear();
     if (!folder || /[/\\]|^\.|^College Assessments$/i.test(folder)) throw new Problem(400, 'Please choose the subject.');
     if (!/^[A-Z0-9]{1,8}$/.test(short)) throw new Problem(400, 'Please choose the subject.');
@@ -165,6 +241,9 @@ export async function POST(request: Request): Promise<Response> {
     });
     await must(token, '/git/refs', { method: 'POST', body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: commit.sha }) });
 
+    const notice: Notice | null = email ? { email, name, subject: folder, exam: `${term} ${year}`, link } : null;
+    const sealed = notice ? seal(notice) : null;
+
     const kb = (n: number) => (n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.round(n / 1024)} KB`);
     const pr = await must<{ number: number; html_url: string }>(token, '/pulls', {
       method: 'POST',
@@ -181,18 +260,26 @@ export async function POST(request: Request): Promise<Response> {
           `| Exam | ${term} ${year} |`,
           `| File${names.length > 1 ? 's' : ''} | ${names.map((n, i) => `\`${n}\` (${kb(files[i].bytes.length)})`).join('<br>')} |`,
           `| Sent by | ${sender}${college ? `, ${college}` : ''} |`,
+          `| Email when live | ${sealed ? 'yes (address encrypted below)' : 'no'} |`,
           '',
           '**Before merging:** open the file and check it is this subject’s Pokhara University paper for this exam, and that it’s readable.',
           'Use **Squash and merge** and keep the line below in the commit message: it credits the sender on the Contributors page.',
           '',
           credit,
+          // Read by .github/workflows/paper-merged.yml after the merge; only NOTIFY_KEY can open it.
+          ...(sealed ? ['', `<!-- notify:${sealed} -->`] : []),
         ].join('\n'),
       }),
     });
     // A label makes these easy to find; not needed for anything else.
     await github(token, `/issues/${pr.number}/labels`, { method: 'POST', body: JSON.stringify({ labels: ['website upload'] }) });
 
-    return json(200, { ok: true, files: names, pullRequest: pr.html_url });
+    if (notice) {
+      const mail = receivedMail(notice);
+      await sendMail(notice.email, mail.subject, mail.text, mail.html);
+    }
+
+    return json(200, { ok: true, files: names, pullRequest: pr.html_url, emailed: !!notice });
   } catch (err) {
     if (err instanceof Problem) return json(err.status, { error: err.message });
     console.error(err);

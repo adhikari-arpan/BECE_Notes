@@ -63,6 +63,7 @@ export function SendPaperView() {
   const [preparing, setPreparing] = useState(false);
   const [name, setName] = useState('');
   const [college, setCollege] = useState('');
+  const [email, setEmail] = useState('');
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [error, setError] = useState('');
@@ -127,6 +128,9 @@ export function SendPaperView() {
     body.set('term', term);
     body.set('name', name.trim());
     body.set('college', college.trim());
+    body.set('email', email.trim());
+    // The subject's past questions page (same address as pastSubjectPath), linked in the "it's live" email.
+    body.set('page', `/past-questions/semester-${subject.semester}/${subject.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`);
     body.set('consent', 'yes');
     body.set('website', String(new FormData(e.currentTarget).get('website') ?? ''));
     picked.blobs.forEach((blob, i) => body.append('file', blob, fileNames[i]));
@@ -169,7 +173,7 @@ export function SendPaperView() {
             <h3>Thank you{name.trim() ? `, ${name.trim()}` : ''}!</h3>
             <p>
               Your paper was sent as <strong>{result.files.join(', ')}</strong>. It goes live on the site once it’s been checked,
-              usually within a few days.
+              usually within a few days.{email.trim() ? ' We’ve emailed you a confirmation, and we’ll email again when it’s live.' : ''}
             </p>
             <div className="feedback-done-actions">
               <button type="button" className="feedback-secondary" onClick={another}>Send another paper</button>
@@ -243,6 +247,12 @@ export function SendPaperView() {
                 <input type="text" value={college} onChange={(e) => setCollege(e.target.value.slice(0, 60))} placeholder="e.g. NCIT" autoComplete="organization" />
               </label>
             </div>
+
+            <label className="feedback-field">
+              <span>Email <small>(optional: we’ll tell you when it’s live)</small></span>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value.slice(0, 120))} placeholder="you@example.com" autoComplete="email" inputMode="email" />
+              <small>Only used for two emails about this paper: “received” and “it’s live”. Never shown or shared.</small>
+            </label>
 
             <label className="sendpaper-consent">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />

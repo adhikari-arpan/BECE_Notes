@@ -1,4 +1,4 @@
-import { BarChart3, Cookie, Database, ExternalLink, FileLock2, HardDrive, Mail, Megaphone, MessageSquareHeart, RefreshCw, ShieldCheck, Users } from 'lucide-react';
+import { BarChart3, Cookie, Database, ExternalLink, FileLock2, FileUp, HardDrive, Mail, Megaphone, MessageSquareHeart, RefreshCw, ShieldCheck, Users } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { PageHero } from '@/components/PageHero';
 import { openCookieSettings } from '@/content/consent';
@@ -172,6 +172,17 @@ export function PrivacyView() {
               If you use the <Link to="/feedback">feedback form</Link>, the topic, your message and the name you type (or
               “Anonymous” if you leave it blank) are sent through <a href="https://formspree.io" target="_blank" rel="noreferrer">Formspree</a> and
               delivered to us by email. No email address is asked for. Please don’t include personal details you don’t want to share.
+            </p>
+          </div>
+
+          <div className="content-page-section">
+            <h3><FileUp size={18} /> Sending a past paper</h3>
+            <p>
+              When you <Link to="/send-paper">send a paper</Link>, the file, the subject and exam, and the name and college you type
+              (all optional except the paper) go into a public pull request on <a href="https://github.com/adhikari-arpan/BECE_Notes" target="_blank" rel="noreferrer">GitHub</a> for
+              review, and your name is credited with the paper. If you add an email address, it’s used only for two emails about that
+              paper (“received” and “it’s live”), sent through <a href="https://resend.com" target="_blank" rel="noreferrer">Resend</a>. The address is stored
+              only in encrypted form, never shown, and not used for anything else.
             </p>
           </div>
 

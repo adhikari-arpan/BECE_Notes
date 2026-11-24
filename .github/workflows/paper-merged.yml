@@ -1,0 +1,43 @@
+# Runs in the PUBLIC repo when a pull request from the website's /send-paper (branch paper/…) is closed:
+#   - merged: emails the sender that their paper is live, if they left an address;
+#   - merged or not: deletes the branch, so the "waiting for review" count stays right and a paper
+#     closed by mistake can be sent again.
+#
+# Security: pull_request_target runs with secrets, so nothing from the pull request is run. The script
+# comes from main; it only reads the pull request's description (the encrypted notice) from the event.
+name: Paper merged
+
+on:
+  pull_request_target:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  notify:
+    name: Notify sender
+    if: >-
+      github.repository == 'adhikari-arpan/BECE_Notes'
+      && startsWith(github.event.pull_request.head.ref, 'paper/')
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scripts from main (trusted)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout: .github
+      - name: Email the sender
+        if: github.event.pull_request.merged
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFY_KEY: ${{ secrets.NOTIFY_KEY }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: node .github/scripts/paper-merged.mjs
+      - name: Delete the branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$BRANCH" || echo "Branch already deleted."

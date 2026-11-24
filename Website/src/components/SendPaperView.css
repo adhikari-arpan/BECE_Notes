@@ -1,6 +1,7 @@
 /* /send-paper, on top of the feedback form styles (FeedbackView.css). */
-.feedback-field select { min-width: 0; width: 100%; box-sizing: border-box; padding: 10px 13px; border-radius: 12px; border: 1px solid var(--c-dde3dc); background: var(--c-fffdf7); color: var(--c-0b1f1a); font: 400 14px 'DM Sans', sans-serif; cursor: pointer; }
-.feedback-field select:focus { outline: none; border-color: #e8c873; box-shadow: 0 0 0 3px rgba(240, 195, 74, .2); }
+.feedback-field select, .feedback-field input[type="email"] { min-width: 0; width: 100%; box-sizing: border-box; padding: 10px 13px; border-radius: 12px; border: 1px solid var(--c-dde3dc); background: var(--c-fffdf7); color: var(--c-0b1f1a); font: 400 14px 'DM Sans', sans-serif; cursor: pointer; }
+.feedback-field input[type="email"] { cursor: text; }
+.feedback-field select:focus, .feedback-field input[type="email"]:focus { outline: none; border-color: #e8c873; box-shadow: 0 0 0 3px rgba(240, 195, 74, .2); }
 .feedback-field code { font: 500 11.5px 'DM Mono', monospace; color: var(--c-1d3f35); }
 .sendpaper-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .sendpaper-drop { position: relative; display: flex; align-items: center; gap: 10px; padding: 16px 14px; border-radius: 12px; border: 1.5px dashed var(--c-dde3dc); background: var(--c-f6f7f1); color: var(--c-4c5b54); font: 500 13.5px 'DM Sans', sans-serif; cursor: pointer; transition: border-color .15s, background .15s; }
