@@ -43,3 +43,26 @@
   .sendpaper-row { grid-template-columns: 1fr; }
   .feedback-field > .sendpaper-drop { min-height: 140px; }
 }
+
+/* Several papers: one card each, with "Add another paper" below. */
+.sendpaper-papers { display: grid; gap: 14px; }
+.sendpaper-single { display: contents; }
+.sendpaper-paper { display: grid; gap: 14px; padding: 14px 16px 16px; border-radius: 16px; border: 1px solid var(--c-dde3dc); background: var(--c-fffdf7); }
+.sendpaper-paper.has-error { border-color: #e7a59b; }
+.sendpaper-paper-head { display: flex; align-items: center; gap: 10px; min-height: 30px; }
+.sendpaper-paper-head strong { font: 700 13px 'DM Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #b8860b; }
+.sendpaper-paper-head code { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 11.5px 'DM Mono', monospace; color: var(--c-4c5b54); }
+.sendpaper-paper-state { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--c-4c5b54); }
+.sendpaper-paper-remove { margin-left: auto; display: grid; place-items: center; width: 30px; height: 30px; border: 0; border-radius: 99px; background: transparent; color: var(--c-7d8b84); cursor: pointer; }
+.sendpaper-paper-remove:hover { background: rgba(200, 80, 60, .1); color: #b4442e; }
+.feedback-field > .sendpaper-drop.is-compact { min-height: 112px; padding: 16px 14px; }
+.sendpaper-drop.is-compact .sendpaper-drop-icon { width: 42px; height: 42px; border-radius: 13px; }
+.sendpaper-add { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; border-radius: 14px; border: 1.5px dashed #e8c873; background: transparent; color: #b8860b; font: 700 14px 'DM Sans', sans-serif; cursor: pointer; transition: background .15s; }
+.sendpaper-add:hover:not(:disabled) { background: #fffaeb; }
+.sendpaper-add:disabled { opacity: .5; cursor: default; }
+:root[data-theme="dark"] .sendpaper-add { color: #f0c34a; border-color: rgba(240, 195, 74, .5); }
+:root[data-theme="dark"] .sendpaper-add:hover:not(:disabled) { background: rgba(240, 195, 74, .07); }
+.sendpaper-note.is-ok { margin: 0; background: #dcf3e8; color: #1e6b4c; }
+:root[data-theme="dark"] .sendpaper-note.is-ok { background: rgba(60, 180, 120, .14); color: #8fdcb5; }
+.sendpaper-prs { margin: 14px 0 0; font-size: 13px; line-height: 1.7; color: var(--c-4c5b54); }
+.sendpaper-prs a { color: #b8860b; }

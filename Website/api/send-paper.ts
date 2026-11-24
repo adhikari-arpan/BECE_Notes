@@ -113,30 +113,41 @@ async function sendMail(to: string, subject: string, text: string, html: string)
   }
 }
 
-/** "We got your paper": plain and simple, in the site's colours. */
-function receivedMail(n: Notice) {
-  const hi = n.name ? `Hi ${n.name},` : 'Hi,';
+/**
+ * "We got your paper(s)": plain and simple, in the site's colours. Papers sent together get one email
+ * listing them all (the form sends them one by one; the last one names the others, see `other`).
+ */
+function receivedMail(name: string, papers: { subject: string; exam: string }[]) {
+  const hi = name ? `Hi ${name},` : 'Hi,';
+  const one = papers.length === 1;
+  const waiting = `${one ? 'It’s' : 'They’re'} now waiting for a quick check. We’ll email you again as soon as ${one ? 'it’s' : 'each one is'} live on the site, usually within a few days.`;
   const text = [
     hi,
     '',
-    `Thank you for sending the ${n.subject} paper (${n.exam}) to BECE Vault.`,
-    'It’s now waiting for a quick check. We’ll email you again as soon as it’s live on the site, usually within a few days.',
+    one
+      ? `Thank you for sending the ${papers[0].subject} paper (${papers[0].exam}) to BECE Vault.`
+      : `Thank you for sending ${papers.length} papers to BECE Vault:\n${papers.map((p) => `  - ${p.subject} (${p.exam})`).join('\n')}`,
+    waiting,
     '',
     'Every paper helps the next batch prepare.',
     '',
     `BECE Vault · ${SITE}`,
   ].join('\n');
+  const list = papers.map((p) => `<li style="margin:0 0 4px"><strong>${escapeHtml(p.subject)}</strong> (${escapeHtml(p.exam)})</li>`).join('');
   const html = mailLayout({
-    preheader: 'Your paper is waiting for a quick check.',
+    preheader: `Your paper${one ? ' is' : 's are'} waiting for a quick check.`,
     badge: 'Received',
-    heading: 'We got your paper!',
+    heading: one ? 'We got your paper!' : `We got your ${papers.length} papers!`,
     body: `<p style="margin:0 0 14px">${escapeHtml(hi)}</p>
-<p style="margin:0 0 14px">Thank you for sending the <strong>${escapeHtml(n.subject)}</strong> paper (${escapeHtml(n.exam)}) to BECE Vault.</p>
-<p style="margin:0 0 14px">It’s now waiting for a quick check. We’ll email you again as soon as it’s live on the site, usually within a few days.</p>
+${one
+    ? `<p style="margin:0 0 14px">Thank you for sending the <strong>${escapeHtml(papers[0].subject)}</strong> paper (${escapeHtml(papers[0].exam)}) to BECE Vault.</p>`
+    : `<p style="margin:0 0 8px">Thank you for sending these papers to BECE Vault:</p><ul style="margin:0 0 14px;padding-left:20px">${list}</ul>`}
+<p style="margin:0 0 14px">${waiting}</p>
 <p style="margin:0">Every paper helps the next batch prepare. 🙌</p>`,
     button: { label: 'Browse past questions', href: `${SITE}/past-questions` },
   });
-  return { subject: `We got your paper: ${n.subject}, ${n.exam}`, text, html };
+  const subject = one ? `We got your paper: ${papers[0].subject}, ${papers[0].exam}` : `We got your ${papers.length} papers`;
+  return { subject, text, html };
 }
 
 /**
@@ -196,6 +207,11 @@ export async function POST(request: Request): Promise<Response> {
     if (email && !/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(email)) throw new Problem(400, 'That email address doesn’t look right.');
     // The subject's past questions page, for the "it's live" email.
     const page = clean(form.get('page'), 160);
+    // Several papers sent together: each comes as its own request (and pull request). All but the last
+    // say `quiet`, and the last names the earlier ones (`other`: "folder|SHORT|year|term") so the sender
+    // gets one "received" email for all of them.
+    const quiet = form.get('quiet') === 'yes';
+    const others = form.getAll('other').slice(0, 10).map((v) => clean(v, 140).split('|'));
     const link = /^\/past-questions\/[a-z0-9/-]+$/.test(page) ? `${SITE}${page}` : `${SITE}/past-questions`;
     const thisYear = new Date().getFullYear();
     if (!folder || /[/\\]|^\.|^College Assessments$/i.test(folder)) throw new Problem(400, 'Please choose the subject.');
@@ -227,6 +243,11 @@ export async function POST(request: Request): Promise<Response> {
     const branch = `${BRANCH_PREFIX}${short.toLowerCase()}-${year}-${term.toLowerCase()}`;
     const pending = await must<{ ref: string }[]>(token, `/git/matching-refs/heads/${BRANCH_PREFIX}`);
     if (pending.some((r) => r.ref === `refs/heads/${branch}`)) throw new Problem(409, `Someone already sent the ${term} ${year} paper for this subject. It’s waiting for review.`);
+    // The earlier papers of this batch, named in the email only if they really are waiting on their branches.
+    const sentBefore = others
+      .filter(([f, s = '', y = '', t]) => f && /^[A-Z0-9]{1,8}$/.test(s) && /^\d{4}$/.test(y) && (t === 'Spring' || t === 'Fall')
+        && pending.some((r) => r.ref === `refs/heads/${BRANCH_PREFIX}${s.toLowerCase()}-${y}-${t.toLowerCase()}`))
+      .map(([f, , y, t]) => ({ subject: f, exam: `${t} ${y}` }));
     if (pending.length >= MAX_PENDING) throw new Problem(429, 'A lot of papers are waiting for review right now. Please try again in a day or two.');
 
     const names = [`${base}.pdf`];
@@ -289,8 +310,8 @@ export async function POST(request: Request): Promise<Response> {
     // A label makes these easy to find; not needed for anything else.
     await github(token, `/issues/${pr.number}/labels`, { method: 'POST', body: JSON.stringify({ labels: ['website upload'] }) });
 
-    if (notice) {
-      const mail = receivedMail(notice);
+    if (notice && !quiet) {
+      const mail = receivedMail(name, [...sentBefore, { subject: notice.subject, exam: notice.exam }]);
       await sendMail(notice.email, mail.subject, mail.text, mail.html);
     }
 
