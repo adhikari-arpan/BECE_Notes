@@ -1,14 +1,18 @@
 import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { marked } from 'marked';
-import { Award, BookOpen, Code2, FileStack, FolderUp, GitCommitHorizontal, GitFork, Github, GitPullRequest, ListTree, Send } from 'lucide-react';
+import { ArrowRight, Award, BookOpen, ChevronDown, Code2, FileStack, Github, GitPullRequest, ListTree, Send, Sparkles } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { PageHero } from '@/components/PageHero';
+import { pastQuestionCollections } from '@/content/notes';
 // The guide is written once, in the repository's CONTRIBUTING.md, and shown here as-is.
 import guide from '../../../CONTRIBUTING.md?raw';
 import './MarkdownViewer.css';
 import './ContributingView.css';
 
 const REPO_URL = 'https://github.com/adhikari-arpan/BECE_Notes';
+
+/** Papers collected so far, shown on the "Send a past paper" card. */
+const paperCount = pastQuestionCollections.reduce((n, c) => n + c.files.length, 0);
 
 interface TocItem {
   id: string;
@@ -72,11 +76,15 @@ export function ContributingView() {
     return { html: doc.body.innerHTML, toc: items };
   }, []);
 
-  // A link to a section (e.g. /contributing#past-question-papers) opens there, after the page's scroll to top.
+  // The full guide is folded away until asked for, so the page starts short.
+  const [guideOpen, setGuideOpen] = useState(false);
+
+  // A link to a section (e.g. /contributing#past-question-papers) opens the guide there, after the page's scroll to top.
   useEffect(() => {
     const id = decodeURIComponent(window.location.hash.slice(1));
-    if (!id) return;
-    const timer = setTimeout(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }), 0);
+    if (!id || !document.getElementById(id)) return;
+    setGuideOpen(true);
+    const timer = setTimeout(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }), 30);
     return () => clearTimeout(timer);
   }, []);
 
@@ -97,7 +105,9 @@ export function ContributingView() {
 
   const goTo = (id: string) => (e: MouseEvent) => {
     e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setGuideOpen(true);
+    // After the guide has opened, so the section can be scrolled to.
+    setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30);
     setActive(id);
   };
 
@@ -115,46 +125,87 @@ export function ContributingView() {
     <>
       <section className="semester-page-header section-wrap contributing-header pqi-header">
         <PageHero
-          title={<>Contributing <em>Guidelines</em></>}
+          title={<>Help build <em>BECE Vault</em></>}
           kicker="Get involved"
-          lead="Notes, past papers or a website fix: every contribution helps the next batch. Here’s the short version; the full guide is below."
+          lead="Every paper and note you share helps the next batch. Pick how you’d like to help."
         />
+      </section>
+
+      {/* The easiest way to help, so it comes first and stands out. */}
+      <section className="section-wrap cg-feature">
+        <div className="cg-feature-card">
+          <div className="cg-feature-text">
+            <span className="cg-feature-badge"><Sparkles size={13} /> Easiest way to help · no GitHub needed</span>
+            <h2>Send a past paper</h2>
+            <p>
+              Have a Pokhara University exam paper? Send the PDF in a minute, no account needed. We name it, check it and add it
+              to the collection{paperCount ? <>, which already has <strong>{paperCount} papers</strong></> : ''}.
+            </p>
+            <ol className="cg-feature-steps">
+              <li><span>1</span> Pick the subject, year and term</li>
+              <li><span>2</span> Add the PDF</li>
+              <li><span>3</span> It goes live after a quick check</li>
+            </ol>
+            <Link to="/send-paper" className="cta-button cg-feature-button"><Send size={16} /> Send a paper</Link>
+          </div>
+          <div className="cg-feature-art" aria-hidden="true">
+            <FileStack size={64} strokeWidth={1.4} />
+          </div>
+        </div>
+      </section>
+
+      <section className="section-wrap cg-more">
+        <h3 className="cg-start-title">Other ways to help</h3>
+        <div className="cg-ways">
+          <a href="#folder-structure" onClick={goTo('folder-structure')}>
+            <BookOpen size={20} />
+            <strong>Share your notes</strong>
+            <span>Upload them to a subject’s folder on GitHub and open a pull request.</span>
+            <em>How to add notes <ArrowRight size={13} /></em>
+          </a>
+          <a href="#contributing-to-the-website" onClick={goTo('contributing-to-the-website')}>
+            <Code2 size={20} />
+            <strong>Improve the website</strong>
+            <span>Fix a bug, a typo or the design. The site’s code is open on GitHub.</span>
+            <em>Website guide <ArrowRight size={13} /></em>
+          </a>
+          <a href="#getting-credited" onClick={goTo('getting-credited')}>
+            <Award size={20} />
+            <strong>Get credited</strong>
+            <span>Ten accepted files puts you on the Contributors page.</span>
+            <em>How credit works <ArrowRight size={13} /></em>
+          </a>
+        </div>
         <div className="contribute-actions">
-          <Link to="/send-paper" className="cta-button"><Send size={16} /> Send a past paper, no GitHub needed</Link>
           <a className="contribute-secondary" href={REPO_URL} target="_blank" rel="noreferrer"><Github size={16} /> Open on GitHub</a>
           <a className="contribute-secondary" href={`${REPO_URL}/fork`} target="_blank" rel="noreferrer"><GitPullRequest size={16} /> Fork &amp; start a pull request</a>
         </div>
       </section>
 
-      <section className="section-wrap cg-start">
-        <h3 className="cg-start-title">Quick start</h3>
-        <ol className="cg-steps">
-          <li><GitFork size={18} /><strong>Fork</strong><span>Fork the repository on GitHub. No need to download it.</span></li>
-          <li><FolderUp size={18} /><strong>Upload</strong><span>Open the right folder in your fork, then <em>Add file → Upload files</em>.</span></li>
-          <li><GitCommitHorizontal size={18} /><strong>Commit</strong><span>Start the message with a prefix like <code>Notes:</code> or <code>Questions:</code>.</span></li>
-          <li><GitPullRequest size={18} /><strong>Pull request</strong><span>Open a pull request. We check everything before it goes live.</span></li>
-        </ol>
-
-        <h3 className="cg-start-title">What are you adding?</h3>
-        <div className="cg-paths">
-          <a href="#folder-structure" onClick={goTo('folder-structure')}><BookOpen size={18} /><strong>Notes</strong><span>Folder layout and file names</span></a>
-          <a href="#past-question-papers" onClick={goTo('past-question-papers')}><FileStack size={18} /><strong>Past papers</strong><span>Year_Spring/Fall_ShortForm</span></a>
-          <a href="#contributing-to-the-website" onClick={goTo('contributing-to-the-website')}><Code2 size={18} /><strong>Website fix</strong><span>Code, design and bugs</span></a>
-          <a href="#getting-credited" onClick={goTo('getting-credited')}><Award size={18} /><strong>Get credited</strong><span>10 valid files gets you listed</span></a>
-        </div>
-      </section>
-
-      <section className="contributing-layout section-wrap">
-        <aside className="contributing-toc" aria-label="On this page">
-          <span className="contributing-toc-title"><ListTree size={14} /> On this page</span>
-          {tocList}
-        </aside>
-        {/* Phones: the same contents, folded into a menu above the guide. */}
-        <details className="contributing-toc-mobile">
-          <summary><ListTree size={14} /> On this page</summary>
-          {tocList}
+      {/* Everything else (folder layout, file names, pull requests…) is here, folded until it's needed. */}
+      <section className="section-wrap cg-guide-wrap">
+        <details className="cg-guide" open={guideOpen} onToggle={(e) => setGuideOpen(e.currentTarget.open)}>
+          <summary>
+            <ListTree size={18} />
+            <span>
+              <strong>Full guide for GitHub contributions</strong>
+              <small>Folder layout, file names, commit messages, pull requests and licence</small>
+            </span>
+            <ChevronDown size={18} className="cg-guide-chevron" />
+          </summary>
+          <div className="contributing-layout">
+            <aside className="contributing-toc" aria-label="On this page">
+              <span className="contributing-toc-title"><ListTree size={14} /> On this page</span>
+              {tocList}
+            </aside>
+            {/* Phones: the same contents, folded into a menu above the guide. */}
+            <details className="contributing-toc-mobile">
+              <summary><ListTree size={14} /> On this page</summary>
+              {tocList}
+            </details>
+            <article className="markdown-preview contributing-guide" dangerouslySetInnerHTML={{ __html: html }} />
+          </div>
         </details>
-        <article className="markdown-preview contributing-guide" dangerouslySetInnerHTML={{ __html: html }} />
       </section>
     </>
   );

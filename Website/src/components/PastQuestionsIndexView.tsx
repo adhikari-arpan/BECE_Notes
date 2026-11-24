@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowRight, FileUp, Search, X } from 'lucide-react';
 import { Link } from '@/components/Link';
 import { PageHero } from '@/components/PageHero';
+import { SendPaperBanner } from '@/components/SendPaperBanner';
 import { StructureToggle } from '@/components/StructureToggle';
 import { normalizeName, pastQuestionCollections, pastQuestionsPath, pastSubjectPath, plural } from '@/content/notes';
 import { pastQuestionSubjects } from '@/content/pastQuestions';
@@ -47,6 +48,7 @@ export function PastQuestionsIndexView() {
       </section>
 
       <section className="section-wrap pqi-page">
+        <SendPaperBanner />
         <label className="pqi-search">
           <Search size={18} />
           <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by subject, e.g. DSA, Calculus, Machine Learning" aria-label="Search past questions by subject" />
@@ -89,8 +91,8 @@ export function PastQuestionsIndexView() {
 
         <div className="pqi-cta">
           <FileUp size={20} />
-          <p><strong>Have a past paper?</strong> The collection is still growing. Add it so the next batch can practice too.</p>
-          <Link to="/contributing#past-question-papers" className="pqi-cta-link">How to send papers <ArrowRight size={14} /></Link>
+          <p><strong>Have a past paper?</strong> The collection is still growing. Send the PDF in a minute, no GitHub needed.</p>
+          <Link to="/send-paper" className="pqi-cta-link">Send a paper <ArrowRight size={14} /></Link>
         </div>
       </section>
     </>

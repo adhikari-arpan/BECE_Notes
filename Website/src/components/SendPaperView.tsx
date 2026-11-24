@@ -228,7 +228,7 @@ export function SendPaperView() {
                 <input type="text" value={name} onChange={(e) => setName(e.target.value.slice(0, 60))} placeholder="Leave empty to stay anonymous" autoComplete="name" />
               </label>
               <label className="feedback-field">
-                <span>College <small>(optional)</small></span>
+                <span>Your college <small>(optional)</small></span>
                 <input type="text" value={college} onChange={(e) => setCollege(e.target.value.slice(0, 60))} placeholder="e.g. NCIT" autoComplete="organization" />
               </label>
             </div>

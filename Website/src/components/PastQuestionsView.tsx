@@ -6,6 +6,7 @@ import { FileVote } from '@/components/FileVote';
 import { PageHero } from '@/components/PageHero';
 import { DownloadButton } from '@/components/DownloadButton';
 import { PastQuestionsGuide } from '@/components/PastQuestionsGuide';
+import { SendPaperBanner } from '@/components/SendPaperBanner';
 import { navigate, useLocation } from '@/content/router';
 import { formatSize, normalizeName, pastQuestionsFor, pastQuestionsPath, plural, semesterPath, subjectPath, type NoteFile, type PastQuestionFolder, type Semester } from '@/content/notes';
 import { pastQuestionSubjects } from '@/content/pastQuestions';
@@ -189,6 +190,7 @@ export function PastQuestionsView({ semester, subject, requestedFile, renderPrev
       </section>
 
       <section className="section-wrap pastq-page">
+        <SendPaperBanner subject={subject?.name.replace(/&/g, 'and')} folder={subject?.folder} />
         {sections.length ? (
         <div className="pastq-layout">
           {/* Subjects: pick one and only its papers are listed. */}
