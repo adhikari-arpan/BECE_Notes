@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Check, Facebook, Globe, Instagram, Link2, Mail, MessageCircle, ScanLine, Send, Share2, Sparkles, X } from 'lucide-react';
 import { Logo } from '@/components/Logo';
@@ -17,20 +17,38 @@ const papers = pastQuestionCollections.reduce((sum, c) => sum + c.files.length, 
 /** The home page's "Share with your class": a business card with a QR code, and where to send the link. */
 export function ShareCard({ share, onClose }: { share: ReturnType<typeof useShareLinks>; onClose: () => void }) {
   const dialog = useRef<HTMLDivElement>(null);
+  const [closing, setClosing] = useState(false);
+  // The parent passes a new onClose on every render: keep the latest in a ref so the effect below runs once.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  /** Plays the fade-out, then unmounts. */
+  const closingRef = useRef(false);
+  const close = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setClosing(true);
+    window.setTimeout(() => onCloseRef.current(), window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 180);
+  }, []);
 
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
     dialog.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close();
     document.addEventListener('keydown', onKey);
-    const overflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    // Lock the page, and pad it by the scrollbar's width so the page behind doesn't jump sideways.
+    const { body } = document;
+    const before = { overflow: body.style.overflow, paddingRight: body.style.paddingRight };
+    const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+    body.style.overflow = 'hidden';
+    if (scrollbar > 0) body.style.paddingRight = `${scrollbar}px`;
     return () => {
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = overflow;
-      prev?.focus();
+      body.style.overflow = before.overflow;
+      body.style.paddingRight = before.paddingRight;
+      prev?.focus({ preventScroll: true });
     };
-  }, [onClose]);
+  }, [close]);
 
   const targets = [
     { label: 'WhatsApp', icon: <MessageCircle size={19} />, onClick: share.whatsapp, cls: 'is-whatsapp' },
@@ -52,9 +70,9 @@ export function ShareCard({ share, onClose }: { share: ReturnType<typeof useShar
   ];
 
   return createPortal(
-    <div className="sc-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className={`sc-backdrop ${closing ? 'is-closing' : ''}`} onMouseDown={(e) => e.target === e.currentTarget && close()}>
       <div className="sc-dialog" role="dialog" aria-modal="true" aria-labelledby="sc-title" tabIndex={-1} ref={dialog}>
-        <button className="sc-close" onClick={onClose} aria-label="Close"><X size={18} /></button>
+        <button className="sc-close" onClick={close} aria-label="Close"><X size={18} /></button>
 
         <article className="sc-card">
           <div className="sc-watermark" aria-hidden="true"><Logo /></div>
