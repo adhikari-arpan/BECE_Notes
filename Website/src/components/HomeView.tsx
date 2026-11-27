@@ -245,11 +245,11 @@ export function HomeView() {
           </div>
         </div>
         <div className="stats-grid stats-grid-library">
-          <div className="stat-card">
+          <Link to="/notes" className="stat-card stat-card-link">
             <FileText size={18} />
             <strong><CountUp value={allFiles.length} durationMs={1100} whenVisible /></strong>
             <span>Note files</span>
-          </div>
+          </Link>
           <Link to="/past-questions" className="stat-card stat-card-link">
             <FileStack size={18} />
             <strong><CountUp value={questionPapers} durationMs={1100} whenVisible /></strong>
