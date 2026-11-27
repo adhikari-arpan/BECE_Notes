@@ -61,9 +61,15 @@
 .is-copy .sc-target-icon, .is-more .sc-target-icon { background: #0b1f1a; color: #f0c34a; }
 :root[data-theme="dark"] .is-copy .sc-target-icon, :root[data-theme="dark"] .is-more .sc-target-icon { background: #1d3f35; }
 
+/* Open and close with opacity and transform only, which the browser animates smoothly on the GPU. */
+.sc-dialog { will-change: transform, opacity; }
+.sc-backdrop.is-closing { animation: sc-fade-out .18s ease forwards; pointer-events: none; }
+.sc-backdrop.is-closing .sc-dialog { animation: sc-pop-out .18s ease forwards; }
 @keyframes sc-fade { from { opacity: 0; } }
-@keyframes sc-pop { from { opacity: 0; transform: translateY(14px) scale(.96); } }
-@media (prefers-reduced-motion: reduce) { .sc-backdrop, .sc-dialog { animation: none; } }
+@keyframes sc-fade-out { to { opacity: 0; } }
+@keyframes sc-pop { from { opacity: 0; transform: translateY(16px) scale(.97); } }
+@keyframes sc-pop-out { to { opacity: 0; transform: translateY(10px) scale(.98); } }
+@media (prefers-reduced-motion: reduce) { .sc-backdrop, .sc-dialog, .sc-backdrop.is-closing, .sc-backdrop.is-closing .sc-dialog { animation: none; } }
 
 /* Phones: one centred column, and the close button inside the card so nothing pokes past the screen edge. */
 @media (max-width: 560px) {
