@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, Facebook, Globe, Instagram, Link2, Mail, MessageCircle, Send, Share2, X } from 'lucide-react';
+import { Check, Facebook, Globe, Instagram, Link2, Mail, MessageCircle, ScanLine, Send, Share2, Sparkles, X } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import type { useShareLinks } from '@/components/ShareButton';
 import { pastQuestionCollections, semesters } from '@/content/notes';
@@ -57,29 +57,34 @@ export function ShareCard({ share, onClose }: { share: ReturnType<typeof useShar
         <button className="sc-close" onClick={onClose} aria-label="Close"><X size={18} /></button>
 
         <article className="sc-card">
-          <div className="sc-main">
-            <div className="sc-brand">
-              <div className="sc-logo"><Logo /></div>
-              <div>
-                <h3 id="sc-title">BECE Vault</h3>
-                <span>Pokhara University · BE Computer</span>
-              </div>
+          <div className="sc-watermark" aria-hidden="true"><Logo /></div>
+
+          <header className="sc-brand">
+            <div className="sc-logo"><Logo /></div>
+            <div className="sc-brand-text">
+              <span className="sc-chip"><Sparkles size={11} /> Free study library</span>
+              <h3 id="sc-title">BECE Vault</h3>
+              <span className="sc-sub">Pokhara University · BE Computer Engineering</span>
             </div>
+          </header>
+
+          <div className="sc-body">
             <ul className="sc-points">
               <li><Check size={14} /> Notes for all {courseSemesters} semesters</li>
               <li><Check size={14} /> {papers.toLocaleString('en-US')} past exam papers</li>
               <li><Check size={14} /> Syllabus, labs &amp; CGPA calculator</li>
               <li><Check size={14} /> Free, no sign-up needed</li>
             </ul>
-            <div className="sc-contact">
-              <a href={`https://${SITE_HOST}`} target="_blank" rel="noreferrer"><Globe size={13} /> {SITE_HOST}</a>
-              <a href={`mailto:${CONTACT_EMAIL}`}><Mail size={13} /> {CONTACT_EMAIL}</a>
+            <div className="sc-qr">
+              <div className="sc-qr-box"><img src={QR_URL} alt={`QR code for ${SITE_HOST}`} width={140} height={140} /></div>
+              <span><ScanLine size={12} /> Scan to open</span>
             </div>
           </div>
-          <div className="sc-qr">
-            <div className="sc-qr-box"><img src={QR_URL} alt={`QR code for ${SITE_HOST}`} width={132} height={132} /></div>
-            <span>Scan to open</span>
-          </div>
+
+          <footer className="sc-contact">
+            <a href={`https://${SITE_HOST}`} target="_blank" rel="noreferrer"><Globe size={13} /> {SITE_HOST}</a>
+            <a href={`mailto:${CONTACT_EMAIL}`}><Mail size={13} /> {CONTACT_EMAIL}</a>
+          </footer>
         </article>
 
         <div className="sc-share">
