@@ -23,7 +23,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-const BOT = { name: 'BECE Vault Bot', email: 'bot@notes.arpanadhikari7.com.np' };
+// The bot's GitHub account (bece-vault-bot), so its commits link to a profile. Older bot commits used
+// OLD_BOT_EMAILS and are still recognised as the bot's.
+const BOT = { name: 'BECE Vault Bot', email: '362016803+bece-vault-bot@users.noreply.github.com' };
+const OLD_BOT_EMAILS = ['bot@notes.arpanadhikari7.com.np'];
+const isBot = (email) => email === BOT.email || OLD_BOT_EMAILS.includes(email);
 const MEDIA = /\.(pdf|jpe?g|png)$/i;
 const ZERO = /^0+$/;
 const WATERMARK = path.resolve(process.env.WATERMARK_SCRIPT ?? 'Website/scripts/watermark.mjs');
@@ -56,7 +60,7 @@ function commitsToReplay(repo, before, after) {
   return out.split('\x1e').map((r) => r.trim()).filter(Boolean).map((r) => {
     const [sha, an, ae, ad, cn, ce, ...msg] = r.split('\x1f');
     return { sha, an, ae, ad, cn, ce, message: msg.join('\x1f').trim() };
-  }).filter((c) => c.ce !== BOT.email);
+  }).filter((c) => !isBot(c.ce));
 }
 
 /** Files changed by a commit against its first parent: [status, path, newPath?, score?] (score 100 = unchanged content). */

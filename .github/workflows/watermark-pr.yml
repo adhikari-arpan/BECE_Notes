@@ -60,7 +60,7 @@ jobs:
         run: |
           for repo in pr originals; do
             git -C $repo config user.name "BECE Vault Bot"
-            git -C $repo config user.email "bot@notes.arpanadhikari7.com.np"
+            git -C $repo config user.email "362016803+bece-vault-bot@users.noreply.github.com"
           done
           git -C pr fetch -q https://github.com/adhikari-arpan/BECE_Notes.git "${{ github.event.pull_request.base.sha }}"
           node base/.github/scripts/sync.mjs pr pr "${{ github.event.pull_request.base.sha }}" originals "${{ github.event.pull_request.number }}"

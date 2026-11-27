@@ -44,5 +44,5 @@ jobs:
           WATERMARK_SCRIPT: originals/Website/scripts/watermark.mjs
         run: |
           git -C public config user.name "BECE Vault Bot"
-          git -C public config user.email "bot@notes.arpanadhikari7.com.np"
+          git -C public config user.email "362016803+bece-vault-bot@users.noreply.github.com"
           node originals/.github/scripts/sync.mjs publish originals public "${{ github.event.before }}" "${{ github.event.after }}"

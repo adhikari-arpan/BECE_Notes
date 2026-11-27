@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   sync:
-    if: github.repository == 'adhikari-arpan/BECE_Notes' && github.event.head_commit.committer.email != 'bot@notes.arpanadhikari7.com.np'
+    if: github.repository == 'adhikari-arpan/BECE_Notes' && github.event.head_commit.committer.email != '362016803+bece-vault-bot@users.noreply.github.com' && github.event.head_commit.committer.email != 'bot@notes.arpanadhikari7.com.np'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -46,6 +46,6 @@ jobs:
         run: |
           for repo in public originals; do
             git -C $repo config user.name "BECE Vault Bot"
-            git -C $repo config user.email "bot@notes.arpanadhikari7.com.np"
+            git -C $repo config user.email "362016803+bece-vault-bot@users.noreply.github.com"
           done
           node public/.github/scripts/sync.mjs syncback public originals "${{ github.event.before }}" "${{ github.event.after }}"
