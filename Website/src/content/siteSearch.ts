@@ -28,6 +28,7 @@ export function searchIndex(): SearchItem[] {
     { kind: 'page', title: 'Past Questions', context: 'All semesters', to: pastQuestionsPath(), haystack: 'past questions papers old questions exam' },
     { kind: 'page', title: 'Semester-Wise Notes', context: 'All semesters', to: '/notes', haystack: 'notes all semesters' },
     { kind: 'page', title: 'Pokhara University', context: 'About', to: '/pokhara-university', haystack: 'pokhara university pu about' },
+    { kind: 'page', title: 'BE Computer Engineering (BECE)', context: 'About', to: '/be-computer-engineering', haystack: 'bece be computer engineering programme program degree course about' },
     { kind: 'page', title: 'Contribute notes', context: 'Get involved', to: '/contributing', haystack: 'contribute upload share notes add' },
   ];
 
