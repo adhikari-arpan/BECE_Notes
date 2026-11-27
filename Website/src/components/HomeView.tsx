@@ -146,7 +146,7 @@ export function HomeView() {
           </span>
           <span className="home-sendpaper-side">
             <span className="home-sendpaper-cta"><Send size={15} /> Send a paper</span>
-            <small>{questionPapers.toLocaleString('en-US')} papers so far · takes a minute</small>
+            <small>Takes a minute</small>
           </span>
         </Link>
       </section>
