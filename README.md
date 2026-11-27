@@ -19,6 +19,8 @@ Everything in this repository is on **BECE Vault**, the companion website, and t
 
 Have notes, question papers or lab reports to share? See [CONTRIBUTING.md](CONTRIBUTING.md). You can upload files straight from GitHub without cloning. Contributors with **10 or more relevant study note files** are listed on the website.
 
+Commits by **BECE Vault Bot** in the history are automatic: it publishes new files with a watermark and syncs merged pull requests.
+
 ## 📬 Contact
 
 For questions, suggestions, or to have your material credited or removed (with proof of ownership), email **[adhikariarpan2063@gmail.com](mailto:adhikariarpan2063@gmail.com)**.
