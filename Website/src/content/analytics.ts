@@ -63,6 +63,7 @@ export const SOURCES = [
   { key: 'whatsapp', label: 'WhatsApp' },
   { key: 'telegram', label: 'Telegram' },
   { key: 'share', label: 'Shared from a phone' },
+  { key: 'qr', label: 'Scanned the QR code' },
   { key: 'discord', label: 'Discord' },
   { key: 'linkedin', label: 'LinkedIn' },
   { key: 'x', label: 'X (Twitter)' },

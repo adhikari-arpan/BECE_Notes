@@ -1,0 +1,56 @@
+/* "Share with your class" on the home page: a business card with a QR code, then where to share it. */
+.sc-backdrop { position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; padding: 16px; overflow-y: auto; background: rgba(8, 20, 16, .6); backdrop-filter: blur(4px); animation: sc-fade .2s ease; }
+.sc-dialog { position: relative; width: min(560px, 100%); display: grid; gap: 18px; outline: none; animation: sc-pop .3s cubic-bezier(.2, .9, .3, 1.15); }
+.sc-close { position: absolute; top: -6px; right: -6px; z-index: 2; width: 34px; height: 34px; display: grid; place-items: center; border: 0; border-radius: 50%; background: #fffdf7; color: #0b1f1a; box-shadow: 0 6px 18px rgba(0, 0, 0, .25); cursor: pointer; }
+.sc-close:hover { background: #fff4cf; }
+
+/* The card keeps the same colours in light and dark mode, like a printed card. */
+.sc-card { position: relative; overflow: hidden; display: flex; gap: 22px; align-items: stretch; padding: 26px 26px 22px; border-radius: 18px; color: #e9efe9; background: radial-gradient(circle at 100% 0, rgba(240, 195, 74, .18), transparent 45%), linear-gradient(135deg, #12342b, #0b1f1a 70%); border: 1px solid rgba(240, 195, 74, .35); box-shadow: 0 30px 70px rgba(0, 0, 0, .35); }
+.sc-card::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: linear-gradient(90deg, #b8860b, #f0c34a, #b8860b); }
+.sc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.sc-brand { display: flex; align-items: center; gap: 12px; }
+.sc-logo { width: 54px; height: 54px; flex-shrink: 0; display: grid; place-items: center; border-radius: 14px; background: #fffdf7; padding: 6px; }
+.sc-logo img { width: 100%; height: auto; }
+.sc-brand h3 { margin: 0; font: 600 24px/1.1 'Playfair Display', serif; color: #fffdf7; }
+.sc-brand span { display: block; margin-top: 3px; font: 500 10.5px 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: #f0c34a; }
+.sc-points { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.sc-points li { display: flex; align-items: center; gap: 8px; font-size: 13.5px; line-height: 1.35; }
+.sc-points svg { flex-shrink: 0; padding: 2px; border-radius: 50%; background: rgba(240, 195, 74, .18); color: #f0c34a; }
+.sc-contact { margin-top: auto; padding-top: 12px; border-top: 1px dashed rgba(233, 239, 233, .22); display: grid; gap: 5px; }
+.sc-contact a { display: inline-flex; align-items: center; gap: 7px; width: fit-content; max-width: 100%; overflow-wrap: anywhere; font: 500 12px 'DM Mono', monospace; color: #c9d6cf; text-decoration: none; }
+.sc-contact a:hover { color: #f0c34a; }
+.sc-contact svg { flex-shrink: 0; color: #f0c34a; }
+.sc-qr { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+.sc-qr-box { padding: 10px; border-radius: 12px; background: #fff; }
+.sc-qr-box img { display: block; width: 132px; height: 132px; }
+.sc-qr span { font: 500 10.5px 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: #c9d6cf; }
+
+/* Where to share: outside the card. */
+.sc-share { padding: 16px 18px; border-radius: 16px; background: var(--c-fffdf7); border: 1px solid var(--c-e3e6de); box-shadow: 0 18px 45px rgba(0, 0, 0, .2); }
+.sc-share p { margin: 0 0 12px; text-align: center; font: 600 13px 'DM Sans', sans-serif; color: var(--c-1d3f35); }
+.sc-targets { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 14px; }
+.sc-target { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 64px; padding: 0; border: 0; background: transparent; cursor: pointer; color: var(--c-4c5b54); }
+.sc-target-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; color: #fff; transition: transform .15s, box-shadow .15s; }
+.sc-target:hover .sc-target-icon, .sc-target:focus-visible .sc-target-icon { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0, 0, 0, .2); }
+.sc-target:focus-visible { outline: none; }
+.sc-target-label { font: 600 11px 'DM Sans', sans-serif; text-align: center; line-height: 1.2; }
+.is-whatsapp .sc-target-icon { background: #25d366; }
+.is-facebook .sc-target-icon { background: #1877f2; }
+.is-instagram .sc-target-icon { background: radial-gradient(circle at 30% 110%, #fdc468, #df4996 55%, #833ab4); }
+.is-telegram .sc-target-icon { background: #229ed9; }
+.is-copy .sc-target-icon, .is-more .sc-target-icon { background: #0b1f1a; color: #f0c34a; }
+:root[data-theme="dark"] .is-copy .sc-target-icon, :root[data-theme="dark"] .is-more .sc-target-icon { background: #1d3f35; }
+
+@keyframes sc-fade { from { opacity: 0; } }
+@keyframes sc-pop { from { opacity: 0; transform: translateY(14px) scale(.96); } }
+@media (prefers-reduced-motion: reduce) { .sc-backdrop, .sc-dialog { animation: none; } }
+
+@media (max-width: 520px) {
+  .sc-card { flex-direction: column; gap: 18px; padding: 24px 20px 20px; }
+  .sc-qr { flex-direction: row; justify-content: flex-start; gap: 14px; }
+  .sc-qr-box img { width: 104px; height: 104px; }
+  .sc-qr span { max-width: 90px; }
+  .sc-close { top: -10px; right: -4px; }
+  .sc-targets { gap: 10px 8px; }
+  .sc-target { width: 56px; }
+}
