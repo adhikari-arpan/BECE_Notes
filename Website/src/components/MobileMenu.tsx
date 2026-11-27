@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { BookOpen, Calculator, FileStack, House, Menu, ScrollText, X } from 'lucide-react';
 import { Link } from '@/components/Link';
-import { ChiyaButton } from '@/components/TipJar';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 const LINKS = [
@@ -12,7 +11,7 @@ const LINKS = [
   { to: '/cgpa-calculator', label: 'CGPA Calculator', icon: Calculator, match: (p: string) => p === 'cgpa-calculator' },
 ];
 
-/** Phones only (see .mobile-menu in index.css): one ☰ button holding every top-bar link, the Chiya button and the theme switch. */
+/** Phones only (see .mobile-menu in index.css): one ☰ button holding every top-bar link and the theme switch (the Chiya button stays in the bar). */
 export function MobileMenu({ page }: { page: string }) {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
@@ -52,7 +51,6 @@ export function MobileMenu({ page }: { page: string }) {
             </Link>
           ))}
           <div className="mobile-menu-foot">
-            <span onClickCapture={() => setOpen(false)}><ChiyaButton /></span>
             <span className="mobile-menu-theme">Theme <ThemeToggle /></span>
           </div>
         </nav>
