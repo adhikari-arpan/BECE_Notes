@@ -12,6 +12,7 @@ import { ChiyaButton, TipJar } from '@/components/TipJar';
 import { Logo } from '@/components/Logo';
 import { Link } from '@/components/Link';
 import { SiteSearch } from '@/components/SiteSearch';
+import { MobileMenu } from '@/components/MobileMenu';
 import { useLocation } from '@/content/router';
 import { trackPageView } from '@/content/visits';
 import { sectionFor, subjectKey } from '@/content/analytics';
@@ -169,6 +170,7 @@ function App() {
             <ChiyaButton />
             <ThemeToggle />
           </nav>
+          <MobileMenu page={page} />
         </div>
       </header>
 
