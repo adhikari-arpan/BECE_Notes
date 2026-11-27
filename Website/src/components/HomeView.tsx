@@ -72,6 +72,7 @@ export function HomeView() {
             <div><strong><CountUp value={courseSemesters.length} pad={2} /></strong><span>Semesters</span></div>
             <div><strong><CountUp value={totalSubjects} /></strong><span>Subjects</span></div>
             <div><strong><CountUp value={allFiles.length} /></strong><span>Note Files</span></div>
+            <div><strong><CountUp value={questionPapers} /></strong><span>Past Questions</span></div>
           </div>
         </div>
         <div className="hero-visual" aria-hidden="true">
