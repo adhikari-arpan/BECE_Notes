@@ -1,6 +1,7 @@
 /* "Share with your class" on the home page: a business card with a QR code, then where to share it. */
-.sc-backdrop { position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; padding: 16px; overflow-y: auto; background: rgba(8, 20, 16, .62); backdrop-filter: blur(5px); animation: sc-fade .2s ease; }
-.sc-dialog { position: relative; width: min(640px, 100%); display: grid; gap: 18px; outline: none; animation: sc-pop .35s cubic-bezier(.2, .9, .3, 1.15); }
+/* Flex + margin:auto (not grid centring) so a card taller than the screen scrolls instead of losing its top. */
+.sc-backdrop { position: fixed; inset: 0; z-index: 95; display: flex; padding: 16px; overflow-x: hidden; overflow-y: auto; background: rgba(8, 20, 16, .62); backdrop-filter: blur(5px); animation: sc-fade .2s ease; }
+.sc-dialog { position: relative; width: min(640px, 100%); margin: auto; display: grid; gap: 18px; outline: none; animation: sc-pop .35s cubic-bezier(.2, .9, .3, 1.15); }
 .sc-close { position: absolute; top: -8px; right: -8px; z-index: 3; width: 34px; height: 34px; display: grid; place-items: center; border: 0; border-radius: 50%; background: #fffdf7; color: #0b1f1a; box-shadow: 0 6px 18px rgba(0, 0, 0, .25); cursor: pointer; }
 .sc-close:hover { background: #fff4cf; }
 
@@ -64,9 +65,25 @@
 @keyframes sc-pop { from { opacity: 0; transform: translateY(14px) scale(.96); } }
 @media (prefers-reduced-motion: reduce) { .sc-backdrop, .sc-dialog { animation: none; } }
 
+/* Phones: one centred column, and the close button inside the card so nothing pokes past the screen edge. */
 @media (max-width: 560px) {
-  .sc-card { padding: 26px 20px 20px; }
-  .sc-body { flex-direction: column; align-items: flex-start; }
-  .sc-brand h3 { font-size: 28px; }
-  .sc-logo { width: 72px; }
+  .sc-backdrop { padding: 12px; }
+  .sc-dialog { gap: 14px; }
+  .sc-close { top: 12px; right: 12px; width: 32px; height: 32px; background: rgba(255, 253, 247, .14); color: #fffdf7; box-shadow: none; }
+  .sc-close:hover { background: rgba(255, 253, 247, .24); }
+  .sc-card { gap: 20px; padding: 30px 18px 18px; text-align: center; }
+  .sc-brand { flex-direction: column; gap: 10px; }
+  .sc-logo { width: 84px; }
+  .sc-brand h3 { font-size: 30px; }
+  .sc-sub { font-size: 10px; }
+  .sc-body { flex-direction: column; gap: 20px; }
+  /* The list stays left-aligned inside, but the block sits in the middle. */
+  .sc-points { align-self: center; text-align: left; gap: 9px; }
+  .sc-points li { font-size: 14px; }
+  .sc-qr-box img { width: 128px; height: 128px; }
+  .sc-contact { flex-direction: column; align-items: center; gap: 6px; }
+  .sc-watermark { width: 200px; right: -50px; bottom: -36px; }
+  .sc-share { padding: 14px 10px; }
+  .sc-targets { gap: 12px 4px; }
+  .sc-target { width: calc((100% - 8px) / 3); max-width: 76px; }
 }
