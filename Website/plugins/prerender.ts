@@ -264,6 +264,7 @@ function buildPages(data: AppData, opts: PrerenderOptions): Page[] {
     ['/cgpa-calculator', 'CGPA Calculator — Pokhara University BECE', `Free CGPA and SGPA calculator for Pokhara University BE Computer Engineering (BECE): every semester's subjects and credit hours with the official PU grading scale (A = 4.0 … F = 0.0).`],
     ['/notes', 'Semester-Wise Notes — Pokhara University BE Computer Engineering', `Free semester-wise notes for Pokhara University BE Computer Engineering (BECE) on ${opts.siteName}: lecture notes, handwritten notes, lab works and syllabus for every semester, sorted by subject.`],
     ['/pokhara-university', 'Pokhara University (PU) — About', `About Pokhara University (PU), Nepal: established 1997, faculties, schools and affiliated colleges, with BE Computer Engineering syllabus and grading guides on ${opts.siteName}.`],
+    ['/be-computer-engineering', 'BE Computer Engineering (BECE) at Pokhara University — About', `About BE Computer Engineering (BECE) at Pokhara University, Nepal: a four-year, eight-semester degree, what it covers year by year, with notes, past questions and syllabus on ${opts.siteName}.`],
     ['/past-questions', 'Past Questions — Pokhara University BE Computer Engineering', `Pokhara University BE Computer Engineering past exam papers and college assessments for all 8 semesters, sorted by subject and year, on ${opts.siteName}.`],
     ['/send-paper', 'Send a Past Paper', `Send a Pokhara University BE Computer Engineering past exam paper to ${opts.siteName}, no GitHub needed: pick the subject, year and term, then add the PDF or photos of the pages.`],
     ['/feedback', 'Website Feedback', `Send feedback about ${opts.siteName}: report mistakes or missing notes, or suggest improvements. No email needed; you can stay anonymous.`],
@@ -468,7 +469,7 @@ function homeShell(stats: { semesters: number; subjects: number; files: number; 
     + `<a href="/" class="brand-lockup"><div class="brand-mark">${logo}</div><div><span class="brand-name">BECE Vault</span></div></a>`
     + '<nav class="top-actions"><a href="/past-questions" class="text-button">Past Questions</a><a href="/syllabus" class="text-button">Syllabus</a><a href="/cgpa-calculator" class="text-button">CGPA Calculator</a></nav></div></header><main>'
     + '<section class="hero section-wrap"><div class="hero-copy">'
-    + '<div class="eyebrow"><span class="eyebrow-line"></span> <a href="/pokhara-university" class="eyebrow-link">Pokhara University</a> · BECE</div>'
+    + '<div class="eyebrow"><span class="eyebrow-line"></span> <a href="/pokhara-university" class="eyebrow-link">Pokhara University</a> · <a href="/be-computer-engineering" class="eyebrow-link">BECE</a></div>'
     + '<h1><span class="hero-title-lead">Computer Engineering notes,</span><em>in one place.</em></h1>'
     + '<p class="hero-lede">Free, semester-wise notes for Pokhara University BE Computer Engineering: every lecture note, past question, lab report and syllabus across your BECE journey. Pick a semester to explore its subjects.</p>'
     + `<a href="/syllabus" class="hero-badge">${badge} Based on the new PU syllabus</a>`

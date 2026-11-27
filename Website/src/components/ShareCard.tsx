@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { Check, Facebook, Globe, Instagram, Link2, Mail, MessageCircle, ScanLine, Send, Share2, Sparkles, X } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import type { useShareLinks } from '@/components/ShareButton';
-import { pastQuestionCollections, semesters } from '@/content/notes';
+import { semesters } from '@/content/notes';
 import { SITE_HOST } from '@/content/watermark';
 import './ShareCard.css';
 
@@ -12,7 +12,6 @@ const CONTACT_EMAIL = 'adhikariarpan2063@gmail.com';
 const QR_URL = `${import.meta.env.BASE_URL}images/share-qr.svg`;
 
 const courseSemesters = semesters.filter((s) => /^\d+$/.test(s.id)).length;
-const papers = pastQuestionCollections.reduce((sum, c) => sum + c.files.length, 0);
 
 /** The home page's "Share with your class": a business card with a QR code, and where to send the link. */
 export function ShareCard({ share, onClose }: { share: ReturnType<typeof useShareLinks>; onClose: () => void }) {
@@ -89,7 +88,7 @@ export function ShareCard({ share, onClose }: { share: ReturnType<typeof useShar
           <div className="sc-body">
             <ul className="sc-points">
               <li><Check size={14} /> Notes for all {courseSemesters} semesters</li>
-              <li><Check size={14} /> {papers.toLocaleString('en-US')} past exam papers</li>
+              <li><Check size={14} /> PU past question papers for every subject</li>
               <li><Check size={14} /> Syllabus, labs &amp; CGPA calculator</li>
               <li><Check size={14} /> Free, no sign-up needed</li>
             </ul>
